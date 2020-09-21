@@ -1,23 +1,19 @@
 ﻿using System;
 using NDesk.Options;
 
-// ENet 2.4.3 (https://github.com/nxrighthere/ENet-CSharp)
-using ENet;
-// LiteNetLib 0.9.3.2 (https://github.com/RevenantX/LiteNetLib)
-using LiteNetLib;
-
 namespace DotNetCoreNetworkingBenchmark
 {
     internal enum NetworkLibrary
     {
         ENet,
+        NetCoreServer,
         LiteNetLib
     }
-    
+
     class Program
     {
         public static BenchmarkConfiguration Config;
-        
+
         static void Main(string[] args)
         {
             Config = new BenchmarkConfiguration();
