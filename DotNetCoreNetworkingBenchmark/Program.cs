@@ -25,12 +25,13 @@ namespace DotNetCoreNetworkingBenchmark
             var options = new OptionSet()
             {
                 { "h|?|help", "Show help",   v =>  showHelp = (v != null) },
-                { "l|library=", "Library target (Default: ENet)", v => Config.Library = (NetworkLibrary)Enum.Parse(typeof(NetworkLibrary), v, true) },
-                { "a|address=", "Address to use (Default: 127.0.0.1)", v => Config.Address = v },
-                { "p|port=", "Socket Port (Default: 3333)", v => Config.Port = int.Parse(v) },
-                { "c|clients=", "Number of simultaneous clients (Default: 1000)", v => Config.NumClients = int.Parse(v) },
-                { "s|size=", "Message byte size sent by clients (Default: 20)", v => Config.MessageByteSize = int.Parse(v) },
-                { "d|duration=", "Duration fo the test in seconds (Default: 10)", v => Config.TestDurationInSeconds = int.Parse(v) }
+                { "l|library=", $"Library target (Default: {Config.Library})", v => Config.Library = (NetworkLibrary)Enum.Parse(typeof(NetworkLibrary), v, true) },
+                { "a|address=", $"Address to use (Default: {Config.Address})", v => Config.Address = v },
+                { "p|port=", $"Port (Default: {Config.Port})", v => Config.Port = int.Parse(v) },
+                { "c|clients=", $"# Simultaneous clients (Default: {Config.NumClients})", v => Config.NumClients = int.Parse(v) },
+                { "m|messages=", $"# Parallel messages per client (Default: {Config.ParallelMessagesPerClient})", v => Config.ParallelMessagesPerClient = int.Parse(v) },
+                { "s|size=", $"Message byte size sent by clients (Default: {Config.MessageByteSize})", v => Config.MessageByteSize = int.Parse(v) },
+                { "d|duration=", $"Duration fo the test in seconds (Default: {Config.TestDurationInSeconds})", v => Config.TestDurationInSeconds = int.Parse(v) }
             };
 
             try
