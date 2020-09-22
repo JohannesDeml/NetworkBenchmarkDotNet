@@ -85,8 +85,8 @@ namespace DotNetCoreNetworkingBenchmark
 	        Config.BenchmarkData.StartBenchmark();
 	        _library.StartBenchmark();
 	        Thread.Sleep(Config.TestDurationInSeconds * 1000);
-	        Config.BenchmarkData.StopBenchmark();
 	        _library.StopBenchmark();
+	        Config.BenchmarkData.StopBenchmark();
         }
 
         private static void CleanupBenchmark()

@@ -72,7 +72,7 @@ namespace DotNetCoreNetworkingBenchmark.NetCoreServer
 
 		public void StopBenchmark()
 		{
-			// TODO Anything to do here?
+
 		}
 
 		public Task DisconnectClients()

@@ -11,9 +11,10 @@ namespace DotNetCoreNetworkingBenchmark
         public string Address = "127.0.0.1";
 
         public int NumClients = 1000;
+        public int ParallelMessagesPerClient = 100;
         public int MessageByteSize = 32;
         public byte[] Message { get; private set; }
-        public int TestDurationInSeconds = 3;
+        public int TestDurationInSeconds = 10;
 
         public BenchmarkConfiguration()
         {
@@ -42,8 +43,9 @@ namespace DotNetCoreNetworkingBenchmark
             sb.AppendLine(header);
             sb.AppendLine($"Library: {Library}");
             sb.AppendLine($"Address: {Address}, Port: {Port}");
-            sb.AppendLine($"Number of Clients: {NumClients}");
-            sb.AppendLine($"Message Size: {MessageByteSize} bytes");
+            sb.AppendLine($"Number of clients: {NumClients}");
+            sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
+            sb.AppendLine($"Message size: {MessageByteSize} bytes");
             sb.AppendLine($"Duration: {TestDurationInSeconds} seconds");
             sb.AppendLine(new string('-', header.Length));
 
@@ -58,16 +60,24 @@ namespace DotNetCoreNetworkingBenchmark
 	        sb.AppendLine();
 	        sb.AppendLine(header);
 	        sb.AppendLine($"Library: {Library}");
-	        sb.AppendLine($"Number of Clients: {NumClients:n0}");
-	        sb.AppendLine($"Message Size: {MessageByteSize:n0} bytes");
-	        sb.AppendLine($"Duration: {BenchmarkData.Duration.ToString(@"ss\.fff")} seconds");
-	        sb.AppendLine($"Messages Sent Clients: {BenchmarkData.MessagesClientSent:n0}");
-	        sb.AppendLine($"Messages Received Server: {BenchmarkData.MessagesServerReceived:n0}");
-	        sb.AppendLine($"Messages Sent Server: {BenchmarkData.MessagesServerSent:n0}");
-	        sb.AppendLine($"Messages Received Clients: {BenchmarkData.MessagesClientReceived:n0}");
+	        sb.AppendLine($"Number of clients: {NumClients:n0}");
+	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
+	        sb.AppendLine($"Message size: {MessageByteSize:n0} bytes");
+	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
+	        sb.AppendLine($"Messages sent client: {BenchmarkData.MessagesClientSent:n0}");
+	        sb.AppendLine($"Messages received server: {BenchmarkData.MessagesServerReceived:n0}");
+	        sb.AppendLine($"Messages sent server: {BenchmarkData.MessagesServerSent:n0}");
+	        sb.AppendLine($"Messages received clients: {BenchmarkData.MessagesClientReceived:n0}");
 
-	        var rtt = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
-	        sb.AppendLine($"Average Round Trip Time: {rtt:0.000} μs");
+	        var totalBytes = BenchmarkData.MessagesClientReceived * MessageByteSize;
+	        var totalMb = totalBytes / (1024.0d * 1024.0d);
+	        sb.AppendLine($"Total data: {totalMb:0.00} MB");
+
+	        var latency = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
+	        sb.AppendLine($"Data throughput: {totalMb/BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
+	        sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived/BenchmarkData.Duration.TotalSeconds:n0} msg/s");
+	        sb.AppendLine($"Message latency: {latency:0.000} μs");
+
 	        sb.AppendLine(new string('-', header.Length));
 
 	        return sb.ToString();

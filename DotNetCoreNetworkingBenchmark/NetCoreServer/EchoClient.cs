@@ -9,10 +9,12 @@ namespace DotNetCoreNetworkingBenchmark.NetCoreServer
 	class EchoClient : UdpClient
 	{
 		private byte[] _message;
+		private int _initialMessages;
 		private BenchmarkData _benchmarkData;
 		public EchoClient(BenchmarkConfiguration config) : base(config.Address, config.Port)
 		{
 			_message = config.Message;
+			_initialMessages = config.ParallelMessagesPerClient;
 			_benchmarkData = config.BenchmarkData;
 		}
 
@@ -44,7 +46,10 @@ namespace DotNetCoreNetworkingBenchmark.NetCoreServer
 
 		public void StartSendingMessages()
 		{
-			SendMessage();
+			for (int i = 0; i < _initialMessages; i++)
+			{
+				SendMessage();
+			}
 		}
 
 		private void SendMessage()
