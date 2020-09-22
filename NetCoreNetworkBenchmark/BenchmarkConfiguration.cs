@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace DotNetCoreNetworkingBenchmark
+namespace NetCoreNetworkBenchmark
 {
     internal class BenchmarkConfiguration
     {

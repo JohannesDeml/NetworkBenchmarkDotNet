@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using UdpClient = NetCoreServer.UdpClient;
 
-namespace DotNetCoreNetworkingBenchmark.NetCoreServer
+namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	class EchoClient : UdpClient
 	{

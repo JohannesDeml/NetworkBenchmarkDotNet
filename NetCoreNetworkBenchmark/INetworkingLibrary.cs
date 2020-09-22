@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNetCoreNetworkingBenchmark.NetCoreServer;
+using NetCoreNetworkBenchmark.NetCoreServer;
 
-namespace DotNetCoreNetworkingBenchmark
+namespace NetCoreNetworkBenchmark
 {
 	internal interface INetworkingLibrary
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNetCoreNetworkingBenchmark
+namespace NetCoreNetworkBenchmark
 {
 	internal class BenchmarkData
 	{

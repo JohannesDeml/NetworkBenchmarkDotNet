@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NDesk.Options;
 
-namespace DotNetCoreNetworkingBenchmark
+namespace NetCoreNetworkBenchmark
 {
     internal enum NetworkLibrary
     {

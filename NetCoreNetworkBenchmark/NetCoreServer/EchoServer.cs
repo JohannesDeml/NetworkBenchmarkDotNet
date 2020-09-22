@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using NetCoreServer;
 
-namespace DotNetCoreNetworkingBenchmark.NetCoreServer
+namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	class EchoServer : UdpServer
 	{

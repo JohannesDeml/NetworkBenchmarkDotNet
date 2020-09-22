@@ -6,6 +6,7 @@
         <Title>.Net Core Networking Benchmark</Title>
         <Authors>Johannes Deml</Authors>
         <Company>Deml</Company>
+        <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

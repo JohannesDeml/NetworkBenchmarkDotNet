@@ -2,7 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 
-namespace DotNetCoreNetworkingBenchmark.NetCoreServer
+namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	internal class NetCoreServerLibrary: INetworkingLibrary
 	{

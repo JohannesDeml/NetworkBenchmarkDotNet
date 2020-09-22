@@ -1,4 +1,4 @@
-# .Net Core Networking Benchmark
+# .Net Core Network Benchmark
 
 *Low Level .Net Core Networking libraries benchmarked with UDP socket performance*
 
