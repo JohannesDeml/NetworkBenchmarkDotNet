@@ -64,10 +64,10 @@ namespace NetCoreNetworkBenchmark
 	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
 	        sb.AppendLine($"Message size: {MessageByteSize:n0} bytes");
 	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
-	        sb.AppendLine($"Messages sent client: {BenchmarkData.MessagesClientSent:n0}");
-	        sb.AppendLine($"Messages received server: {BenchmarkData.MessagesServerReceived:n0}");
-	        sb.AppendLine($"Messages sent server: {BenchmarkData.MessagesServerSent:n0}");
-	        sb.AppendLine($"Messages received clients: {BenchmarkData.MessagesClientReceived:n0}");
+	        sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
+	        sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
+	        sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
+	        sb.AppendLine($"Messages clients received: {BenchmarkData.MessagesClientReceived:n0}");
 
 	        var totalBytes = BenchmarkData.MessagesClientReceived * MessageByteSize;
 	        var totalMb = totalBytes / (1024.0d * 1024.0d);
