@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Text;
 
 namespace NetCoreNetworkBenchmark
@@ -54,11 +55,13 @@ namespace NetCoreNetworkBenchmark
 
         public string PrintStatistics()
         {
-	        var header = "--- Benchmark Results ---";
+	        var header = $"--- Benchmark Results {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} ---";
 	        var sb = new StringBuilder();
 
 	        sb.AppendLine();
 	        sb.AppendLine(header);
+	        sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
+	        sb.AppendLine($"{System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
 	        sb.AppendLine($"Library: {Library}");
 	        sb.AppendLine($"Number of clients: {NumClients:n0}");
 	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
