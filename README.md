@@ -37,3 +37,4 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 
 ## License
 
+[MIT](./LICENSE)
