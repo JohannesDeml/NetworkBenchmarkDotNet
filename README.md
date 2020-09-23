@@ -1,6 +1,6 @@
 # .Net Core Network Benchmark
 
-*Low Level .Net Core Networking libraries benchmarked with UDP socket performance*
+*Low Level .Net Core Networking libraries benchmarked for UDP socket performance*
 
 ![Screenshot](./Docs/screenshot.png)
 
@@ -10,7 +10,7 @@
 
 🚧 *Early in development* 🚧
 
-Benchmark for different low level .Net Core compatible libraries that are compatible with [Unity](https://unity3d.com), but also work as standalone console applications. The benchmark focuses on performance latency and scalability. The tests do not consider ease of use or supported features.
+Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) compatible libraries that are compatible with [Unity](https://unity3d.com), but also work as standalone console applications. The benchmark focuses on performance, latency and scalability.
 
 ### Supported Libraries
 
