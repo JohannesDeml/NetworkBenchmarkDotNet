@@ -4,6 +4,8 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetCoreNetworkBenchmark/all.svg)](../../releases)
+
 ## Description
 
 🚧 *Early in development* 🚧

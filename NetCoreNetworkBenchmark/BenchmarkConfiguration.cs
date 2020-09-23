@@ -54,6 +54,7 @@ namespace NetCoreNetworkBenchmark
 	        var sb = new StringBuilder();
 
             sb.AppendLine("--- Benchmark Configuration ---");
+            sb.AppendLine($"Test: {TestType}");
             sb.AppendLine($"Library: {Library}");
             sb.AppendLine($"Address: {Address}, Port: {Port}");
             sb.AppendLine($"Number of clients: {NumClients}");
@@ -79,21 +80,24 @@ namespace NetCoreNetworkBenchmark
 	        sb.AppendLine(header);
 	        sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 	        sb.AppendLine($"Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+	        sb.AppendLine($"Test: {TestType}");
 	        sb.AppendLine($"Library: {Library}");
 	        sb.AppendLine($"Number of clients: {NumClients:n0}");
 	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
 	        sb.AppendLine($"Message size: {MessageByteSize:n0} bytes");
 	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
+	        sb.AppendLine();
 	        sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
 	        sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
 	        sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
 	        sb.AppendLine($"Messages clients received: {BenchmarkData.MessagesClientReceived:n0}");
+	        sb.AppendLine();
 
 	        var totalBytes = BenchmarkData.MessagesClientReceived * MessageByteSize;
 	        var totalMb = totalBytes / (1024.0d * 1024.0d);
-	        sb.AppendLine($"Total data: {totalMb:0.00} MB");
-
 	        var latency = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
+
+	        sb.AppendLine($"Total data: {totalMb:0.00} MB");
 	        sb.AppendLine($"Data throughput: {totalMb/BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
 	        sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived/BenchmarkData.Duration.TotalSeconds:n0} msg/s");
 	        sb.AppendLine($"Message latency: {latency:0.000} μs");
