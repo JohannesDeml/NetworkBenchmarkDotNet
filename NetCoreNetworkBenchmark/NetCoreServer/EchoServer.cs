@@ -56,6 +56,13 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		protected override void OnError(SocketError error)
 		{
 			Console.WriteLine($"Server caught an error with code {error}");
+
+			if (!_benchmarkData.Running)
+			{
+				return;
+			}
+
+			_benchmarkData.Errors++;
 		}
 	}
 }

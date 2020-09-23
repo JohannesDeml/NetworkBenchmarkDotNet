@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.NetCoreServer
@@ -92,11 +91,34 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task StopClients()
 		{
+			return Task.CompletedTask;
+		}
+
+		public Task Dispose()
+		{
 			for (int i = 0; i < _echoClients.Count; i++)
 			{
 				_echoClients[i].Dispose();
 			}
-			return Task.CompletedTask;
+			_echoServer.Dispose();
+
+			var disposed = Task.Run(() =>
+			{
+				while (!_echoServer.IsDisposed)
+				{
+					Task.Delay(10);
+				}
+				for (int i = 0; i < _config.NumClients; i++)
+				{
+					while (!_echoClients[i].IsDisposed)
+					{
+						Task.Delay(10);
+					}
+				}
+
+			});
+
+			return disposed;
 		}
 	}
 }

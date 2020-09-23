@@ -5,13 +5,6 @@ using NDesk.Options;
 
 namespace NetCoreNetworkBenchmark
 {
-    internal enum NetworkLibrary
-    {
-        ENet,
-        NetCoreServer,
-        LiteNetLib
-    }
-
     class Program
     {
         public static BenchmarkConfiguration Config;
@@ -24,14 +17,24 @@ namespace NetCoreNetworkBenchmark
 
             var options = new OptionSet()
             {
-                { "h|?|help", "Show help",   v =>  showHelp = (v != null) },
-                { "l|library=", $"Library target (Default: {Config.Library})", v => Config.Library = (NetworkLibrary)Enum.Parse(typeof(NetworkLibrary), v, true) },
-                { "a|address=", $"Address to use (Default: {Config.Address})", v => Config.Address = v },
-                { "p|port=", $"Port (Default: {Config.Port})", v => Config.Port = int.Parse(v) },
-                { "c|clients=", $"# Simultaneous clients (Default: {Config.NumClients})", v => Config.NumClients = int.Parse(v) },
-                { "m|messages=", $"# Parallel messages per client (Default: {Config.ParallelMessagesPerClient})", v => Config.ParallelMessagesPerClient = int.Parse(v) },
-                { "s|size=", $"Message byte size sent by clients (Default: {Config.MessageByteSize})", v => Config.MessageByteSize = int.Parse(v) },
-                { "d|duration=", $"Duration fo the test in seconds (Default: {Config.TestDurationInSeconds})", v => Config.TestDurationInSeconds = int.Parse(v) }
+                { "h|?|help", "Show help",
+	                v =>  showHelp = (v != null) },
+                { "t|test=", $"Test (Default: {Config.TestType})\nOptions: {Utilities.EnumToString<TestType>()}",
+	                v => Config.TestType = Utilities.ParseEnum<TestType>(v) },
+                { "l|library=", $"Library target (Default: {Config.Library})\nOptions: {Utilities.EnumToString<NetworkLibrary>()}",
+	                v => Config.Library = Utilities.ParseEnum<NetworkLibrary>(v) },
+                { "a|address=", $"Address to use (Default: {Config.Address})",
+	                v => Config.Address = v },
+                { "p|port=", $"Port (Default: {Config.Port})",
+	                v => Config.Port = int.Parse(v) },
+                { "c|clients=", $"# Simultaneous clients (Default: {Config.NumClients})",
+	                v => Config.NumClients = int.Parse(v) },
+                { "m|messages=", $"# Parallel messages per client (Default: {Config.ParallelMessagesPerClient})",
+	                v => Config.ParallelMessagesPerClient = int.Parse(v) },
+                { "s|size=", $"Message byte size sent by clients (Default: {Config.MessageByteSize})",
+	                v => Config.MessageByteSize = int.Parse(v) },
+                { "d|duration=", $"Duration fo the test in seconds (Default: {Config.TestDurationInSeconds})",
+	                v => Config.TestDurationInSeconds = int.Parse(v) }
             };
 
             try
@@ -40,8 +43,7 @@ namespace NetCoreNetworkBenchmark
             }
             catch (OptionException e)
             {
-                Console.Write("Command line error: ");
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Command line error: {e.Message}");
                 Console.WriteLine("Try `--help' to get usage information.");
                 return;
             }
@@ -54,16 +56,19 @@ namespace NetCoreNetworkBenchmark
             }
 
 
-            Console.WriteLine(Config.PrintConfiguration());
+            Console.Write(Config.PrintConfiguration());
 
             _library = INetworkingLibrary.CreateNetworkingLibrary(Config.Library);
 
-            Console.WriteLine("-> Prepare Benchmark");
+            Console.Write("-> Prepare Benchmark...");
             PrepareBenchmark();
-            Console.WriteLine("-> Run Benchmark");
+            Console.WriteLine(" Done");
+            Console.Write("-> Run Benchmark...");
             RunBenchmark();
-            Console.WriteLine("-> Benchmark Finished - cleaning up");
+            Console.WriteLine(" Done");
+            Console.Write("-> Clean up...");
             CleanupBenchmark();
+            Console.WriteLine(" Done");
             ShowStatistics();
         }
 
@@ -82,7 +87,6 @@ namespace NetCoreNetworkBenchmark
 
         private static void RunBenchmark()
         {
-	        var timestampStart = DateTime.UtcNow;
 	        Config.BenchmarkData.StartBenchmark();
 	        _library.StartBenchmark();
 	        Thread.Sleep(Config.TestDurationInSeconds * 1000);
@@ -90,16 +94,17 @@ namespace NetCoreNetworkBenchmark
 	        Config.BenchmarkData.StopBenchmark();
         }
 
-        private static void CleanupBenchmark()
+        private static async void CleanupBenchmark()
         {
-	        _library.DisconnectClients();
-	        _library.StopClients();
-	        _library.StopServer();
+	        await _library.DisconnectClients();
+	        await _library.StopClients();
+	        await _library.StopServer();
+	        await _library.Dispose();
         }
 
         private static void ShowStatistics()
         {
-	        Console.WriteLine(Config.PrintStatistics());
+	        Console.Write(Config.PrintStatistics());
         }
     }
 }

@@ -30,17 +30,20 @@ namespace NetCoreNetworkBenchmark
 		/// <summary>
 		/// Start the server with the configuration defined during initialization.
 		/// </summary>
+		/// <returns>Awaitable Task for when server finished starting.</returns>
 		Task StartServer();
 
 		/// <summary>
 		/// Start the clients with the configuration defined during initialization.
 		/// Note: Server might not be started at that time
 		/// </summary>
+		/// <returns>Awaitable Task for when clients are created and finished starting.</returns>
 		Task StartClients();
 
 		/// <summary>
 		/// Connect the running clients with the server.
 		/// </summary>
+		/// <returns>Awaitable Task for when all clients connected with the server.</returns>
 		Task ConnectClients();
 
 		/// <summary>
@@ -56,16 +59,25 @@ namespace NetCoreNetworkBenchmark
 		/// <summary>
 		/// Disconnect the running clients from the server.
 		/// </summary>
+		/// <returns>Awaitable Task for when all clients are disconnected from the server.</returns>
 		Task DisconnectClients();
 
 		/// <summary>
 		/// Stop server
 		/// </summary>
+		/// <returns>Awaitable Task for when server is stopped.</returns>
 		Task StopServer();
 
 		/// <summary>
 		/// Stop all clients
 		/// </summary>
+		/// <returns>Awaitable Task for when all clients are stopped.</returns>
 		Task StopClients();
+
+		/// <summary>
+		/// Cleanup server and clients
+		/// </summary>
+		/// <returns>Awaitable Task for when disposing is finished.</returns>
+		Task Dispose();
 	}
 }

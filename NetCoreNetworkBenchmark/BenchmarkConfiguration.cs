@@ -4,9 +4,22 @@ using System.Text;
 
 namespace NetCoreNetworkBenchmark
 {
-    internal class BenchmarkConfiguration
+	internal enum NetworkLibrary
+	{
+		ENet,
+		NetCoreServer,
+		LiteNetLib
+	}
+
+	internal enum TestType
+	{
+		PingPong
+	}
+
+	internal class BenchmarkConfiguration
     {
 	    public readonly BenchmarkData BenchmarkData;
+	    public TestType TestType = TestType.PingPong;
 	    public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
         public int Port = 3333;
         public string Address = "127.0.0.1";
@@ -38,17 +51,15 @@ namespace NetCoreNetworkBenchmark
 
         public string PrintConfiguration()
         {
-            var header = "--- Benchmark Configuration ---";
-            var sb = new StringBuilder();
+	        var sb = new StringBuilder();
 
-            sb.AppendLine(header);
+            sb.AppendLine("--- Benchmark Configuration ---");
             sb.AppendLine($"Library: {Library}");
             sb.AppendLine($"Address: {Address}, Port: {Port}");
             sb.AppendLine($"Number of clients: {NumClients}");
             sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
             sb.AppendLine($"Message size: {MessageByteSize} bytes");
             sb.AppendLine($"Duration: {TestDurationInSeconds} seconds");
-            sb.AppendLine(new string('-', header.Length));
 
             return sb.ToString();
         }
@@ -58,10 +69,16 @@ namespace NetCoreNetworkBenchmark
 	        var header = $"--- Benchmark Results {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} ---";
 	        var sb = new StringBuilder();
 
+	        if (BenchmarkData.Errors > 0)
+	        {
+		        sb.AppendLine();
+		        sb.AppendLine($"Errors: {BenchmarkData.Errors}");
+	        }
+
 	        sb.AppendLine();
 	        sb.AppendLine(header);
 	        sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
-	        sb.AppendLine($"{System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+	        sb.AppendLine($"Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
 	        sb.AppendLine($"Library: {Library}");
 	        sb.AppendLine($"Number of clients: {NumClients:n0}");
 	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");

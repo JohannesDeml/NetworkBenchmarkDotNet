@@ -14,6 +14,7 @@ namespace NetCoreNetworkBenchmark
 		public long MessagesClientReceived;
 		public long MessagesServerSent;
 		public long MessagesServerReceived;
+		public long Errors;
 
 		public void Reset()
 		{
@@ -21,6 +22,7 @@ namespace NetCoreNetworkBenchmark
 			MessagesClientReceived = 0L;
 			MessagesServerSent = 0L;
 			MessagesServerReceived = 0L;
+			Errors = 0;
 		}
 
 		public void StartBenchmark()
