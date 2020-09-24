@@ -20,21 +20,21 @@ namespace NetCoreNetworkBenchmark
                 { "h|?|help", "Show help",
 	                v =>  showHelp = (v != null) },
                 { "t|test=", $"Test (Default: {Config.TestType})\nOptions: {Utilities.EnumToString<TestType>()}",
-	                v => Config.TestType = Utilities.ParseEnum<TestType>(v) },
+	                v => Utilities.ParseOption(v, out Config.TestType) },
                 { "l|library=", $"Library target (Default: {Config.Library})\nOptions: {Utilities.EnumToString<NetworkLibrary>()}",
-	                v => Config.Library = Utilities.ParseEnum<NetworkLibrary>(v) },
+	                v => Utilities.ParseOption(v, out Config.Library) },
                 { "a|address=", $"Address to use (Default: {Config.Address})",
 	                v => Config.Address = v },
                 { "p|port=", $"Port (Default: {Config.Port})",
-	                v => Config.Port = int.Parse(v) },
+	                v => Utilities.ParseOption(v, out Config.Port, 0, 65535) },
                 { "c|clients=", $"# Simultaneous clients (Default: {Config.NumClients})",
-	                v => Config.NumClients = int.Parse(v) },
+	                v => Utilities.ParseOption(v, out Config.NumClients, 1, 1024 * 1024) },
                 { "m|messages=", $"# Parallel messages per client (Default: {Config.ParallelMessagesPerClient})",
-	                v => Config.ParallelMessagesPerClient = int.Parse(v) },
+	                v => Utilities.ParseOption(v, out Config.ParallelMessagesPerClient, 1, 1024 * 1024) },
                 { "s|size=", $"Message byte size sent by clients (Default: {Config.MessageByteSize})",
-	                v => Config.MessageByteSize = int.Parse(v) },
+	                v => Utilities.ParseOption(v, out Config.MessageByteSize, 1, 1024 * 1024) },
                 { "d|duration=", $"Duration fo the test in seconds (Default: {Config.TestDurationInSeconds})",
-	                v => Config.TestDurationInSeconds = int.Parse(v) }
+	                v => Utilities.ParseOption(v, out Config.TestDurationInSeconds, 1) }
             };
 
             try
@@ -43,9 +43,8 @@ namespace NetCoreNetworkBenchmark
             }
             catch (OptionException e)
             {
-                Console.WriteLine($"Command line error: {e.Message}");
-                Console.WriteLine("Try `--help' to get usage information.");
-                return;
+                Console.WriteLine($"Error when parsing options\n{e.Message}\n");
+                showHelp = true;
             }
 
             if (showHelp)

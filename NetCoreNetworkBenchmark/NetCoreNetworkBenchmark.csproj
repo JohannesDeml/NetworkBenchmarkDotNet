@@ -5,7 +5,7 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Title>.Net Core Networking Benchmark</Title>
         <Authors>Johannes Deml</Authors>
-        <Company>Deml</Company>
+        <Company>Johannes Deml</Company>
         <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
         <PackageVersion>0.1.0</PackageVersion>
         <AssemblyVersion>0.1.0</AssemblyVersion>
