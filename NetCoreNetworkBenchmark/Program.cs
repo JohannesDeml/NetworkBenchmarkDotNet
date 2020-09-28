@@ -86,15 +86,15 @@ namespace NetCoreNetworkBenchmark
 	        Console.Write(Config.PrintStatistics());
         }
 
-        private static async void PrepareBenchmark()
+        private static void PrepareBenchmark()
         {
 	        Config.PrepareForNewBenchmark();
 	        _networkBenchmark.Initialize(Config);
 
 	        var serverTask =  _networkBenchmark.StartServer();
 	        var clientTask =  _networkBenchmark.StartClients();
-	        await serverTask;
-	        await clientTask;
+	        serverTask.Wait();
+	        clientTask.Wait();
 
 	        _networkBenchmark.ConnectClients().Wait();
         }
@@ -108,11 +108,11 @@ namespace NetCoreNetworkBenchmark
 	        Config.BenchmarkData.StopBenchmark();
         }
 
-        private static async void CleanupBenchmark()
+        private static void CleanupBenchmark()
         {
-	        await _networkBenchmark.DisconnectClients();
-	        await _networkBenchmark.StopClients();
-	        await _networkBenchmark.StopServer();
+	        _networkBenchmark.DisconnectClients().Wait();
+	        _networkBenchmark.StopClients().Wait();
+	        _networkBenchmark.StopServer().Wait();
 	        _networkBenchmark.Dispose().Wait();
 	        GC.Collect();
         }
@@ -122,11 +122,12 @@ namespace NetCoreNetworkBenchmark
 	        Config = new BenchmarkConfiguration()
 	        {
 		        Address = "127.0.0.1",
+		        TestType = TestType.PingPong,
 		        MessageByteSize = 1,
 		        NumClients = 1000,
 		        ParallelMessagesPerClient = 1,
 		        PrintSteps = false,
-		        TestDurationInSeconds = 10
+		        TestDurationInSeconds = 1
 	        };
 
 	        //Console.Write(Config.PrintConfiguration());
@@ -136,20 +137,11 @@ namespace NetCoreNetworkBenchmark
 	        Config.NumClients = 100;
 	        Config.ParallelMessagesPerClient = 1000;
 
-	        Console.Write(Config.PrintConfiguration());
-	        RunWithAllLibraries();
-
-	        Console.Write(Config.PrintConfiguration());
-	        RunWithAllLibraries();
-
-	        Console.Write(Config.PrintConfiguration());
-	        RunWithAllLibraries();
-
-	        Console.Write(Config.PrintConfiguration());
-	        RunWithAllLibraries();
-
-	        Console.Write(Config.PrintConfiguration());
-	        RunWithAllLibraries();
+	        for (int i = 0; i < 20; i++)
+	        {
+		        Console.Write(Config.PrintConfiguration());
+		        RunWithAllLibraries();
+	        }
         }
 
         private static void RunWithAllLibraries()
