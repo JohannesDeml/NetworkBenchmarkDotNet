@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using NetCoreNetworkBenchmark.Enet;
 using NetCoreNetworkBenchmark.NetCoreServer;
 
 namespace NetCoreNetworkBenchmark
@@ -11,7 +12,7 @@ namespace NetCoreNetworkBenchmark
 			switch (library)
 			{
 				case NetworkLibrary.ENet:
-					throw new System.NotImplementedException();
+					return new ENetBenchmark();
 
 				case NetworkLibrary.NetCoreServer:
 					return new NetCoreServerBenchmark();
