@@ -8,7 +8,7 @@ namespace NetCoreNetworkBenchmark
     class Program
     {
         public static BenchmarkConfiguration Config;
-        private static INetworkingLibrary _library;
+        private static INetworkBenchmark _networkBenchmark;
 
         static void Main(string[] args)
         {
@@ -57,7 +57,7 @@ namespace NetCoreNetworkBenchmark
 
             Console.Write(Config.PrintConfiguration());
 
-            _library = INetworkingLibrary.CreateNetworkingLibrary(Config.Library);
+            _networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
 
             Console.Write("-> Prepare Benchmark...");
             PrepareBenchmark();
@@ -74,31 +74,31 @@ namespace NetCoreNetworkBenchmark
         private static async void PrepareBenchmark()
         {
 	        Config.PrepareForNewBenchmark();
-	        _library.Initialize(Config);
+	        _networkBenchmark.Initialize(Config);
 
-	        var serverTask =  _library.StartServer();
-	        var clientTask =  _library.StartClients();
+	        var serverTask =  _networkBenchmark.StartServer();
+	        var clientTask =  _networkBenchmark.StartClients();
 	        await serverTask;
 	        await clientTask;
 
-	        await _library.ConnectClients();
+	        await _networkBenchmark.ConnectClients();
         }
 
         private static void RunBenchmark()
         {
 	        Config.BenchmarkData.StartBenchmark();
-	        _library.StartBenchmark();
+	        _networkBenchmark.StartBenchmark();
 	        Thread.Sleep(Config.TestDurationInSeconds * 1000);
-	        _library.StopBenchmark();
+	        _networkBenchmark.StopBenchmark();
 	        Config.BenchmarkData.StopBenchmark();
         }
 
         private static async void CleanupBenchmark()
         {
-	        await _library.DisconnectClients();
-	        await _library.StopClients();
-	        await _library.StopServer();
-	        await _library.Dispose();
+	        await _networkBenchmark.DisconnectClients();
+	        await _networkBenchmark.StopClients();
+	        await _networkBenchmark.StopServer();
+	        await _networkBenchmark.Dispose();
         }
 
         private static void ShowStatistics()

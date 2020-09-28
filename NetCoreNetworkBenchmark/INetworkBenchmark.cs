@@ -4,18 +4,21 @@ using NetCoreNetworkBenchmark.NetCoreServer;
 
 namespace NetCoreNetworkBenchmark
 {
-	internal interface INetworkingLibrary
+	internal interface INetworkBenchmark
 	{
-		public static INetworkingLibrary CreateNetworkingLibrary(NetworkLibrary library)
+		public static INetworkBenchmark CreateNetworkBenchmark(NetworkLibrary library)
 		{
 			switch (library)
 			{
 				case NetworkLibrary.ENet:
 					throw new System.NotImplementedException();
+
 				case NetworkLibrary.NetCoreServer:
-					return new NetCoreServerLibrary();
+					return new NetCoreServerBenchmark();
+
 				case NetworkLibrary.LiteNetLib:
 					throw new System.NotImplementedException();
+
 				default:
 					throw new ArgumentOutOfRangeException(nameof(library), library, null);
 			}

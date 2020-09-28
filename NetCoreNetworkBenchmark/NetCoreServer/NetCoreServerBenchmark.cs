@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.NetCoreServer
 {
-	internal class NetCoreServerLibrary: INetworkingLibrary
+	internal class NetCoreServerBenchmark: INetworkBenchmark
 	{
 		private BenchmarkConfiguration _config;
 		private EchoServer _echoServer;
