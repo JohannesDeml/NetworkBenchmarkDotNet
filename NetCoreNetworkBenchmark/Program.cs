@@ -71,19 +71,28 @@ namespace NetCoreNetworkBenchmark
         {
 	        _networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
 
-	        if (Config.PrintSteps) Console.Write("-> Prepare Benchmark...");
-	        PrepareBenchmark();
-	        if (Config.PrintSteps) Console.WriteLine(" Done");
+	        try
+	        {
+		        if (Config.PrintSteps) Console.Write("-> Prepare Benchmark...");
+		        PrepareBenchmark();
+		        if (Config.PrintSteps) Console.WriteLine(" Done");
 
-	        if (Config.PrintSteps) Console.Write("-> Run Benchmark...");
-	        RunBenchmark();
-	        if (Config.PrintSteps) Console.WriteLine(" Done");
-
-	        if (Config.PrintSteps) Console.Write("-> Clean up...");
-	        CleanupBenchmark();
-	        if (Config.PrintSteps) Console.WriteLine(" Done");
-
-	        Console.Write(Config.PrintStatistics());
+		        if (Config.PrintSteps) Console.Write($"-> Run Benchmark {Config.Library}...");
+		        RunBenchmark();
+		        if (Config.PrintSteps) Console.WriteLine(" Done");
+	        }
+	        catch (Exception e)
+	        {
+		        Console.WriteLine($"Error when running Library {Config.Library}" +
+		                          $"\n{e.Message}\n{e.StackTrace}");
+	        }
+	        finally
+	        {
+		        if (Config.PrintSteps) Console.Write("-> Clean up...");
+		        CleanupBenchmark();
+		        if (Config.PrintSteps) Console.WriteLine(" Done");
+				Console.Write(Config.PrintStatistics());
+	        }
         }
 
         private static void PrepareBenchmark()
@@ -101,6 +110,7 @@ namespace NetCoreNetworkBenchmark
 
         private static void RunBenchmark()
         {
+	        Config.BenchmarkData.Reset();
 	        Config.BenchmarkData.StartBenchmark();
 	        _networkBenchmark.StartBenchmark();
 	        Thread.Sleep(Config.TestDurationInSeconds * 1000);
@@ -123,25 +133,24 @@ namespace NetCoreNetworkBenchmark
 	        {
 		        Address = "127.0.0.1",
 		        TestType = TestType.PingPong,
-		        MessageByteSize = 1,
+		        MessageByteSize = 32,
 		        NumClients = 1000,
+		        Name = "1",
 		        ParallelMessagesPerClient = 1,
 		        PrintSteps = false,
-		        TestDurationInSeconds = 1
+		        TestDurationInSeconds = 60
 	        };
 
-	        //Console.Write(Config.PrintConfiguration());
-	        //RunWithAllLibraries();
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
 
+	        Config.Name = "2";
 	        Config.MessageByteSize = 32;
 	        Config.NumClients = 100;
 	        Config.ParallelMessagesPerClient = 1000;
 
-	        for (int i = 0; i < 20; i++)
-	        {
-		        Console.Write(Config.PrintConfiguration());
-		        RunWithAllLibraries();
-	        }
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
         }
 
         private static void RunWithAllLibraries()

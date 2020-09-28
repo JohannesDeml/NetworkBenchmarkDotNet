@@ -20,19 +20,20 @@ namespace NetCoreNetworkBenchmark
     {
 	    public readonly BenchmarkData BenchmarkData;
 	    public TestType TestType = TestType.PingPong;
-	    public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
+	    public NetworkLibrary Library = NetworkLibrary.ENet;
         public int Port = 3333;
         public string Address = "127.0.0.1";
         public bool PrintSteps = true;
 
+        public string Name = "Custom";
+
         public int NumClients = 1000;
-        public int ParallelMessagesPerClient = 100;
+        public int ParallelMessagesPerClient = 1;
         public int MessageByteSize = 32;
-        /// <summary>
-        /// Tick Rate for fetching events if supported by the library
-        /// </summary>
-        public int TickRateClient = 100;
-        public int TickRateServer = 30;
+
+        public int TickRateClient = 60;
+        public int TickRateServer = 60;
+
         public byte[] Message { get; private set; }
         public int TestDurationInSeconds = 10;
 
@@ -44,8 +45,7 @@ namespace NetCoreNetworkBenchmark
         public void PrepareForNewBenchmark()
         {
 	        GenerateMessageBytes();
-	        BenchmarkData.Reset();
-	        BenchmarkData.StartBenchmark();
+	        BenchmarkData.PrepareBenchmark();
         }
 
         private void GenerateMessageBytes()
@@ -59,16 +59,16 @@ namespace NetCoreNetworkBenchmark
         {
 	        var sb = new StringBuilder();
 
-            sb.AppendLine($"### Benchmark Configuration (v {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version})");
-            sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
-            sb.AppendLine($"Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
-            sb.AppendLine($"Test: {TestType}");
-            sb.AppendLine($"Library: {Library}");
-            sb.AppendLine($"Address: {Address}, Port: {Port}");
-            sb.AppendLine($"Number of clients: {NumClients}");
-            sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
-            sb.AppendLine($"Message size: {MessageByteSize} bytes");
-            sb.AppendLine($"Defined duration: {TestDurationInSeconds} seconds");
+            sb.AppendLine($"### Benchmark {Name} (v {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version})");
+            sb.AppendLine($"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
+            sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+            sb.AppendLine($"* Test: {TestType}");
+            sb.AppendLine($"* Address: {Address}, Port: {Port}");
+            sb.AppendLine($"* Number of clients: {NumClients}");
+            sb.AppendLine($"* Parallel messages per client: {ParallelMessagesPerClient:n0}");
+            sb.AppendLine($"* Message size: {MessageByteSize} bytes");
+            sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
+            sb.AppendLine();
 
             return sb.ToString();
         }
@@ -79,11 +79,10 @@ namespace NetCoreNetworkBenchmark
 
 	        if (BenchmarkData.Errors > 0)
 	        {
-		        sb.AppendLine();
 		        sb.AppendLine($"Errors: {BenchmarkData.Errors}");
+		        sb.AppendLine();
 	        }
 
-	        sb.AppendLine();
 	        sb.AppendLine($"#### {Library}");
 	        sb.AppendLine("```");
 	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
@@ -102,6 +101,7 @@ namespace NetCoreNetworkBenchmark
 	        sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived/BenchmarkData.Duration.TotalSeconds:n0} msg/s");
 	        sb.AppendLine($"Message latency: {latency:0.000} μs");
 	        sb.AppendLine("```");
+	        sb.AppendLine();
 
 	        return sb.ToString();
         }

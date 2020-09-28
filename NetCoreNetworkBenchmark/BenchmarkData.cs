@@ -25,6 +25,11 @@ namespace NetCoreNetworkBenchmark
 			Errors = 0;
 		}
 
+		public void PrepareBenchmark()
+		{
+			Running = true;
+		}
+
 		public void StartBenchmark()
 		{
 			StartTime = DateTime.Now;
