@@ -27,6 +27,11 @@ namespace NetCoreNetworkBenchmark
         public int NumClients = 1000;
         public int ParallelMessagesPerClient = 100;
         public int MessageByteSize = 32;
+        /// <summary>
+        /// Tick Rate for fetching events if supported by the library
+        /// </summary>
+        public int TickRateClient = 100;
+        public int TickRateServer = 30;
         public byte[] Message { get; private set; }
         public int TestDurationInSeconds = 10;
 
@@ -53,21 +58,22 @@ namespace NetCoreNetworkBenchmark
         {
 	        var sb = new StringBuilder();
 
-            sb.AppendLine("--- Benchmark Configuration ---");
+            sb.AppendLine($"### Benchmark Configuration (v {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version})");
+            sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
+            sb.AppendLine($"Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
             sb.AppendLine($"Test: {TestType}");
             sb.AppendLine($"Library: {Library}");
             sb.AppendLine($"Address: {Address}, Port: {Port}");
             sb.AppendLine($"Number of clients: {NumClients}");
             sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
             sb.AppendLine($"Message size: {MessageByteSize} bytes");
-            sb.AppendLine($"Duration: {TestDurationInSeconds} seconds");
+            sb.AppendLine($"Defined duration: {TestDurationInSeconds} seconds");
 
             return sb.ToString();
         }
 
         public string PrintStatistics()
         {
-	        var header = $"--- Benchmark Results {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} ---";
 	        var sb = new StringBuilder();
 
 	        if (BenchmarkData.Errors > 0)
@@ -77,16 +83,9 @@ namespace NetCoreNetworkBenchmark
 	        }
 
 	        sb.AppendLine();
-	        sb.AppendLine(header);
-	        sb.AppendLine($"OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
-	        sb.AppendLine($"Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
-	        sb.AppendLine($"Test: {TestType}");
-	        sb.AppendLine($"Library: {Library}");
-	        sb.AppendLine($"Number of clients: {NumClients:n0}");
-	        sb.AppendLine($"Parallel messages per client: {ParallelMessagesPerClient:n0}");
-	        sb.AppendLine($"Message size: {MessageByteSize:n0} bytes");
+	        sb.AppendLine($"#### {Library}");
+	        sb.AppendLine("```");
 	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
-	        sb.AppendLine();
 	        sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
 	        sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
 	        sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
@@ -101,8 +100,7 @@ namespace NetCoreNetworkBenchmark
 	        sb.AppendLine($"Data throughput: {totalMb/BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
 	        sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived/BenchmarkData.Duration.TotalSeconds:n0} msg/s");
 	        sb.AppendLine($"Message latency: {latency:0.000} μs");
-
-	        sb.AppendLine(new string('-', header.Length));
+	        sb.AppendLine("```");
 
 	        return sb.ToString();
         }

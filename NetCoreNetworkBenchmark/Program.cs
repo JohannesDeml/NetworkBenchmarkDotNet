@@ -81,7 +81,7 @@ namespace NetCoreNetworkBenchmark
 	        await serverTask;
 	        await clientTask;
 
-	        await _networkBenchmark.ConnectClients();
+	        _networkBenchmark.ConnectClients().Wait();
         }
 
         private static void RunBenchmark()
@@ -98,7 +98,7 @@ namespace NetCoreNetworkBenchmark
 	        await _networkBenchmark.DisconnectClients();
 	        await _networkBenchmark.StopClients();
 	        await _networkBenchmark.StopServer();
-	        await _networkBenchmark.Dispose();
+	        _networkBenchmark.Dispose().Wait();
         }
 
         private static void ShowStatistics()

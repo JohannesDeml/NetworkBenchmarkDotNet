@@ -15,10 +15,10 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 ### Supported Libraries
 
 * [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
 
 ### Upcoming Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
 * [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.3.2)
 
 ### Todo
