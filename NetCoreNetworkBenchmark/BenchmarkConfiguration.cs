@@ -23,6 +23,7 @@ namespace NetCoreNetworkBenchmark
 	    public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
         public int Port = 3333;
         public string Address = "127.0.0.1";
+        public bool PrintSteps = true;
 
         public int NumClients = 1000;
         public int ParallelMessagesPerClient = 100;

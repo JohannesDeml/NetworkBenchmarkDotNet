@@ -14,11 +14,14 @@ namespace NetCoreNetworkBenchmark
         {
             Config = new BenchmarkConfiguration();
             var showHelp = false;
+            var predefinedBenchmark = false;
 
             var options = new OptionSet()
             {
                 { "h|?|help", "Show help",
 	                v =>  showHelp = (v != null) },
+                { "b|benchmark", "Run predefined full benchmark with all tests and libraries, ignores all other settings",
+	                v =>  predefinedBenchmark = (v != null) },
                 { "t|test=", $"Test (Default: {Config.TestType})\nOptions: {Utilities.EnumToString<TestType>()}",
 	                v => Utilities.ParseOption(v, out Config.TestType) },
                 { "l|library=", $"Library target (Default: {Config.Library})\nOptions: {Utilities.EnumToString<NetworkLibrary>()}",
@@ -54,21 +57,33 @@ namespace NetCoreNetworkBenchmark
                 return;
             }
 
+            if (predefinedBenchmark)
+            {
+	            RunPredefinedBenchmark();
+	            return;
+            }
 
             Console.Write(Config.PrintConfiguration());
+            Run();
+        }
 
-            _networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
+        private static void Run()
+        {
+	        _networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
 
-            Console.Write("-> Prepare Benchmark...");
-            PrepareBenchmark();
-            Console.WriteLine(" Done");
-            Console.Write("-> Run Benchmark...");
-            RunBenchmark();
-            Console.WriteLine(" Done");
-            Console.Write("-> Clean up...");
-            CleanupBenchmark();
-            Console.WriteLine(" Done");
-            ShowStatistics();
+	        if (Config.PrintSteps) Console.Write("-> Prepare Benchmark...");
+	        PrepareBenchmark();
+	        if (Config.PrintSteps) Console.WriteLine(" Done");
+
+	        if (Config.PrintSteps) Console.Write("-> Run Benchmark...");
+	        RunBenchmark();
+	        if (Config.PrintSteps) Console.WriteLine(" Done");
+
+	        if (Config.PrintSteps) Console.Write("-> Clean up...");
+	        CleanupBenchmark();
+	        if (Config.PrintSteps) Console.WriteLine(" Done");
+
+	        Console.Write(Config.PrintStatistics());
         }
 
         private static async void PrepareBenchmark()
@@ -99,11 +114,56 @@ namespace NetCoreNetworkBenchmark
 	        await _networkBenchmark.StopClients();
 	        await _networkBenchmark.StopServer();
 	        _networkBenchmark.Dispose().Wait();
+	        GC.Collect();
         }
 
-        private static void ShowStatistics()
+        private static void RunPredefinedBenchmark()
         {
-	        Console.Write(Config.PrintStatistics());
+	        Config = new BenchmarkConfiguration()
+	        {
+		        Address = "127.0.0.1",
+		        MessageByteSize = 1,
+		        NumClients = 1000,
+		        ParallelMessagesPerClient = 1,
+		        PrintSteps = false,
+		        TestDurationInSeconds = 10
+	        };
+
+	        //Console.Write(Config.PrintConfiguration());
+	        //RunWithAllLibraries();
+
+	        Config.MessageByteSize = 32;
+	        Config.NumClients = 100;
+	        Config.ParallelMessagesPerClient = 1000;
+
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
+
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
+
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
+
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
+
+	        Console.Write(Config.PrintConfiguration());
+	        RunWithAllLibraries();
+        }
+
+        private static void RunWithAllLibraries()
+        {
+	        RunWithLibrary(NetworkLibrary.ENet);
+	        RunWithLibrary(NetworkLibrary.NetCoreServer);
+        }
+
+        private static void RunWithLibrary(NetworkLibrary library)
+        {
+	        Config.Library = library;
+	        Run();
+	        Thread.Sleep(1000);
+	        GC.Collect();
         }
     }
 }

@@ -94,8 +94,18 @@ namespace NetCoreNetworkBenchmark.Enet
 			}
 			_echoServer.Dispose();
 
+			var allDisposed = Task.Run(() =>
+			{
+				for (int i = 0; i < _echoClients.Count; i++)
+				{
+					while (!_echoClients[i].IsDisposed)
+					{
+						Task.Delay(10);
+					}
+				}
 
-			return Task.CompletedTask;
+			});
+			return allDisposed;
 		}
 	}
 }

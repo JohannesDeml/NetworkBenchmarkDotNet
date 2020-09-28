@@ -14,6 +14,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		private Address _address;
 		private Peer _peer;
 		public bool IsConnected => _peer.State == PeerState.Connected;
+		public bool IsDisposed { get; private set; }
 		private Task _listenTask;
 		private BenchmarkConfiguration _config;
 		private BenchmarkData _benchmarkData;
@@ -28,6 +29,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			_address = new Address();
 			_address.SetHost(config.Address);
 			_address.Port = (ushort)config.Port;
+			IsDisposed = false;
 		}
 
 		public void Start()
@@ -36,6 +38,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			_peer = _host.Connect(_address, 4);
 
 			_listenTask = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
+			IsDisposed = false;
 		}
 
 		public void StartSendingMessages()
@@ -48,14 +51,19 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void Disconnect()
 		{
-			_peer.Disconnect(0);
+			_peer.DisconnectNow(0);
 		}
 
-		public void Dispose()
+		public async void Dispose()
 		{
+			while (!_listenTask.IsCompleted)
+			{
+				await Task.Delay(10);
+			}
 			_listenTask.Dispose();
 			_host.Flush();
 			_host.Dispose();
+			IsDisposed = true;
 		}
 
 		private void Listen()
