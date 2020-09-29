@@ -30,7 +30,8 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 
 ## Benchmarks
 
-Benchmarks are run with an older Ubuntu machine. Surprisingly, with a new Windows machine I got worse results ([Results v 0.1.0](https://github.com/JohannesDeml/NetCoreNetworkBenchmark/releases/tag/0.1.0))
+Benchmarks are run with an older Ubuntu machine. Surprisingly, with a new Windows machine I got worse results ([Results v 0.1.0](https://github.com/JohannesDeml/NetCoreNetworkBenchmark/releases/tag/0.1.0))  
+To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b`
 
 * OS: Ubuntu 20.04.1 LTS
 * CPU: Intel® Core™ i5-3570K CPU @ **3.40GHz × 4**
@@ -115,7 +116,27 @@ Message latency: 8.508 μs
 
 ## Installation
 
+Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) (>=3.1 recommended) installed.
 
+Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it.
+
+## Usage
+
+```
+  -h, -?, --help             Show help
+  -b, --benchmark            Run predefined full benchmark with all tests and
+                               libraries, ignores all other settings
+  -t, --test=VALUE           Test (Default: PingPong)
+                               Options: [PingPong]
+  -l, --library=VALUE        Library target (Default: ENet)
+                               Options: [ENet, NetCoreServer, LiteNetLib]
+  -a, --address=VALUE        Address to use (Default: 127.0.0.1)
+  -p, --port=VALUE           Port (Default: 3333)
+  -c, --clients=VALUE        # Simultaneous clients (Default: 1000)
+  -m, --messages=VALUE       # Parallel messages per client (Default: 1)
+  -s, --size=VALUE           Message byte size sent by clients (Default: 32)
+  -d, --duration=VALUE       Duration fo the test in seconds (Default: 10)
+```
 
 ## License
 
