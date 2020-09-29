@@ -15,7 +15,10 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 ### Supported Libraries
 
 * [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
+  * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
 * [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
+  * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
+  * Max concurrent connections are limited to 4095 due to the protocol
 
 ### Upcoming Libraries
 
@@ -25,18 +28,24 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 
 - [ ] Test for maximum concurrent clients
 - [ ] Test for Garbage generation
-- [x] Test for roundtrip time
+- [ ] Test on local network, instead of one machine
+- [x] Test for roundtrip time (Benchmark 1)
 - [x] Generate simple benchmark statistics
 
 ## Benchmarks
 
-Benchmarks are run with an older Ubuntu machine. Surprisingly, with a new Windows machine I got worse results ([Results v 0.1.0](https://github.com/JohannesDeml/NetCoreNetworkBenchmark/releases/tag/0.1.0))  
 To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b`
+Note that the benchmarks run a lot better on Linux compared to Windows  ([Results v 0.1.0](https://github.com/JohannesDeml/NetCoreNetworkBenchmark/releases/tag/0.1.0))  
 
-* OS: Ubuntu 20.04.1 LTS
-* CPU: Intel® Core™ i5-3570K CPU @ **3.40GHz × 4**
-* Mainboard:  Gigabyte Z77X-D3H **Gb LAN (Atheros)**
-* RAM: G.Skill **16GB** (2 x 8 GB) DDR3-1600 (Part number: F3-1600C11-8GNT)
+
+```
+OS: Ubuntu 20.04.1 LTS
+CPU: Intel® Core™ i5-3570K CPU @ **3.40GHz × 4**
+Mainboard:  Gigabyte Z77X-D3H **Gb LAN (Atheros)**
+RAM: G.Skill **16GB** (2 x 8 GB) DDR3-1600 (Part number: F3-1600C11-8GNT)
+
+```
+
 
 ### Benchmark 1 (v 0.1.0)
 * OS: Linux 5.4.0-48-generic #52-Ubuntu SMP Thu Sep 10 10:58:49 UTC 2020 X64
