@@ -16,12 +16,22 @@ namespace NetCoreNetworkBenchmark
 		PingPong
 	}
 
+	internal enum MessagePayload
+	{
+		Random,
+		Zeros,
+		Ones
+	}
+
 	internal class BenchmarkConfiguration
     {
 	    public readonly BenchmarkData BenchmarkData;
 	    public TestType TestType = TestType.PingPong;
 	    public NetworkLibrary Library = NetworkLibrary.ENet;
         public int Port = 3333;
+        /// <summary>
+        /// Target address. If you want to test locally its "127.0.0.1" for ipv4 and "::1" for ipv6
+        /// </summary>
         public string Address = "127.0.0.1";
         public bool PrintSteps = true;
 
@@ -30,6 +40,7 @@ namespace NetCoreNetworkBenchmark
         public int NumClients = 1000;
         public int ParallelMessagesPerClient = 1;
         public int MessageByteSize = 32;
+        public MessagePayload MessagePayload = MessagePayload.Ones;
 
         public int TickRateClient = 60;
         public int TickRateServer = 60;
@@ -50,9 +61,25 @@ namespace NetCoreNetworkBenchmark
 
         private void GenerateMessageBytes()
         {
-	        var rnd = new Random(0);
 	        Message = new byte[MessageByteSize];
-	        rnd.NextBytes(Message);
+
+	        switch (MessagePayload)
+	        {
+		        case MessagePayload.Random:
+					var rnd = new Random(0);
+			        rnd.NextBytes(Message);
+			        break;
+		        case MessagePayload.Zeros:
+			        break;
+		        case MessagePayload.Ones:
+			        for (int i = 0; i < MessageByteSize; i++)
+			        {
+				        Message[i] = 0xff;
+			        }
+			        break;
+		        default:
+			        throw new ArgumentOutOfRangeException();
+	        }
         }
 
         public string PrintConfiguration()
@@ -67,6 +94,7 @@ namespace NetCoreNetworkBenchmark
             sb.AppendLine($"* Number of clients: {NumClients}");
             sb.AppendLine($"* Parallel messages per client: {ParallelMessagesPerClient:n0}");
             sb.AppendLine($"* Message size: {MessageByteSize} bytes");
+            sb.AppendLine($"* Message Payload: {MessagePayload} bytes");
             sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
             sb.AppendLine();
 

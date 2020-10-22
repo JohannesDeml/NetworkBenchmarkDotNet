@@ -83,7 +83,6 @@ namespace NetCoreNetworkBenchmark.Enet
 						Interlocked.Increment(ref _benchmarkData.MessagesClientReceived);
 						netEvent.Packet.CopyTo(_message);
 						SendUnreliable(_message, 0, _peer);
-						Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
 
 						netEvent.Packet.Dispose();
 
@@ -97,6 +96,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
+			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
 		}
 
 		private void SendUnreliable(byte[] data, byte channelID, Peer peer) {
@@ -104,6 +104,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
 			peer.Send(channelID, ref packet);
+			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
 		}
 	}
 }

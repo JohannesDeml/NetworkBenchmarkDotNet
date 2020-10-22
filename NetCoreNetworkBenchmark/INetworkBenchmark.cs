@@ -79,9 +79,15 @@ namespace NetCoreNetworkBenchmark
 		Task StopClients();
 
 		/// <summary>
-		/// Cleanup server and clients
+		/// Cleanup clients
 		/// </summary>
 		/// <returns>Awaitable Task for when disposing is finished.</returns>
-		Task Dispose();
+		Task DisposeClients();
+
+		/// <summary>
+		/// Cleanup server
+		/// </summary>
+		/// <returns>Awaitable Task for when disposing is finished.</returns>
+		Task DisposeServer();
 	}
 }

@@ -122,8 +122,11 @@ namespace NetCoreNetworkBenchmark
         {
 	        _networkBenchmark.DisconnectClients().Wait();
 	        _networkBenchmark.StopClients().Wait();
+	        _networkBenchmark.DisposeClients().Wait();
+
 	        _networkBenchmark.StopServer().Wait();
-	        _networkBenchmark.Dispose().Wait();
+	        _networkBenchmark.DisposeServer().Wait();
+
 	        GC.Collect();
         }
 

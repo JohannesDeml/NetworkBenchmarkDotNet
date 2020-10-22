@@ -102,12 +102,29 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			return Task.CompletedTask;
 		}
 
-		public Task Dispose()
+		public Task DisposeClients()
 		{
 			for (int i = 0; i < _echoClients.Count; i++)
 			{
 				_echoClients[i].Dispose();
 			}
+
+			var disposeAll = Task.Run(() =>
+			{
+				for (int i = 0; i < _config.NumClients; i++)
+				{
+					while (!_echoClients[i].IsDisposed)
+					{
+						Task.Delay(10);
+					}
+				}
+			});
+
+			return disposeAll;
+		}
+
+		public Task DisposeServer()
+		{
 			_echoServer.Dispose();
 
 			var disposeAll = Task.Run(() =>
@@ -116,14 +133,6 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 				{
 					Task.Delay(10);
 				}
-				for (int i = 0; i < _config.NumClients; i++)
-				{
-					while (!_echoClients[i].IsDisposed)
-					{
-						Task.Delay(10);
-					}
-				}
-
 			});
 
 			return disposeAll;

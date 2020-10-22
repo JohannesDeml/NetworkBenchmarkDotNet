@@ -86,13 +86,12 @@ namespace NetCoreNetworkBenchmark.Enet
 			return Task.CompletedTask;
 		}
 
-		public Task Dispose()
+		public Task DisposeClients()
 		{
 			for (int i = 0; i < _echoClients.Count; i++)
 			{
 				_echoClients[i].Dispose();
 			}
-			_echoServer.Dispose();
 
 			var allDisposed = Task.Run(() =>
 			{
@@ -106,6 +105,13 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			});
 			return allDisposed;
+		}
+
+		public Task DisposeServer()
+		{
+			_echoServer.Dispose();
+
+			return Task.CompletedTask;
 		}
 	}
 }
