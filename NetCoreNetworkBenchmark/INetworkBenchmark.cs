@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NetCoreNetworkBenchmark.Enet;
+using NetCoreNetworkBenchmark.LiteNetLib;
 using NetCoreNetworkBenchmark.NetCoreServer;
 
 namespace NetCoreNetworkBenchmark
@@ -18,7 +19,7 @@ namespace NetCoreNetworkBenchmark
 					return new NetCoreServerBenchmark();
 
 				case NetworkLibrary.LiteNetLib:
-					throw new System.NotImplementedException();
+					return new LiteNetLibBenchmark();
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(library), library, null);
