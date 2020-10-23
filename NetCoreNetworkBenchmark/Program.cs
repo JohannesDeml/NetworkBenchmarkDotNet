@@ -137,6 +137,7 @@ namespace NetCoreNetworkBenchmark
 		        Address = "127.0.0.1",
 		        TestType = TestType.PingPong,
 		        MessageByteSize = 32,
+		        MessagePayload = MessagePayload.Random,
 		        NumClients = 1000,
 		        Name = "1",
 		        ParallelMessagesPerClient = 1,
