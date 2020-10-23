@@ -53,9 +53,13 @@ namespace NetCoreNetworkBenchmark.Enet
 
 					case EventType.Receive:
 						Interlocked.Increment(ref _benchmarkData.MessagesServerReceived);
-						netEvent.Packet.CopyTo(_message);
-						SendUnreliable(_message, 0, netEvent.Peer);
-						Interlocked.Increment(ref _benchmarkData.MessagesServerSent);
+
+						if (_benchmarkData.Running)
+						{
+							netEvent.Packet.CopyTo(_message);
+							SendUnreliable(_message, 0, netEvent.Peer);
+							Interlocked.Increment(ref _benchmarkData.MessagesServerSent);
+						}
 
 						netEvent.Packet.Dispose();
 

@@ -34,10 +34,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void Start()
 		{
-			_host.Create();
-			_peer = _host.Connect(_address, 4);
-
-			_listenTask = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
+			_listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
 			IsDisposed = false;
 		}
 
@@ -66,8 +63,11 @@ namespace NetCoreNetworkBenchmark.Enet
 			IsDisposed = true;
 		}
 
-		private void Listen()
+		private void ConnectAndListen()
 		{
+			_host.Create();
+			_peer = _host.Connect(_address, 4);
+
 			while (_benchmarkData.Running) {
 				_host.Service(1000 / _config.TickRateClient, out Event netEvent);
 
