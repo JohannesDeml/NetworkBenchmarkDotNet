@@ -7,24 +7,28 @@ namespace NetCoreNetworkBenchmark.Enet
 {
 	internal class EchoClient
 	{
+		public bool IsConnected => _peer.State == PeerState.Connected;
+		public bool IsDisposed { get; private set; }
+
 		private int _id;
+		private BenchmarkConfiguration _config;
+		private BenchmarkData _benchmarkData;
+
 		private byte[] _message;
-		private int _initialMessages;
+		private int _tickRate;
 		private Host _host;
 		private Address _address;
 		private Peer _peer;
-		public bool IsConnected => _peer.State == PeerState.Connected;
-		public bool IsDisposed { get; private set; }
 		private Task _listenTask;
-		private BenchmarkConfiguration _config;
-		private BenchmarkData _benchmarkData;
+
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
 			_id = id;
-			_message = config.Message;
-			_initialMessages = config.ParallelMessagesPerClient;
 			_config = config;
 			_benchmarkData = config.BenchmarkData;
+			_message = config.Message;
+			_tickRate = Math.Max(1000 / _config.TickRateClient, 1);
+
 			_host = new Host();
 			_address = new Address();
 			_address.SetHost(config.Address);
@@ -40,7 +44,9 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void StartSendingMessages()
 		{
-			for (int i = 0; i < _initialMessages; i++)
+			var parallelMessagesPerClient = _config.ParallelMessagesPerClient;
+
+			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
 				SendUnreliable(_message, 0, _peer);
 			}
@@ -69,7 +75,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			_peer = _host.Connect(_address, 4);
 
 			while (_benchmarkData.Running) {
-				_host.Service(1000 / _config.TickRateClient, out Event netEvent);
+				_host.Service(_tickRate, out Event netEvent);
 
 				switch (netEvent.Type) {
 					case EventType.None:

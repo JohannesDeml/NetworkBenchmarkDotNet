@@ -15,13 +15,17 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private EventBasedNetListener _listener;
 		private NetManager _netManager;
 		private byte[] _message;
+		private int _tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
 			_config = config;
 			_benchmarkData = config.BenchmarkData;
+			_tickRate = Math.Max(1000 / _config.TickRateServer, 1);
+
 			_listener = new EventBasedNetListener();
 			_netManager = new NetManager(_listener);
+			_netManager.UpdateTime = _tickRate;
 			_message = new byte[config.MessageByteSize];
 
 			_serverThread = new Thread(this.Start);
@@ -51,7 +55,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			while (_benchmarkData.Running) {
 				_netManager.PollEvents();
-				Thread.Sleep(1000 / _config.TickRateServer);
+				Thread.Sleep(_tickRate);
 			}
 		}
 

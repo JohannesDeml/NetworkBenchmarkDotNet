@@ -9,24 +9,27 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 {
 	internal class EchoClient
 	{
+		public bool IsConnected { get; private set; }
+		public bool IsDisposed { get; private set; }
+
 		private int _id;
+		private BenchmarkConfiguration _config;
+		private BenchmarkData _benchmarkData;
+
 		private byte[] _message;
-		private int _initialMessages;
+		private int _tickRate;
 		private EventBasedNetListener _listener;
 		private NetManager _netManager;
 		private NetPeer _peer;
-		public bool IsConnected { get; private set; }
-		public bool IsDisposed { get; private set; }
 		private Task _listenTask;
-		private BenchmarkConfiguration _config;
-		private BenchmarkData _benchmarkData;
+
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
 			_id = id;
-			_message = config.Message;
-			_initialMessages = config.ParallelMessagesPerClient;
 			_config = config;
 			_benchmarkData = config.BenchmarkData;
+			_message = config.Message;
+			_tickRate = Math.Max(1000 / _config.TickRateClient, 1);
 
 			_listener = new EventBasedNetListener();
 			_netManager = new NetManager(_listener);
@@ -48,7 +51,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartSendingMessages()
 		{
-			for (int i = 0; i < _initialMessages; i++)
+			var parallelMessagesPerClient = _config.ParallelMessagesPerClient;
+
+			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
 				SendUnreliable(_message);
 			}
@@ -89,11 +94,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private void ConnectAndListen()
 		{
 			_netManager.Start();
-			_netManager.Connect(_config.Address, _config.Port, "LiteNetLib");
+			_peer = _netManager.Connect(_config.Address, _config.Port, "LiteNetLib");
 
 			while (_benchmarkData.Running) {
 				_netManager.PollEvents();
-				Thread.Sleep(1000 / _config.TickRateClient);
+				Thread.Sleep(_tickRate);
 			}
 		}
 
@@ -105,7 +110,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnPeerConnected(NetPeer peer)
 		{
-			_peer = peer;
 			IsConnected = true;
 		}
 

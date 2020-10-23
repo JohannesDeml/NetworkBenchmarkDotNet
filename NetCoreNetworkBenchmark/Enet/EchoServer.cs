@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ENet;
 
@@ -12,11 +13,14 @@ namespace NetCoreNetworkBenchmark.Enet
 		private Host _host;
 		private Address _address;
 		private byte[] _message;
+		private int _tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
 			_config = config;
 			_benchmarkData = config.BenchmarkData;
+			_tickRate = Math.Max(1000 / _config.TickRateServer, 1);
+
 			_host = new Host();
 			_address = new Address();
 			_message = new byte[config.MessageByteSize];
@@ -45,7 +49,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			_host.Create(_address, _config.NumClients);
 
 			while (_benchmarkData.Running) {
-				_host.Service(1000 / _config.TickRateServer, out Event netEvent);
+				_host.Service(_tickRate, out Event netEvent);
 
 				switch (netEvent.Type) {
 					case EventType.None:
