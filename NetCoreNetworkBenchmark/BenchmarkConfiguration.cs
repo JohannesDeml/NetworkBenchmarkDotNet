@@ -27,7 +27,7 @@ namespace NetCoreNetworkBenchmark
     {
 	    public readonly BenchmarkData BenchmarkData;
 	    public TestType TestType = TestType.PingPong;
-	    public NetworkLibrary Library = NetworkLibrary.ENet;
+	    public NetworkLibrary Library = NetworkLibrary.LiteNetLib;
         public int Port = 3333;
         /// <summary>
         /// Target address. If you want to test locally its "127.0.0.1" for ipv4 and "::1" for ipv6
@@ -94,7 +94,7 @@ namespace NetCoreNetworkBenchmark
             sb.AppendLine($"* Number of clients: {NumClients}");
             sb.AppendLine($"* Parallel messages per client: {ParallelMessagesPerClient:n0}");
             sb.AppendLine($"* Message size: {MessageByteSize} bytes");
-            sb.AppendLine($"* Message Payload: {MessagePayload} bytes");
+            sb.AppendLine($"* Message Payload: {MessagePayload}");
             sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
             sb.AppendLine();
 

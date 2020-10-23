@@ -16,13 +16,14 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 
 * [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
+  * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
 * [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
-
-### Upcoming Libraries
-
+  * Packetsize overhead: 10 bytes
 * [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.3.2)
+  * Very feature-rich library
+  * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
 
 ### Todo
 

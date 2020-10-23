@@ -160,13 +160,14 @@ namespace NetCoreNetworkBenchmark
         {
 	        RunWithLibrary(NetworkLibrary.ENet);
 	        RunWithLibrary(NetworkLibrary.NetCoreServer);
+	        RunWithLibrary(NetworkLibrary.LiteNetLib);
         }
 
         private static void RunWithLibrary(NetworkLibrary library)
         {
 	        Config.Library = library;
 	        Run();
-	        Thread.Sleep(1000);
+	        Thread.Sleep(500);
 	        GC.Collect();
         }
     }
