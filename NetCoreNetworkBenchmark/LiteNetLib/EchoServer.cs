@@ -98,7 +98,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			if (_benchmarkData.Running)
 			{
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, _message, 0, reader.UserDataSize);
-				peer.Send(_message, DeliveryMethod.Unreliable);
+				peer.Send(_message, deliverymethod);
 				Interlocked.Increment(ref _benchmarkData.MessagesServerSent);
 			}
 

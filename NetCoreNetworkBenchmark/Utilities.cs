@@ -61,5 +61,23 @@ namespace NetCoreNetworkBenchmark
 			throw new OptionException($"Option {value} not valid\n" +
 			                          $"Allowed Range: [{minValue} , {maxValue}]", nameof(value));
 		}
+
+		public static void WriteStep(string text)
+		{
+			if (!Program.Config.PrintSteps)
+			{
+				return;
+			}
+			Console.Write(text);
+		}
+
+		public static void WriteStepLine(string text)
+		{
+			if (!Program.Config.PrintSteps)
+			{
+				return;
+			}
+			Console.WriteLine(text);
+		}
 	}
 }

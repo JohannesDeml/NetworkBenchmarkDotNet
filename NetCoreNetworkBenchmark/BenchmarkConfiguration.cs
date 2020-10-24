@@ -87,6 +87,7 @@ namespace NetCoreNetworkBenchmark
 	        var sb = new StringBuilder();
 
             sb.AppendLine($"### Benchmark {Name} (v {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version})");
+            sb.AppendLine($"* `{CreateCommandlineInstruction()}`");
             sb.AppendLine($"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
             sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
             sb.AppendLine($"* Test: {TestType}");
@@ -105,14 +106,13 @@ namespace NetCoreNetworkBenchmark
         {
 	        var sb = new StringBuilder();
 
+	        sb.AppendLine($"#### {Library}");
+	        sb.AppendLine("```");
 	        if (BenchmarkData.Errors > 0)
 	        {
 		        sb.AppendLine($"Errors: {BenchmarkData.Errors}");
 		        sb.AppendLine();
 	        }
-
-	        sb.AppendLine($"#### {Library}");
-	        sb.AppendLine("```");
 	        sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
 	        sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
 	        sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
@@ -130,6 +130,23 @@ namespace NetCoreNetworkBenchmark
 	        sb.AppendLine($"Message latency: {latency:0.000} μs");
 	        sb.AppendLine("```");
 	        sb.AppendLine();
+
+	        return sb.ToString();
+        }
+
+        public string CreateCommandlineInstruction()
+        {
+	        var sb = new StringBuilder("./NetCoreNetworkBenchmark");
+
+	        sb.Append($" -t {TestType}");
+	        sb.Append($" -l {Library}");
+	        sb.Append($" -a {Address}");
+	        sb.Append($" -p {Port}");
+	        sb.Append($" -c {NumClients}");
+	        sb.Append($" -s {MessageByteSize}");
+	        sb.Append($" -x {MessagePayload}");
+	        sb.Append($" -m {ParallelMessagesPerClient}");
+	        sb.Append($" -d {TestDurationInSeconds}");
 
 	        return sb.ToString();
         }

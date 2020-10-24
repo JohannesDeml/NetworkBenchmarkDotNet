@@ -36,6 +36,8 @@ namespace NetCoreNetworkBenchmark
 	                v => Utilities.ParseOption(v, out Config.ParallelMessagesPerClient, 1, 1024 * 1024) },
                 { "s|size=", $"Message byte size sent by clients (Default: {Config.MessageByteSize})",
 	                v => Utilities.ParseOption(v, out Config.MessageByteSize, 1, 1024 * 1024) },
+                { "x|messageload=", $"Message load sent by clients (Default: {Config.MessagePayload})\nOptions: {Utilities.EnumToString<MessagePayload>()}",
+	                v => Utilities.ParseOption(v, out Config.MessagePayload) },
                 { "d|duration=", $"Duration fo the test in seconds (Default: {Config.TestDurationInSeconds})",
 	                v => Utilities.ParseOption(v, out Config.TestDurationInSeconds, 1) }
             };
@@ -73,13 +75,13 @@ namespace NetCoreNetworkBenchmark
 
 	        try
 	        {
-		        if (Config.PrintSteps) Console.Write("-> Prepare Benchmark...");
+		        Utilities.WriteStep("-> Prepare Benchmark.");
 		        PrepareBenchmark();
-		        if (Config.PrintSteps) Console.WriteLine(" Done");
+		        Utilities.WriteStepLine(" Done");
 
-		        if (Config.PrintSteps) Console.Write($"-> Run Benchmark {Config.Library}...");
+		        Utilities.WriteStep($"-> Run Benchmark {Config.Library}...");
 		        RunBenchmark();
-		        if (Config.PrintSteps) Console.WriteLine(" Done");
+		        Utilities.WriteStepLine(" Done");
 	        }
 	        catch (Exception e)
 	        {
@@ -88,9 +90,9 @@ namespace NetCoreNetworkBenchmark
 	        }
 	        finally
 	        {
-		        if (Config.PrintSteps) Console.Write("-> Clean up...");
+		        Utilities.WriteStep("-> Clean up.");
 		        CleanupBenchmark();
-		        if (Config.PrintSteps) Console.WriteLine(" Done");
+		        Utilities.WriteStepLine(" Done");
 				Console.Write(Config.PrintStatistics());
 	        }
         }
@@ -99,11 +101,13 @@ namespace NetCoreNetworkBenchmark
         {
 	        Config.PrepareForNewBenchmark();
 	        _networkBenchmark.Initialize(Config);
+	        Utilities.WriteStep(".");
 
 	        var serverTask =  _networkBenchmark.StartServer();
 	        var clientTask =  _networkBenchmark.StartClients();
 	        serverTask.Wait();
 	        clientTask.Wait();
+	        Utilities.WriteStep(".");
 
 	        _networkBenchmark.ConnectClients().Wait();
         }
@@ -120,12 +124,16 @@ namespace NetCoreNetworkBenchmark
 
         private static void CleanupBenchmark()
         {
+
 	        _networkBenchmark.DisconnectClients().Wait();
 	        _networkBenchmark.StopClients().Wait();
 	        _networkBenchmark.DisposeClients().Wait();
+	        Utilities.WriteStep(".");
+
 
 	        _networkBenchmark.StopServer().Wait();
 	        _networkBenchmark.DisposeServer().Wait();
+	        Utilities.WriteStep(".");
 
 	        GC.Collect();
         }
@@ -142,7 +150,9 @@ namespace NetCoreNetworkBenchmark
 		        Name = "1",
 		        ParallelMessagesPerClient = 1,
 		        PrintSteps = false,
-		        TestDurationInSeconds = 60
+		        TestDurationInSeconds = 60,
+		        TickRateServer = 60,
+		        TickRateClient = 60
 	        };
 
 	        Console.Write(Config.PrintConfiguration());
@@ -160,8 +170,8 @@ namespace NetCoreNetworkBenchmark
         private static void RunWithAllLibraries()
         {
 	        RunWithLibrary(NetworkLibrary.ENet);
-	        RunWithLibrary(NetworkLibrary.NetCoreServer);
 	        RunWithLibrary(NetworkLibrary.LiteNetLib);
+	        RunWithLibrary(NetworkLibrary.NetCoreServer);
         }
 
         private static void RunWithLibrary(NetworkLibrary library)

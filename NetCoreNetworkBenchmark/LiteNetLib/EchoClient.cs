@@ -55,7 +55,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				SendUnreliable(_message);
+				Send(_message, DeliveryMethod.Unreliable);
 			}
 		}
 
@@ -73,7 +73,25 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				return;
 			}
 
-			_peer.Disconnect();
+			// Disconnecting properly takes forever with 100+ clients
+			// Task.Factory.StartNew(() =>
+			// {
+			// 	_peer.Disconnect();
+			//
+			// 	while (IsConnected)
+			// 	{
+			// 		_netManager.PollEvents();
+			// 		Thread.Sleep(_tickRate);
+			// 	}
+			// });
+
+			IsConnected = false;
+		}
+
+		public void Stop()
+		{
+			// If not disconnected, stopping consumes a lot of time
+			// _netManager.Stop(false);
 		}
 
 		public async void Dispose()
@@ -88,6 +106,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			_listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 			_listener.NetworkReceiveEvent -= OnNetworkReceive;
 			_listener.NetworkErrorEvent -= OnNetworkError;
+
 			IsDisposed = true;
 		}
 
@@ -96,15 +115,26 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			_netManager.Start();
 			_peer = _netManager.Connect(_config.Address, _config.Port, "LiteNetLib");
 
-			while (_benchmarkData.Running) {
+			while (_benchmarkData.Running || IsConnected) {
 				_netManager.PollEvents();
 				Thread.Sleep(_tickRate);
 			}
 		}
 
-		private void SendUnreliable(byte[] bytes)
+		private void Send(byte[] bytes, DeliveryMethod deliverymethod)
 		{
-			_peer.Send(bytes, DeliveryMethod.Unreliable);
+			if (_peer == null)
+			{
+				Interlocked.Increment(ref _benchmarkData.Errors);
+				if (_netManager.FirstPeer == null)
+				{
+					Console.WriteLine($"Client {_id} is missing the reference to the server");
+					return;
+				}
+
+				_peer = _netManager.FirstPeer;
+			}
+			_peer.Send(bytes, deliverymethod);
 			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
 		}
 
@@ -121,11 +151,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)
 		{
-			Interlocked.Increment(ref _benchmarkData.MessagesClientReceived);
-
 			if (_benchmarkData.Running)
 			{
-				SendUnreliable(_message);
+				Interlocked.Increment(ref _benchmarkData.MessagesClientReceived);
+				Send(_message, deliverymethod);
 			}
 
 			reader.Recycle();
@@ -133,7 +162,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
-			Interlocked.Increment(ref _benchmarkData.Errors);
+			if (_benchmarkData.Running)
+			{
+				Interlocked.Increment(ref _benchmarkData.Errors);
+			}
 		}
 	}
 }
