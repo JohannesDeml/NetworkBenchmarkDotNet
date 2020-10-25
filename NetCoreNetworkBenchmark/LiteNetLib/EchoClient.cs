@@ -12,14 +12,14 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		public bool IsConnected { get; private set; }
 		public bool IsDisposed { get; private set; }
 
-		private int _id;
-		private BenchmarkConfiguration _config;
-		private BenchmarkData _benchmarkData;
+		private readonly int _id;
+		private readonly BenchmarkConfiguration _config;
+		private readonly BenchmarkData _benchmarkData;
 
-		private byte[] _message;
-		private int _tickRate;
-		private EventBasedNetListener _listener;
-		private NetManager _netManager;
+		private readonly byte[] _message;
+		private readonly int _tickRate;
+		private readonly EventBasedNetListener _listener;
+		private readonly NetManager _netManager;
 		private NetPeer _peer;
 		private Task _listenTask;
 
@@ -100,6 +100,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				await Task.Delay(10);
 			}
+
 			_listenTask.Dispose();
 
 			_listener.PeerConnectedEvent -= OnPeerConnected;
@@ -115,7 +116,8 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			_netManager.Start();
 			_peer = _netManager.Connect(_config.Address, _config.Port, "LiteNetLib");
 
-			while (_benchmarkData.Running || IsConnected) {
+			while (_benchmarkData.Running || IsConnected)
+			{
 				_netManager.PollEvents();
 				Thread.Sleep(_tickRate);
 			}
@@ -134,6 +136,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 				_peer = _netManager.FirstPeer;
 			}
+
 			_peer.Send(bytes, deliverymethod);
 			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
 		}

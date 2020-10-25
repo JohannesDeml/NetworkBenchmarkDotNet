@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Text;
 using NDesk.Options;
 
@@ -29,10 +28,9 @@ namespace NetCoreNetworkBenchmark
 			return EnumToString(typeof(T));
 		}
 
-		public static bool ParseOption<TEnum>(string value, out TEnum target) where TEnum : Enum
+		public static bool ParseOption<TEnum>(string value, out TEnum target) where TEnum: Enum
 		{
-
-			if(Enum.TryParse(typeof(TEnum), value, true, out var parsedValue))
+			if (Enum.TryParse(typeof(TEnum), value, true, out var parsedValue))
 			{
 				target = (TEnum) parsedValue;
 				if (target != null && (Enum.IsDefined(typeof(TEnum), target) || target.ToString().Contains(",")))
@@ -48,8 +46,7 @@ namespace NetCoreNetworkBenchmark
 
 		public static bool ParseOption(string value, out int target, int minValue = 0, int maxValue = Int32.MaxValue)
 		{
-
-			if(int.TryParse(value, out var parsedValue))
+			if (int.TryParse(value, out var parsedValue))
 			{
 				target = parsedValue;
 				if (target >= minValue && target <= maxValue)
@@ -68,6 +65,7 @@ namespace NetCoreNetworkBenchmark
 			{
 				return;
 			}
+
 			Console.Write(text);
 		}
 
@@ -77,6 +75,7 @@ namespace NetCoreNetworkBenchmark
 			{
 				return;
 			}
+
 			Console.WriteLine(text);
 		}
 	}

@@ -7,13 +7,13 @@ namespace NetCoreNetworkBenchmark.Enet
 {
 	internal class EchoServer
 	{
-		private BenchmarkConfiguration _config;
-		private BenchmarkData _benchmarkData;
-		private Thread _serverThread;
-		private Host _host;
-		private Address _address;
-		private byte[] _message;
-		private int _tickRate;
+		private readonly BenchmarkConfiguration _config;
+		private readonly BenchmarkData _benchmarkData;
+		private readonly Thread _serverThread;
+		private readonly Host _host;
+		private readonly Address _address;
+		private readonly byte[] _message;
+		private readonly int _tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
@@ -25,7 +25,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			_address = new Address();
 			_message = new byte[config.MessageByteSize];
 
-			_address.Port = (ushort)config.Port;
+			_address.Port = (ushort) config.Port;
 			_address.SetHost(config.Address);
 			_serverThread = new Thread(this.Start);
 			_serverThread.Name = "Enet Server";
@@ -48,10 +48,12 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			_host.Create(_address, _config.NumClients);
 
-			while (_benchmarkData.Running) {
+			while (_benchmarkData.Running)
+			{
 				_host.Service(_tickRate, out Event netEvent);
 
-				switch (netEvent.Type) {
+				switch (netEvent.Type)
+				{
 					case EventType.None:
 						break;
 
@@ -90,14 +92,16 @@ namespace NetCoreNetworkBenchmark.Enet
 			_host.Dispose();
 		}
 
-		private void SendReliable(byte[] data, byte channelID, Peer peer) {
+		private void SendReliable(byte[] data, byte channelID, Peer peer)
+		{
 			Packet packet = default(Packet);
 
 			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
 		}
 
-		private void SendUnreliable(byte[] data, byte channelID, Peer peer) {
+		private void SendUnreliable(byte[] data, byte channelID, Peer peer)
+		{
 			Packet packet = default(Packet);
 
 			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced

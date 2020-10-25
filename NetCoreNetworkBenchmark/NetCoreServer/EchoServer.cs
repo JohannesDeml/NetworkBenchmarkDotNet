@@ -6,11 +6,11 @@ using NetCoreServer;
 
 namespace NetCoreNetworkBenchmark.NetCoreServer
 {
-	class EchoServer : UdpServer
+	class EchoServer: UdpServer
 	{
-		private BenchmarkData _benchmarkData;
+		private readonly BenchmarkData _benchmarkData;
 
-		public EchoServer(BenchmarkConfiguration config) : base(IPAddress.Any, config.Port)
+		public EchoServer(BenchmarkConfiguration config): base(IPAddress.Any, config.Port)
 		{
 			_benchmarkData = config.BenchmarkData;
 		}
@@ -44,12 +44,13 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		{
 			// Continue receive datagrams.
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
-			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); } );
+			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 
 			if (!_benchmarkData.Running)
 			{
 				return;
 			}
+
 			_benchmarkData.MessagesServerSent++;
 		}
 

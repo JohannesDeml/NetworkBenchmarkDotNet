@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.NetCoreServer
@@ -15,7 +14,6 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			this._config = config;
 			this._echoServer = new EchoServer(_config);
 			this._echoClients = new List<EchoClient>(config.NumClients);
-
 		}
 
 		public Task StartServer()
@@ -57,7 +55,6 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 						Task.Delay(10);
 					}
 				}
-
 			});
 			return clientsConnected;
 		}
@@ -72,7 +69,6 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public void StopBenchmark()
 		{
-
 		}
 
 		public Task DisconnectClients()
@@ -81,6 +77,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			{
 				_echoClients[i].Disconnect();
 			}
+
 			return Task.CompletedTask;
 		}
 

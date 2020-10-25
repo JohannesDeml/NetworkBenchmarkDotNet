@@ -62,7 +62,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StopBenchmark()
 		{
-
 		}
 
 		public Task DisconnectClients()
@@ -96,6 +95,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				_echoClients[i].Stop();
 			}
+
 			return Task.CompletedTask;
 		}
 
@@ -115,7 +115,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 						Task.Delay(10);
 					}
 				}
-
 			});
 			return allDisposed;
 		}

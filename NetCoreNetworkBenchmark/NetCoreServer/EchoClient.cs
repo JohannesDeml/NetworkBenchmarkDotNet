@@ -6,12 +6,13 @@ using UdpClient = NetCoreServer.UdpClient;
 
 namespace NetCoreNetworkBenchmark.NetCoreServer
 {
-	class EchoClient : UdpClient
+	class EchoClient: UdpClient
 	{
-		private byte[] _message;
-		private int _initialMessages;
-		private BenchmarkData _benchmarkData;
-		public EchoClient(BenchmarkConfiguration config) : base(config.Address, config.Port)
+		private readonly byte[] _message;
+		private readonly int _initialMessages;
+		private readonly BenchmarkData _benchmarkData;
+
+		public EchoClient(BenchmarkConfiguration config): base(config.Address, config.Port)
 		{
 			_message = config.Message;
 			_initialMessages = config.ParallelMessagesPerClient;
@@ -28,7 +29,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		{
 			// Continue receive datagrams
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
-			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); } );
+			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 
 			if (!_benchmarkData.Running)
 			{
@@ -64,6 +65,5 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			Send(_message);
 			_benchmarkData.MessagesClientSent++;
 		}
-
 	}
 }

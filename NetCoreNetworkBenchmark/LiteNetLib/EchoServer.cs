@@ -9,13 +9,13 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 {
 	internal class EchoServer
 	{
-		private BenchmarkConfiguration _config;
-		private BenchmarkData _benchmarkData;
-		private Thread _serverThread;
-		private EventBasedNetListener _listener;
-		private NetManager _netManager;
-		private byte[] _message;
-		private int _tickRate;
+		private readonly BenchmarkConfiguration _config;
+		private readonly BenchmarkData _benchmarkData;
+		private readonly Thread _serverThread;
+		private readonly EventBasedNetListener _listener;
+		private readonly NetManager _netManager;
+		private readonly byte[] _message;
+		private readonly int _tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
@@ -53,7 +53,8 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			_netManager.Start(_config.Port);
 
-			while (_benchmarkData.Running) {
+			while (_benchmarkData.Running)
+			{
 				_netManager.PollEvents();
 				Thread.Sleep(_tickRate);
 			}

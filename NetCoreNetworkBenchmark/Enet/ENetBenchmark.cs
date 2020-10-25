@@ -49,7 +49,6 @@ namespace NetCoreNetworkBenchmark.Enet
 						Task.Delay(10);
 					}
 				}
-
 			});
 			return clientsConnected;
 		}
@@ -64,7 +63,6 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void StopBenchmark()
 		{
-
 		}
 
 		public Task DisconnectClients()
@@ -73,6 +71,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			{
 				_echoClients[i].Disconnect();
 			}
+
 			return Task.CompletedTask;
 		}
 
@@ -102,7 +101,6 @@ namespace NetCoreNetworkBenchmark.Enet
 						Task.Delay(10);
 					}
 				}
-
 			});
 			return allDisposed;
 		}
