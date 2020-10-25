@@ -7,7 +7,7 @@ namespace NetCoreNetworkBenchmark
 	class Program
 	{
 		public static BenchmarkConfiguration Config;
-		private static INetworkBenchmark _networkBenchmark;
+		private static INetworkBenchmark networkBenchmark;
 
 		static void Main(string[] args)
 		{
@@ -92,7 +92,7 @@ namespace NetCoreNetworkBenchmark
 
 		private static void Run()
 		{
-			_networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
+			networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Config.Library);
 
 			try
 			{
@@ -121,38 +121,38 @@ namespace NetCoreNetworkBenchmark
 		private static void PrepareBenchmark()
 		{
 			Config.PrepareForNewBenchmark();
-			_networkBenchmark.Initialize(Config);
+			networkBenchmark.Initialize(Config);
 			Utilities.WriteStep(".");
 
-			var serverTask = _networkBenchmark.StartServer();
-			var clientTask = _networkBenchmark.StartClients();
+			var serverTask = networkBenchmark.StartServer();
+			var clientTask = networkBenchmark.StartClients();
 			serverTask.Wait();
 			clientTask.Wait();
 			Utilities.WriteStep(".");
 
-			_networkBenchmark.ConnectClients().Wait();
+			networkBenchmark.ConnectClients().Wait();
 		}
 
 		private static void RunBenchmark()
 		{
 			Config.BenchmarkData.Reset();
 			Config.BenchmarkData.StartBenchmark();
-			_networkBenchmark.StartBenchmark();
+			networkBenchmark.StartBenchmark();
 			Thread.Sleep(Config.TestDurationInSeconds * 1000);
-			_networkBenchmark.StopBenchmark();
+			networkBenchmark.StopBenchmark();
 			Config.BenchmarkData.StopBenchmark();
 		}
 
 		private static void CleanupBenchmark()
 		{
-			_networkBenchmark.DisconnectClients().Wait();
-			_networkBenchmark.StopClients().Wait();
-			_networkBenchmark.DisposeClients().Wait();
+			networkBenchmark.DisconnectClients().Wait();
+			networkBenchmark.StopClients().Wait();
+			networkBenchmark.DisposeClients().Wait();
 			Utilities.WriteStep(".");
 
 
-			_networkBenchmark.StopServer().Wait();
-			_networkBenchmark.DisposeServer().Wait();
+			networkBenchmark.StopServer().Wait();
+			networkBenchmark.DisposeServer().Wait();
 			Utilities.WriteStep(".");
 
 			GC.Collect();

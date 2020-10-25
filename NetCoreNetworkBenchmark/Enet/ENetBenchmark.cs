@@ -5,29 +5,29 @@ namespace NetCoreNetworkBenchmark.Enet
 {
 	internal class ENetBenchmark: INetworkBenchmark
 	{
-		private BenchmarkConfiguration _config;
-		private EchoServer _echoServer;
-		private List<EchoClient> _echoClients;
+		private BenchmarkConfiguration config;
+		private EchoServer echoServer;
+		private List<EchoClient> echoClients;
 
 
 		public void Initialize(BenchmarkConfiguration config)
 		{
-			_config = config;
+			this.config = config;
 			ENet.Library.Initialize();
-			_echoServer = new EchoServer(config);
-			_echoClients = new List<EchoClient>();
+			echoServer = new EchoServer(config);
+			echoClients = new List<EchoClient>();
 		}
 
 		public Task StartServer()
 		{
-			return _echoServer.StartServerThread();
+			return echoServer.StartServerThread();
 		}
 
 		public Task StartClients()
 		{
-			for (int i = 0; i < _config.NumClients; i++)
+			for (int i = 0; i < config.NumClients; i++)
 			{
-				_echoClients.Add(new EchoClient(i, _config));
+				echoClients.Add(new EchoClient(i, config));
 			}
 
 			return Task.CompletedTask;
@@ -35,16 +35,16 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < _config.NumClients; i++)
+			for (int i = 0; i < config.NumClients; i++)
 			{
-				_echoClients[i].Start();
+				echoClients[i].Start();
 			}
 
 			var clientsConnected = Task.Run(() =>
 			{
-				for (int i = 0; i < _config.NumClients; i++)
+				for (int i = 0; i < config.NumClients; i++)
 				{
-					while (!_echoClients[i].IsConnected)
+					while (!echoClients[i].IsConnected)
 					{
 						Task.Delay(10);
 					}
@@ -55,9 +55,9 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void StartBenchmark()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].StartSendingMessages();
+				echoClients[i].StartSendingMessages();
 			}
 		}
 
@@ -67,9 +67,9 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task DisconnectClients()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].Disconnect();
+				echoClients[i].Disconnect();
 			}
 
 			return Task.CompletedTask;
@@ -77,7 +77,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task StopServer()
 		{
-			return _echoServer.StopServerThread();
+			return echoServer.StopServerThread();
 		}
 
 		public Task StopClients()
@@ -87,16 +87,16 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task DisposeClients()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].Dispose();
+				echoClients[i].Dispose();
 			}
 
 			var allDisposed = Task.Run(() =>
 			{
-				for (int i = 0; i < _echoClients.Count; i++)
+				for (int i = 0; i < echoClients.Count; i++)
 				{
-					while (!_echoClients[i].IsDisposed)
+					while (!echoClients[i].IsDisposed)
 					{
 						Task.Delay(10);
 					}
@@ -107,7 +107,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task DisposeServer()
 		{
-			_echoServer.Dispose();
+			echoServer.Dispose();
 
 			return Task.CompletedTask;
 		}

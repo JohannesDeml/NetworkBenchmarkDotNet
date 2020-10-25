@@ -9,39 +9,39 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 {
 	internal class EchoServer
 	{
-		private readonly BenchmarkConfiguration _config;
-		private readonly BenchmarkData _benchmarkData;
-		private readonly Thread _serverThread;
-		private readonly EventBasedNetListener _listener;
-		private readonly NetManager _netManager;
-		private readonly byte[] _message;
-		private readonly int _tickRate;
+		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkData benchmarkData;
+		private readonly Thread serverThread;
+		private readonly EventBasedNetListener listener;
+		private readonly NetManager netManager;
+		private readonly byte[] message;
+		private readonly int tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
-			_config = config;
-			_benchmarkData = config.BenchmarkData;
-			_tickRate = Math.Max(1000 / _config.TickRateServer, 1);
+			this.config = config;
+			benchmarkData = config.BenchmarkData;
+			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
 
-			_listener = new EventBasedNetListener();
-			_netManager = new NetManager(_listener);
-			_netManager.UpdateTime = _tickRate;
-			_message = new byte[config.MessageByteSize];
+			listener = new EventBasedNetListener();
+			netManager = new NetManager(listener);
+			netManager.UpdateTime = tickRate;
+			message = new byte[config.MessageByteSize];
 
-			_serverThread = new Thread(this.Start);
-			_serverThread.Name = "LiteNetLib Server";
+			serverThread = new Thread(this.Start);
+			serverThread.Name = "LiteNetLib Server";
 
-			_listener.ConnectionRequestEvent += OnConnectionRequest;
-			_listener.NetworkReceiveEvent += OnNetworkReceive;
-			_listener.NetworkErrorEvent += OnNetworkError;
+			listener.ConnectionRequestEvent += OnConnectionRequest;
+			listener.NetworkReceiveEvent += OnNetworkReceive;
+			listener.NetworkErrorEvent += OnNetworkError;
 		}
 
 		public Task StartServerThread()
 		{
-			_serverThread.Start();
+			serverThread.Start();
 			var serverStarted = Task.Run(() =>
 			{
-				while (!_serverThread.IsAlive)
+				while (!serverThread.IsAlive)
 				{
 					Task.Delay(10);
 				}
@@ -51,21 +51,21 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void Start()
 		{
-			_netManager.Start(_config.Port);
+			netManager.Start(config.Port);
 
-			while (_benchmarkData.Running)
+			while (benchmarkData.Running)
 			{
-				_netManager.PollEvents();
-				Thread.Sleep(_tickRate);
+				netManager.PollEvents();
+				Thread.Sleep(tickRate);
 			}
 		}
 
 		public Task StopServerThread()
 		{
-			_netManager.Stop();
+			netManager.Stop();
 			var serverStopped = Task.Run(() =>
 			{
-				while (_serverThread.IsAlive)
+				while (serverThread.IsAlive)
 				{
 					Task.Delay(10);
 				}
@@ -75,14 +75,14 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void Dispose()
 		{
-			_listener.ConnectionRequestEvent -= OnConnectionRequest;
-			_listener.NetworkReceiveEvent -= OnNetworkReceive;
-			_listener.NetworkErrorEvent -= OnNetworkError;
+			listener.ConnectionRequestEvent -= OnConnectionRequest;
+			listener.NetworkReceiveEvent -= OnNetworkReceive;
+			listener.NetworkErrorEvent -= OnNetworkError;
 		}
 
 		private void OnConnectionRequest(ConnectionRequest request)
 		{
-			if (_netManager.ConnectedPeerList.Count > _config.NumClients)
+			if (netManager.ConnectedPeerList.Count > config.NumClients)
 			{
 				Console.WriteLine("Too many clients try to connect to the server");
 				request.Reject();
@@ -94,13 +94,13 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)
 		{
-			Interlocked.Increment(ref _benchmarkData.MessagesServerReceived);
+			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
-			if (_benchmarkData.Running)
+			if (benchmarkData.Running)
 			{
-				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, _message, 0, reader.UserDataSize);
-				peer.Send(_message, deliverymethod);
-				Interlocked.Increment(ref _benchmarkData.MessagesServerSent);
+				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
+				peer.Send(message, deliverymethod);
+				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 			}
 
 			reader.Recycle();
@@ -108,7 +108,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
-			Interlocked.Increment(ref _benchmarkData.Errors);
+			Interlocked.Increment(ref benchmarkData.Errors);
 		}
 	}
 }

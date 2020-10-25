@@ -5,23 +5,23 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	internal class NetCoreServerBenchmark: INetworkBenchmark
 	{
-		private BenchmarkConfiguration _config;
-		private EchoServer _echoServer;
-		private List<EchoClient> _echoClients;
+		private BenchmarkConfiguration config;
+		private EchoServer echoServer;
+		private List<EchoClient> echoClients;
 
 		public void Initialize(BenchmarkConfiguration config)
 		{
-			this._config = config;
-			this._echoServer = new EchoServer(_config);
-			this._echoClients = new List<EchoClient>(config.NumClients);
+			this.config = config;
+			this.echoServer = new EchoServer(this.config);
+			this.echoClients = new List<EchoClient>(config.NumClients);
 		}
 
 		public Task StartServer()
 		{
-			_echoServer.Start();
+			echoServer.Start();
 			var serverStarted = Task.Run(() =>
 			{
-				while (!_echoServer.IsStarted)
+				while (!echoServer.IsStarted)
 				{
 					Task.Delay(10);
 				}
@@ -31,9 +31,9 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task StartClients()
 		{
-			for (int i = 0; i < _config.NumClients; i++)
+			for (int i = 0; i < config.NumClients; i++)
 			{
-				_echoClients.Add(new EchoClient(_config));
+				echoClients.Add(new EchoClient(config));
 			}
 
 			return Task.CompletedTask;
@@ -41,16 +41,16 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < _config.NumClients; i++)
+			for (int i = 0; i < config.NumClients; i++)
 			{
-				_echoClients[i].Connect();
+				echoClients[i].Connect();
 			}
 
 			var clientsConnected = Task.Run(() =>
 			{
-				for (int i = 0; i < _config.NumClients; i++)
+				for (int i = 0; i < config.NumClients; i++)
 				{
-					while (!_echoClients[i].IsConnected)
+					while (!echoClients[i].IsConnected)
 					{
 						Task.Delay(10);
 					}
@@ -61,9 +61,9 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public void StartBenchmark()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].StartSendingMessages();
+				echoClients[i].StartSendingMessages();
 			}
 		}
 
@@ -73,9 +73,9 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task DisconnectClients()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].Disconnect();
+				echoClients[i].Disconnect();
 			}
 
 			return Task.CompletedTask;
@@ -83,10 +83,10 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task StopServer()
 		{
-			_echoServer.Stop();
+			echoServer.Stop();
 			var serverStopped = Task.Run(() =>
 			{
-				while (_echoServer.IsStarted)
+				while (echoServer.IsStarted)
 				{
 					Task.Delay(10);
 				}
@@ -101,16 +101,16 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task DisposeClients()
 		{
-			for (int i = 0; i < _echoClients.Count; i++)
+			for (int i = 0; i < echoClients.Count; i++)
 			{
-				_echoClients[i].Dispose();
+				echoClients[i].Dispose();
 			}
 
 			var disposeAll = Task.Run(() =>
 			{
-				for (int i = 0; i < _config.NumClients; i++)
+				for (int i = 0; i < config.NumClients; i++)
 				{
-					while (!_echoClients[i].IsDisposed)
+					while (!echoClients[i].IsDisposed)
 					{
 						Task.Delay(10);
 					}
@@ -122,11 +122,11 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task DisposeServer()
 		{
-			_echoServer.Dispose();
+			echoServer.Dispose();
 
 			var disposeAll = Task.Run(() =>
 			{
-				while (!_echoServer.IsDisposed)
+				while (!echoServer.IsDisposed)
 				{
 					Task.Delay(10);
 				}

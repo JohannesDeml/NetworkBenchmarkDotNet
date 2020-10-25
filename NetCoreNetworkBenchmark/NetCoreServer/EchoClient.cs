@@ -8,15 +8,15 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	class EchoClient: UdpClient
 	{
-		private readonly byte[] _message;
-		private readonly int _initialMessages;
-		private readonly BenchmarkData _benchmarkData;
+		private readonly byte[] message;
+		private readonly int initialMessages;
+		private readonly BenchmarkData benchmarkData;
 
 		public EchoClient(BenchmarkConfiguration config): base(config.Address, config.Port)
 		{
-			_message = config.Message;
-			_initialMessages = config.ParallelMessagesPerClient;
-			_benchmarkData = config.BenchmarkData;
+			message = config.Message;
+			initialMessages = config.ParallelMessagesPerClient;
+			benchmarkData = config.BenchmarkData;
 		}
 
 		protected override void OnConnected()
@@ -31,12 +31,12 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
 			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 
-			if (!_benchmarkData.Running)
+			if (!benchmarkData.Running)
 			{
 				return;
 			}
 
-			_benchmarkData.MessagesClientReceived++;
+			benchmarkData.MessagesClientReceived++;
 			SendMessage();
 		}
 
@@ -44,17 +44,17 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		{
 			Console.WriteLine($"Client caught an error with code {error}");
 
-			if (!_benchmarkData.Running)
+			if (!benchmarkData.Running)
 			{
 				return;
 			}
 
-			_benchmarkData.Errors++;
+			benchmarkData.Errors++;
 		}
 
 		public void StartSendingMessages()
 		{
-			for (int i = 0; i < _initialMessages; i++)
+			for (int i = 0; i < initialMessages; i++)
 			{
 				SendMessage();
 			}
@@ -62,8 +62,8 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		private void SendMessage()
 		{
-			Send(_message);
-			_benchmarkData.MessagesClientSent++;
+			Send(message);
+			benchmarkData.MessagesClientSent++;
 		}
 	}
 }

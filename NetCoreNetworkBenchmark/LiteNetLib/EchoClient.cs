@@ -12,50 +12,50 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		public bool IsConnected { get; private set; }
 		public bool IsDisposed { get; private set; }
 
-		private readonly int _id;
-		private readonly BenchmarkConfiguration _config;
-		private readonly BenchmarkData _benchmarkData;
+		private readonly int id;
+		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkData benchmarkData;
 
-		private readonly byte[] _message;
-		private readonly int _tickRate;
-		private readonly EventBasedNetListener _listener;
-		private readonly NetManager _netManager;
-		private NetPeer _peer;
-		private Task _listenTask;
+		private readonly byte[] message;
+		private readonly int tickRate;
+		private readonly EventBasedNetListener listener;
+		private readonly NetManager netManager;
+		private NetPeer peer;
+		private Task listenTask;
 
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
-			_id = id;
-			_config = config;
-			_benchmarkData = config.BenchmarkData;
-			_message = config.Message;
-			_tickRate = Math.Max(1000 / _config.TickRateClient, 1);
+			this.id = id;
+			this.config = config;
+			benchmarkData = config.BenchmarkData;
+			message = config.Message;
+			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
 
-			_listener = new EventBasedNetListener();
-			_netManager = new NetManager(_listener);
+			listener = new EventBasedNetListener();
+			netManager = new NetManager(listener);
 
 			IsConnected = false;
 			IsDisposed = false;
 
-			_listener.PeerConnectedEvent += OnPeerConnected;
-			_listener.PeerDisconnectedEvent += OnPeerDisconnected;
-			_listener.NetworkReceiveEvent += OnNetworkReceive;
-			_listener.NetworkErrorEvent += OnNetworkError;
+			listener.PeerConnectedEvent += OnPeerConnected;
+			listener.PeerDisconnectedEvent += OnPeerDisconnected;
+			listener.NetworkReceiveEvent += OnNetworkReceive;
+			listener.NetworkErrorEvent += OnNetworkError;
 		}
 
 		public void Start()
 		{
-			_listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
+			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
 			IsDisposed = false;
 		}
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = _config.ParallelMessagesPerClient;
+			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(_message, DeliveryMethod.Unreliable);
+				Send(message, DeliveryMethod.Unreliable);
 			}
 		}
 
@@ -66,9 +66,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				return;
 			}
 
-			if (_peer == null)
+			if (peer == null)
 			{
-				Console.WriteLine($"Client {_id} does not know peer even though it was connected, should not happen.");
+				Console.WriteLine($"Client {id} does not know peer even though it was connected, should not happen.");
 				IsConnected = false;
 				return;
 			}
@@ -96,49 +96,49 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public async void Dispose()
 		{
-			while (!_listenTask.IsCompleted)
+			while (!listenTask.IsCompleted)
 			{
 				await Task.Delay(10);
 			}
 
-			_listenTask.Dispose();
+			listenTask.Dispose();
 
-			_listener.PeerConnectedEvent -= OnPeerConnected;
-			_listener.PeerDisconnectedEvent -= OnPeerDisconnected;
-			_listener.NetworkReceiveEvent -= OnNetworkReceive;
-			_listener.NetworkErrorEvent -= OnNetworkError;
+			listener.PeerConnectedEvent -= OnPeerConnected;
+			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
+			listener.NetworkReceiveEvent -= OnNetworkReceive;
+			listener.NetworkErrorEvent -= OnNetworkError;
 
 			IsDisposed = true;
 		}
 
 		private void ConnectAndListen()
 		{
-			_netManager.Start();
-			_peer = _netManager.Connect(_config.Address, _config.Port, "LiteNetLib");
+			netManager.Start();
+			peer = netManager.Connect(config.Address, config.Port, "LiteNetLib");
 
-			while (_benchmarkData.Running || IsConnected)
+			while (benchmarkData.Running || IsConnected)
 			{
-				_netManager.PollEvents();
-				Thread.Sleep(_tickRate);
+				netManager.PollEvents();
+				Thread.Sleep(tickRate);
 			}
 		}
 
 		private void Send(byte[] bytes, DeliveryMethod deliverymethod)
 		{
-			if (_peer == null)
+			if (peer == null)
 			{
-				Interlocked.Increment(ref _benchmarkData.Errors);
-				if (_netManager.FirstPeer == null)
+				Interlocked.Increment(ref benchmarkData.Errors);
+				if (netManager.FirstPeer == null)
 				{
-					Console.WriteLine($"Client {_id} is missing the reference to the server");
+					Console.WriteLine($"Client {id} is missing the reference to the server");
 					return;
 				}
 
-				_peer = _netManager.FirstPeer;
+				peer = netManager.FirstPeer;
 			}
 
-			_peer.Send(bytes, deliverymethod);
-			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
+			peer.Send(bytes, deliverymethod);
+			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 
 		private void OnPeerConnected(NetPeer peer)
@@ -148,16 +148,16 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
 		{
-			_peer = null;
+			this.peer = null;
 			IsConnected = false;
 		}
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)
 		{
-			if (_benchmarkData.Running)
+			if (benchmarkData.Running)
 			{
-				Interlocked.Increment(ref _benchmarkData.MessagesClientReceived);
-				Send(_message, deliverymethod);
+				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+				Send(message, deliverymethod);
 			}
 
 			reader.Recycle();
@@ -165,9 +165,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
-			if (_benchmarkData.Running)
+			if (benchmarkData.Running)
 			{
-				Interlocked.Increment(ref _benchmarkData.Errors);
+				Interlocked.Increment(ref benchmarkData.Errors);
 			}
 		}
 	}

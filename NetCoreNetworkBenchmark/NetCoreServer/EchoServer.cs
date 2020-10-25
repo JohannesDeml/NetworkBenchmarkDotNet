@@ -8,11 +8,11 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 {
 	class EchoServer: UdpServer
 	{
-		private readonly BenchmarkData _benchmarkData;
+		private readonly BenchmarkData benchmarkData;
 
 		public EchoServer(BenchmarkConfiguration config): base(IPAddress.Any, config.Port)
 		{
-			_benchmarkData = config.BenchmarkData;
+			benchmarkData = config.BenchmarkData;
 		}
 
 		protected override void OnStarted()
@@ -30,12 +30,12 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 				ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 			}
 
-			if (!_benchmarkData.Running)
+			if (!benchmarkData.Running)
 			{
 				return;
 			}
 
-			_benchmarkData.MessagesServerReceived++;
+			benchmarkData.MessagesServerReceived++;
 			// Echo the message back to the sender
 			SendAsync(endpoint, buffer, offset, size);
 		}
@@ -46,24 +46,24 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
 			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 
-			if (!_benchmarkData.Running)
+			if (!benchmarkData.Running)
 			{
 				return;
 			}
 
-			_benchmarkData.MessagesServerSent++;
+			benchmarkData.MessagesServerSent++;
 		}
 
 		protected override void OnError(SocketError error)
 		{
 			Console.WriteLine($"Server caught an error with code {error}");
 
-			if (!_benchmarkData.Running)
+			if (!benchmarkData.Running)
 			{
 				return;
 			}
 
-			_benchmarkData.Errors++;
+			benchmarkData.Errors++;
 		}
 	}
 }

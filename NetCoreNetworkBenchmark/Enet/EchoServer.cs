@@ -7,36 +7,36 @@ namespace NetCoreNetworkBenchmark.Enet
 {
 	internal class EchoServer
 	{
-		private readonly BenchmarkConfiguration _config;
-		private readonly BenchmarkData _benchmarkData;
-		private readonly Thread _serverThread;
-		private readonly Host _host;
-		private readonly Address _address;
-		private readonly byte[] _message;
-		private readonly int _tickRate;
+		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkData benchmarkData;
+		private readonly Thread serverThread;
+		private readonly Host host;
+		private readonly Address address;
+		private readonly byte[] message;
+		private readonly int tickRate;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
-			_config = config;
-			_benchmarkData = config.BenchmarkData;
-			_tickRate = Math.Max(1000 / _config.TickRateServer, 1);
+			this.config = config;
+			benchmarkData = config.BenchmarkData;
+			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
 
-			_host = new Host();
-			_address = new Address();
-			_message = new byte[config.MessageByteSize];
+			host = new Host();
+			address = new Address();
+			message = new byte[config.MessageByteSize];
 
-			_address.Port = (ushort) config.Port;
-			_address.SetHost(config.Address);
-			_serverThread = new Thread(this.Start);
-			_serverThread.Name = "Enet Server";
+			address.Port = (ushort) config.Port;
+			address.SetHost(config.Address);
+			serverThread = new Thread(this.Start);
+			serverThread.Name = "Enet Server";
 		}
 
 		public Task StartServerThread()
 		{
-			_serverThread.Start();
+			serverThread.Start();
 			var serverStarted = Task.Run(() =>
 			{
-				while (!_serverThread.IsAlive)
+				while (!serverThread.IsAlive)
 				{
 					Task.Delay(10);
 				}
@@ -46,11 +46,11 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		private void Start()
 		{
-			_host.Create(_address, _config.NumClients);
+			host.Create(address, config.NumClients);
 
-			while (_benchmarkData.Running)
+			while (benchmarkData.Running)
 			{
-				_host.Service(_tickRate, out Event netEvent);
+				host.Service(tickRate, out Event netEvent);
 
 				switch (netEvent.Type)
 				{
@@ -58,13 +58,13 @@ namespace NetCoreNetworkBenchmark.Enet
 						break;
 
 					case EventType.Receive:
-						Interlocked.Increment(ref _benchmarkData.MessagesServerReceived);
+						Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
-						if (_benchmarkData.Running)
+						if (benchmarkData.Running)
 						{
-							netEvent.Packet.CopyTo(_message);
-							SendUnreliable(_message, 0, netEvent.Peer);
-							Interlocked.Increment(ref _benchmarkData.MessagesServerSent);
+							netEvent.Packet.CopyTo(message);
+							SendUnreliable(message, 0, netEvent.Peer);
+							Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 						}
 
 						netEvent.Packet.Dispose();
@@ -78,7 +78,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			var serverStopped = Task.Run(() =>
 			{
-				while (_serverThread.IsAlive)
+				while (serverThread.IsAlive)
 				{
 					Task.Delay(10);
 				}
@@ -88,8 +88,8 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void Dispose()
 		{
-			_host.Flush();
-			_host.Dispose();
+			host.Flush();
+			host.Dispose();
 		}
 
 		private void SendReliable(byte[] data, byte channelID, Peer peer)

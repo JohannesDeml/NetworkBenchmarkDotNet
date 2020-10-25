@@ -7,77 +7,77 @@ namespace NetCoreNetworkBenchmark.Enet
 {
 	internal class EchoClient
 	{
-		public bool IsConnected => _peer.State == PeerState.Connected;
+		public bool IsConnected => peer.State == PeerState.Connected;
 		public bool IsDisposed { get; private set; }
 
-		private int _id;
-		private readonly BenchmarkConfiguration _config;
-		private readonly BenchmarkData _benchmarkData;
+		private int id;
+		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkData benchmarkData;
 
-		private readonly byte[] _message;
-		private readonly int _tickRate;
-		private readonly Host _host;
-		private readonly Address _address;
-		private Peer _peer;
-		private Task _listenTask;
+		private readonly byte[] message;
+		private readonly int tickRate;
+		private readonly Host host;
+		private readonly Address address;
+		private Peer peer;
+		private Task listenTask;
 
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
-			_id = id;
-			_config = config;
-			_benchmarkData = config.BenchmarkData;
-			_message = config.Message;
-			_tickRate = Math.Max(1000 / _config.TickRateClient, 1);
+			this.id = id;
+			this.config = config;
+			benchmarkData = config.BenchmarkData;
+			message = config.Message;
+			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
 
-			_host = new Host();
-			_address = new Address();
-			_address.SetHost(config.Address);
-			_address.Port = (ushort) config.Port;
+			host = new Host();
+			address = new Address();
+			address.SetHost(config.Address);
+			address.Port = (ushort) config.Port;
 			IsDisposed = false;
 		}
 
 		public void Start()
 		{
-			_listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
+			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
 			IsDisposed = false;
 		}
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = _config.ParallelMessagesPerClient;
+			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				SendUnreliable(_message, 0, _peer);
+				SendUnreliable(message, 0, peer);
 			}
 		}
 
 		public void Disconnect()
 		{
-			_peer.DisconnectNow(0);
+			peer.DisconnectNow(0);
 		}
 
 		public async void Dispose()
 		{
-			while (!_listenTask.IsCompleted)
+			while (!listenTask.IsCompleted)
 			{
 				await Task.Delay(10);
 			}
 
-			_listenTask.Dispose();
-			_host.Flush();
-			_host.Dispose();
+			listenTask.Dispose();
+			host.Flush();
+			host.Dispose();
 			IsDisposed = true;
 		}
 
 		private void ConnectAndListen()
 		{
-			_host.Create();
-			_peer = _host.Connect(_address, 4);
+			host.Create();
+			peer = host.Connect(address, 4);
 
-			while (_benchmarkData.Running)
+			while (benchmarkData.Running)
 			{
-				_host.Service(_tickRate, out Event netEvent);
+				host.Service(tickRate, out Event netEvent);
 
 				switch (netEvent.Type)
 				{
@@ -89,9 +89,9 @@ namespace NetCoreNetworkBenchmark.Enet
 						break;
 
 					case EventType.Receive:
-						Interlocked.Increment(ref _benchmarkData.MessagesClientReceived);
-						netEvent.Packet.CopyTo(_message);
-						SendUnreliable(_message, 0, _peer);
+						Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+						netEvent.Packet.CopyTo(message);
+						SendUnreliable(message, 0, peer);
 
 						netEvent.Packet.Dispose();
 
@@ -106,7 +106,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
-			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 
 		private void SendUnreliable(byte[] data, byte channelID, Peer peer)
@@ -115,7 +115,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
 			peer.Send(channelID, ref packet);
-			Interlocked.Increment(ref _benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 	}
 }
