@@ -74,24 +74,22 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			}
 
 			// Disconnecting properly takes forever with 100+ clients
-			// Task.Factory.StartNew(() =>
-			// {
-			// 	_peer.Disconnect();
-			//
-			// 	while (IsConnected)
-			// 	{
-			// 		_netManager.PollEvents();
-			// 		Thread.Sleep(_tickRate);
-			// 	}
-			// });
+			Task.Factory.StartNew(() =>
+			{
+				peer.Disconnect();
 
-			IsConnected = false;
+				while (IsConnected)
+				{
+					netManager.PollEvents();
+					Thread.Sleep(tickRate);
+				}
+			});
 		}
 
 		public void Stop()
 		{
 			// If not disconnected, stopping consumes a lot of time
-			// _netManager.Stop(false);
+			netManager.Stop(false);
 		}
 
 		public async void Dispose()
