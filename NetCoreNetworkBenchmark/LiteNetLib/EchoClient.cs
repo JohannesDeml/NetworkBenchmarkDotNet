@@ -34,6 +34,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			netManager = new NetManager(listener);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
 			netManager.UnsyncedEvents = true;
+			netManager.DisconnectTimeout = 10000;
 
 			IsConnected = false;
 			IsDisposed = false;
@@ -57,7 +58,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(message, DeliveryMethod.Unreliable);
+				Send(message, DeliveryMethod.ReliableUnordered);
 			}
 			netManager.TriggerUpdate();
 		}
@@ -107,16 +108,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void Send(byte[] bytes, DeliveryMethod deliverymethod)
 		{
-			if (peer == null)
+			if (!IsConnected)
 			{
-				Interlocked.Increment(ref benchmarkData.Errors);
-				if (netManager.FirstPeer == null)
-				{
-					Console.WriteLine($"Client {id} is missing the reference to the server");
-					return;
-				}
-
-				peer = netManager.FirstPeer;
+				return;
 			}
 
 			peer.Send(bytes, deliverymethod);
@@ -130,6 +124,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
 		{
+			if (disconnectInfo.Reason == DisconnectReason.Timeout && benchmarkData.Running)
+			{
+				Console.WriteLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
+				Interlocked.Increment(ref benchmarkData.Errors);
+			}
 			this.peer = null;
 			IsConnected = false;
 		}
@@ -150,6 +149,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			if (benchmarkData.Running)
 			{
+				Console.WriteLine($"Error Client {id}: {socketerror}");
 				Interlocked.Increment(ref benchmarkData.Errors);
 			}
 		}
