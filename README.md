@@ -36,9 +36,8 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
 ## Benchmarks
 
 To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b`
-Note that the benchmarks run a lot better on Linux compared to Windows  ([Results v 0.1.0](https://github.com/JohannesDeml/NetCoreNetworkBenchmark/releases/tag/0.1.0)) 
 
-[Results](./Benchmarks)
+[All Results](./Benchmarks)
 
 
 ```
@@ -52,6 +51,16 @@ RAM: G.Skill 16GB (2 x 8 GB) DDR3-1600 (Part number: F3-1600C11-8GNT)
 | ----------- | --------------- | ------------- | ------------- |
 | Benchmark 1 | 197,036 msg/s   | 1,768 msg/s   | 107,772 msg/s |
 | Benchmark 2 | 1,908,836 msg/s | 144,585 msg/s | 118,974 msg/s |
+
+### Notes
+
+* Messages per second are messages that are sent from the client to the server and back.
+* Benchmark 1 runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. Message size is 32 bytes.
+* Benchmark 2 runs the pingpong test with **100** clients, which pingpong **1,000 messages** with the server. Message size is 32 bytes.
+* LiteNetLib performs better on Windows in my tests and oftentimes has problems with running all clients correctly. 
+* ENet and NetCoreServer perform better on Linux and their benchmarks are a lot more stable.
+* ENet and LiteNetLib merge messages, that's why they have better results in the second benchmark. 
+* To get the actual round trip time, test with one parallel message (e.g. Benchmark 1).
 
 ## Installation
 
