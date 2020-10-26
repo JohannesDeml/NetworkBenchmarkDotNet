@@ -10,6 +10,8 @@
         <PackageVersion>0.2.1</PackageVersion>
         <AssemblyVersion>0.2.1</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
