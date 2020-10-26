@@ -59,9 +59,9 @@ namespace NetCoreNetworkBenchmark
 			                          $"Allowed Range: [{minValue} , {maxValue}]", nameof(value));
 		}
 
-		public static void WriteStep(string text)
+		public static void WriteVerbose(string text)
 		{
-			if (!Program.Config.PrintSteps)
+			if (!Program.Config.Verbose)
 			{
 				return;
 			}
@@ -69,9 +69,9 @@ namespace NetCoreNetworkBenchmark
 			Console.Write(text);
 		}
 
-		public static void WriteStepLine(string text)
+		public static void WriteVerboseLine(string text)
 		{
-			if (!Program.Config.PrintSteps)
+			if (!Program.Config.Verbose)
 			{
 				return;
 			}

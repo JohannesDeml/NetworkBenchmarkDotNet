@@ -8,8 +8,6 @@
 
 ## Description
 
-🚧 *Early in development* 🚧
-
 Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) compatible libraries that are compatible with [Unity](https://unity3d.com), but also work as standalone console applications. The benchmark focuses on performance, latency and scalability.
 
 ### Supported Libraries
@@ -49,17 +47,17 @@ RAM: G.Skill 16GB (2 x 8 GB) DDR3-1600 (Part number: F3-1600C11-8GNT)
 
 |             | ENet            | LiteNetLib    | NetCoreServer |
 | ----------- | --------------- | ------------- | ------------- |
-| Benchmark 1 | 197,036 msg/s   | 1,768 msg/s   | 107,772 msg/s |
-| Benchmark 2 | 1,908,836 msg/s | 144,585 msg/s | 118,974 msg/s |
+| Benchmark 1 | 193,515 msg/s   | 65,142 msg/s  | 110,051 msg/s |
+| Benchmark 2 | 2,149,574 msg/s | 478,019 msg/s | 118,773 msg/s |
 
 ### Notes
 
 * Messages per second are messages that are sent from the client to the server and back.
 * Benchmark 1 runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. Message size is 32 bytes.
 * Benchmark 2 runs the pingpong test with **100** clients, which pingpong **1,000 messages** with the server. Message size is 32 bytes.
-* LiteNetLib performs better on Windows in my tests and oftentimes has problems with running all clients correctly. 
-* ENet and NetCoreServer perform better on Linux and their benchmarks are a lot more stable.
+* The tests perform better on Linux compared to Windows 10.
 * ENet and LiteNetLib merge messages, that's why they have better results in the second benchmark. 
+* LiteNetLib opens a new thread for every client and therefore has a lot more overhead in this benchmark. That overhead vanishes in a real world application, when the server only needs to run one server networking thread.
 * To get the actual round trip time, test with one parallel message (e.g. Benchmark 1).
 
 ## Installation

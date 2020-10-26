@@ -35,11 +35,11 @@ namespace NetCoreNetworkBenchmark
 		/// </summary>
 		public string Address = "127.0.0.1";
 
-		public bool PrintSteps = true;
+		public bool Verbose = true;
 
 		public string Name = "Custom";
 
-		public int NumClients = 1000;
+		public int NumClients = 100;
 		public int ParallelMessagesPerClient = 1;
 		public int MessageByteSize = 32;
 		public MessagePayload MessagePayload = MessagePayload.Ones;
@@ -48,7 +48,7 @@ namespace NetCoreNetworkBenchmark
 		public int TickRateServer = 60;
 
 		public byte[] Message { get; private set; }
-		public int TestDurationInSeconds = 2;
+		public int TestDurationInSeconds = 10;
 
 		public BenchmarkConfiguration()
 		{

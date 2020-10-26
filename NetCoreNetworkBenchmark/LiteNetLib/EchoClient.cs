@@ -21,7 +21,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private NetPeer peer;
-		private Task listenTask;
 
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
@@ -33,6 +32,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
+			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			netManager.UnsyncedEvents = true;
+			netManager.DisconnectTimeout = 10000;
 
 			IsConnected = false;
 			IsDisposed = false;
@@ -45,7 +47,8 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void Start()
 		{
-			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
+			netManager.Start();
+			peer = netManager.Connect(config.Address, config.Port, "ConnectionKey");
 			IsDisposed = false;
 		}
 
@@ -55,21 +58,15 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(message, DeliveryMethod.Unreliable);
+				Send(message, DeliveryMethod.ReliableUnordered);
 			}
+			netManager.TriggerUpdate();
 		}
 
 		public Task Disconnect()
 		{
 			if (!IsConnected)
 			{
-				return Task.CompletedTask;
-			}
-
-			if (peer == null)
-			{
-				Console.WriteLine($"Client {id} does not know peer even though it was connected, should not happen.");
-				IsConnected = false;
 				return Task.CompletedTask;
 			}
 
@@ -92,15 +89,8 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			return stopClient;
 		}
 
-		public async void Dispose()
+		public void Dispose()
 		{
-			while (!listenTask.IsCompleted)
-			{
-				await Task.Delay(10);
-			}
-
-			listenTask.Dispose();
-
 			listener.PeerConnectedEvent -= OnPeerConnected;
 			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 			listener.NetworkReceiveEvent -= OnNetworkReceive;
@@ -109,30 +99,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			IsDisposed = true;
 		}
 
-		private void ConnectAndListen()
-		{
-			netManager.Start();
-			peer = netManager.Connect(config.Address, config.Port, "LiteNetLib");
-
-			while (benchmarkData.Running || IsConnected)
-			{
-				netManager.PollEvents();
-				Thread.Sleep(tickRate);
-			}
-		}
-
 		private void Send(byte[] bytes, DeliveryMethod deliverymethod)
 		{
-			if (peer == null)
+			if (!IsConnected)
 			{
-				Interlocked.Increment(ref benchmarkData.Errors);
-				if (netManager.FirstPeer == null)
-				{
-					Console.WriteLine($"Client {id} is missing the reference to the server");
-					return;
-				}
-
-				peer = netManager.FirstPeer;
+				return;
 			}
 
 			peer.Send(bytes, deliverymethod);
@@ -146,6 +117,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
 		{
+			if (disconnectInfo.Reason == DisconnectReason.Timeout && benchmarkData.Running)
+			{
+				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
+				Interlocked.Increment(ref benchmarkData.Errors);
+			}
 			this.peer = null;
 			IsConnected = false;
 		}
@@ -156,6 +132,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 				Send(message, deliverymethod);
+				netManager.TriggerUpdate();
 			}
 
 			reader.Recycle();
@@ -165,6 +142,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			if (benchmarkData.Running)
 			{
+				Utilities.WriteVerboseLine($"Error Client {id}: {socketerror}");
 				Interlocked.Increment(ref benchmarkData.Errors);
 			}
 		}

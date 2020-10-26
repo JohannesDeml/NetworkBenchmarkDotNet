@@ -7,16 +7,36 @@
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
         <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.2.0</PackageVersion>
-        <AssemblyVersion>0.2.0</AssemblyVersion>
+        <PackageVersion>0.2.1</PackageVersion>
+        <AssemblyVersion>0.2.1</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="ENet-CSharp" Version="2.4.3" />
-      <PackageReference Include="LiteNetLib" Version="0.9.3.2" />
       <PackageReference Include="NDesk.Options" Version="0.2.1" />
       <PackageReference Include="NetCoreServer" Version="3.0.20" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
+    </ItemGroup>
+
+
+    <PropertyGroup>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <RetainVMGarbageCollection>true</RetainVMGarbageCollection>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    
 </Project>

@@ -11,12 +11,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 	{
 		private readonly BenchmarkConfiguration config;
 		private readonly BenchmarkData benchmarkData;
-		private readonly Thread serverThread;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
 		private readonly int tickRate;
-		private bool isRunning;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
@@ -27,48 +25,40 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.UpdateTime = tickRate;
-			message = new byte[config.MessageByteSize];
+			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			netManager.UnsyncedEvents = true;
 
-			serverThread = new Thread(this.Start);
-			serverThread.Name = "LiteNetLib Server";
+			message = new byte[config.MessageByteSize];
 
 			listener.ConnectionRequestEvent += OnConnectionRequest;
 			listener.NetworkReceiveEvent += OnNetworkReceive;
 			listener.NetworkErrorEvent += OnNetworkError;
 		}
 
-		public Task StartServerThread()
+		public Task StartServer()
 		{
-			serverThread.Start();
-			var serverStarted = Task.Run(() =>
+			Start();
+			var serverStopped = Task.Run(() =>
 			{
-				while (!serverThread.IsAlive)
+				while (!netManager.IsRunning)
 				{
 					Task.Delay(10);
 				}
 			});
-			return serverStarted;
+			return serverStopped;
 		}
 
 		private void Start()
 		{
-			isRunning = true;
 			netManager.Start(config.Port);
-
-			while (isRunning)
-			{
-				netManager.PollEvents();
-				Thread.Sleep(tickRate);
-			}
 		}
 
-		public Task StopServerThread()
+		public Task StopServer()
 		{
-			isRunning = false;
 			netManager.Stop();
 			var serverStopped = Task.Run(() =>
 			{
-				while (serverThread.IsAlive)
+				while (netManager.IsRunning)
 				{
 					Task.Delay(10);
 				}
@@ -104,6 +94,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
 				peer.Send(message, deliverymethod);
 				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+				netManager.TriggerUpdate();
 			}
 
 			reader.Recycle();

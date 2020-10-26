@@ -96,13 +96,13 @@ namespace NetCoreNetworkBenchmark
 
 			try
 			{
-				Utilities.WriteStep("-> Prepare Benchmark.");
+				Utilities.WriteVerbose("-> Prepare Benchmark.");
 				PrepareBenchmark();
-				Utilities.WriteStepLine(" Done");
+				Utilities.WriteVerboseLine(" Done");
 
-				Utilities.WriteStep($"-> Run Benchmark {Config.Library}...");
+				Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
 				RunBenchmark();
-				Utilities.WriteStepLine(" Done");
+				Utilities.WriteVerboseLine(" Done");
 			}
 			catch (Exception e)
 			{
@@ -111,9 +111,9 @@ namespace NetCoreNetworkBenchmark
 			}
 			finally
 			{
-				Utilities.WriteStep("-> Clean up.");
+				Utilities.WriteVerbose("-> Clean up.");
 				CleanupBenchmark();
-				Utilities.WriteStepLine(" Done");
+				Utilities.WriteVerboseLine(" Done");
 				Console.Write(Config.PrintStatistics());
 			}
 		}
@@ -122,13 +122,13 @@ namespace NetCoreNetworkBenchmark
 		{
 			Config.PrepareForNewBenchmark();
 			networkBenchmark.Initialize(Config);
-			Utilities.WriteStep(".");
+			Utilities.WriteVerbose(".");
 
 			var serverTask = networkBenchmark.StartServer();
 			var clientTask = networkBenchmark.StartClients();
 			serverTask.Wait();
 			clientTask.Wait();
-			Utilities.WriteStep(".");
+			Utilities.WriteVerbose(".");
 
 			networkBenchmark.ConnectClients().Wait();
 		}
@@ -148,12 +148,12 @@ namespace NetCoreNetworkBenchmark
 			networkBenchmark.DisconnectClients().Wait();
 			networkBenchmark.StopClients().Wait();
 			networkBenchmark.DisposeClients().Wait();
-			Utilities.WriteStep(".");
+			Utilities.WriteVerbose(".");
 
 
 			networkBenchmark.StopServer().Wait();
 			networkBenchmark.DisposeServer().Wait();
-			Utilities.WriteStep(".");
+			Utilities.WriteVerbose(".");
 
 			GC.Collect();
 		}
@@ -169,7 +169,7 @@ namespace NetCoreNetworkBenchmark
 				NumClients = 1000,
 				Name = "1",
 				ParallelMessagesPerClient = 1,
-				PrintSteps = false,
+				Verbose = false,
 				TestDurationInSeconds = 60,
 				TickRateServer = 60,
 				TickRateClient = 60
