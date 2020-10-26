@@ -28,8 +28,9 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			netManager = new NetManager(listener);
 			netManager.UpdateTime = tickRate;
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
-			message = new byte[config.MessageByteSize];
+			netManager.UnsyncedEvents = true;
 
+			message = new byte[config.MessageByteSize];
 			serverThread = new Thread(this.Start);
 			serverThread.Name = "LiteNetLib Server";
 
@@ -58,7 +59,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			while (isRunning)
 			{
-				netManager.PollEvents();
+				//netManager.PollEvents();
 				Thread.Sleep(tickRate);
 			}
 		}

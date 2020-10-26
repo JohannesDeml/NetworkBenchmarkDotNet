@@ -34,6 +34,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			netManager.UnsyncedEvents = true;
 
 			IsConnected = false;
 			IsDisposed = false;
@@ -118,7 +119,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			while (benchmarkData.Running || IsConnected)
 			{
-				netManager.PollEvents();
+				//netManager.PollEvents();
 				Thread.Sleep(tickRate);
 			}
 		}
