@@ -14,9 +14,12 @@
 
     <ItemGroup>
       <PackageReference Include="ENet-CSharp" Version="2.4.3" />
-      <PackageReference Include="LiteNetLib" Version="0.9.3.2" />
       <PackageReference Include="NDesk.Options" Version="0.2.1" />
       <PackageReference Include="NetCoreServer" Version="3.0.20" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
     </ItemGroup>
 
 </Project>
