@@ -70,13 +70,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				return Task.CompletedTask;
 			}
 
-			if (peer == null)
-			{
-				Console.WriteLine($"Client {id} does not know peer even though it was connected, should not happen.");
-				IsConnected = false;
-				return Task.CompletedTask;
-			}
-
 			var clientDisconnected = Task.Factory.StartNew(() =>
 			{
 				peer.Disconnect();
@@ -126,7 +119,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			if (disconnectInfo.Reason == DisconnectReason.Timeout && benchmarkData.Running)
 			{
-				Console.WriteLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
+				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
 				Interlocked.Increment(ref benchmarkData.Errors);
 			}
 			this.peer = null;
@@ -149,7 +142,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			if (benchmarkData.Running)
 			{
-				Console.WriteLine($"Error Client {id}: {socketerror}");
+				Utilities.WriteVerboseLine($"Error Client {id}: {socketerror}");
 				Interlocked.Increment(ref benchmarkData.Errors);
 			}
 		}

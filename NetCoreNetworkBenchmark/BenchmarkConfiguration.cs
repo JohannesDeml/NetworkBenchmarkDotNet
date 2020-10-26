@@ -35,7 +35,7 @@ namespace NetCoreNetworkBenchmark
 		/// </summary>
 		public string Address = "127.0.0.1";
 
-		public bool PrintSteps = true;
+		public bool Verbose = true;
 
 		public string Name = "Custom";
 
