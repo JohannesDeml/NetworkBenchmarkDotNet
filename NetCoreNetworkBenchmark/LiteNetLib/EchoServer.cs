@@ -16,6 +16,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly NetManager netManager;
 		private readonly byte[] message;
 		private readonly int tickRate;
+		private bool isRunning;
 
 		public EchoServer(BenchmarkConfiguration config)
 		{
@@ -51,9 +52,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void Start()
 		{
+			isRunning = true;
 			netManager.Start(config.Port);
 
-			while (benchmarkData.Running)
+			while (isRunning)
 			{
 				netManager.PollEvents();
 				Thread.Sleep(tickRate);
@@ -62,6 +64,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task StopServerThread()
 		{
+			isRunning = false;
 			netManager.Stop();
 			var serverStopped = Task.Run(() =>
 			{

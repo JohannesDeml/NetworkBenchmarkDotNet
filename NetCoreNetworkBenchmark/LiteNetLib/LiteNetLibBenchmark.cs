@@ -66,22 +66,13 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task DisconnectClients()
 		{
+			var disconnectTasks = new List<Task>();
 			for (int i = 0; i < echoClients.Count; i++)
 			{
-				echoClients[i].Disconnect();
+				disconnectTasks.Add(echoClients[i].Disconnect());
 			}
 
-			var clientsDisconnected = Task.Run(() =>
-			{
-				for (int i = 0; i < config.NumClients; i++)
-				{
-					while (echoClients[i].IsConnected)
-					{
-						Task.Delay(10);
-					}
-				}
-			});
-			return clientsDisconnected;
+			return Task.WhenAll(disconnectTasks);
 		}
 
 		public Task StopServer()
@@ -91,12 +82,13 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task StopClients()
 		{
+			var stopTasks = new List<Task>();
 			for (int i = 0; i < echoClients.Count; i++)
 			{
-				echoClients[i].Stop();
+				stopTasks.Add(echoClients[i].Stop());
 			}
 
-			return Task.CompletedTask;
+			return Task.WhenAll(stopTasks);
 		}
 
 		public Task DisposeClients()
