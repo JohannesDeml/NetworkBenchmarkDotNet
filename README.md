@@ -19,7 +19,7 @@ Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
-* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.3.2)
+* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (master 252c8eb)
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
 
