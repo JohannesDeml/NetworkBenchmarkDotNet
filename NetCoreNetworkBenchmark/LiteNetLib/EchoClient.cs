@@ -59,37 +59,37 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			}
 		}
 
-		public void Disconnect()
+		public Task Disconnect()
 		{
 			if (!IsConnected)
 			{
-				return;
+				return Task.CompletedTask;
 			}
 
 			if (peer == null)
 			{
 				Console.WriteLine($"Client {id} does not know peer even though it was connected, should not happen.");
 				IsConnected = false;
-				return;
+				return Task.CompletedTask;
 			}
 
-			// Disconnecting properly takes forever with 100+ clients
-			Task.Factory.StartNew(() =>
+			var clientDisconnected = Task.Factory.StartNew(() =>
 			{
 				peer.Disconnect();
+			}, TaskCreationOptions.LongRunning);
 
-				while (IsConnected)
-				{
-					netManager.PollEvents();
-					Thread.Sleep(tickRate);
-				}
-			});
+			return clientDisconnected;
 		}
 
-		public void Stop()
+		public Task Stop()
 		{
 			// If not disconnected, stopping consumes a lot of time
-			netManager.Stop(false);
+			var stopClient = Task.Factory.StartNew(() =>
+			{
+				netManager.Stop(false);
+			}, TaskCreationOptions.LongRunning);
+
+			return stopClient;
 		}
 
 		public async void Dispose()

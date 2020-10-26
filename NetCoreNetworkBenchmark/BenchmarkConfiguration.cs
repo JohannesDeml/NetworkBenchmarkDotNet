@@ -39,7 +39,7 @@ namespace NetCoreNetworkBenchmark
 
 		public string Name = "Custom";
 
-		public int NumClients = 100;
+		public int NumClients = 1000;
 		public int ParallelMessagesPerClient = 1;
 		public int MessageByteSize = 32;
 		public MessagePayload MessagePayload = MessagePayload.Ones;
