@@ -57,6 +57,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				Send(message, DeliveryMethod.Unreliable);
 			}
+			netManager.TriggerUpdate();
 		}
 
 		public Task Disconnect()
@@ -156,6 +157,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 				Send(message, deliverymethod);
+				netManager.TriggerUpdate();
 			}
 
 			reader.Recycle();

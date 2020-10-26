@@ -104,6 +104,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
 				peer.Send(message, deliverymethod);
 				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+				netManager.TriggerUpdate();
 			}
 
 			reader.Recycle();
