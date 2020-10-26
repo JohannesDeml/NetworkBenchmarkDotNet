@@ -27,6 +27,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.UpdateTime = tickRate;
+			netManager.IPv6Enabled = IPv6Mode.Disabled;
 			message = new byte[config.MessageByteSize];
 
 			serverThread = new Thread(this.Start);

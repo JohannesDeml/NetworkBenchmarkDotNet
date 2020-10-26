@@ -33,6 +33,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
+			netManager.IPv6Enabled = IPv6Mode.Disabled;
 
 			IsConnected = false;
 			IsDisposed = false;
