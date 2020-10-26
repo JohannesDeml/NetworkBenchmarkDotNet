@@ -21,7 +21,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private NetPeer peer;
-		private Task listenTask;
 
 		public EchoClient(int id, BenchmarkConfiguration config)
 		{
@@ -47,7 +46,8 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void Start()
 		{
-			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
+			netManager.Start();
+			peer = netManager.Connect(config.Address, config.Port, "ConnectionKey");
 			IsDisposed = false;
 		}
 
@@ -95,33 +95,14 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			return stopClient;
 		}
 
-		public async void Dispose()
+		public void Dispose()
 		{
-			while (!listenTask.IsCompleted)
-			{
-				await Task.Delay(10);
-			}
-
-			listenTask.Dispose();
-
 			listener.PeerConnectedEvent -= OnPeerConnected;
 			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 			listener.NetworkReceiveEvent -= OnNetworkReceive;
 			listener.NetworkErrorEvent -= OnNetworkError;
 
 			IsDisposed = true;
-		}
-
-		private void ConnectAndListen()
-		{
-			netManager.Start();
-			peer = netManager.Connect(config.Address, config.Port, "LiteNetLib");
-
-			while (benchmarkData.Running || IsConnected)
-			{
-				//netManager.PollEvents();
-				Thread.Sleep(tickRate);
-			}
 		}
 
 		private void Send(byte[] bytes, DeliveryMethod deliverymethod)

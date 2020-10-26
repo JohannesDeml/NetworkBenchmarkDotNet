@@ -11,7 +11,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 	{
 		private readonly BenchmarkConfiguration config;
 		private readonly BenchmarkData benchmarkData;
-		private readonly Thread serverThread;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
@@ -31,46 +30,38 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			netManager.UnsyncedEvents = true;
 
 			message = new byte[config.MessageByteSize];
-			serverThread = new Thread(this.Start);
-			serverThread.Name = "LiteNetLib Server";
 
 			listener.ConnectionRequestEvent += OnConnectionRequest;
 			listener.NetworkReceiveEvent += OnNetworkReceive;
 			listener.NetworkErrorEvent += OnNetworkError;
 		}
 
-		public Task StartServerThread()
+		public Task StartServer()
 		{
-			serverThread.Start();
-			var serverStarted = Task.Run(() =>
+			Start();
+			var serverStopped = Task.Run(() =>
 			{
-				while (!serverThread.IsAlive)
+				while (!netManager.IsRunning)
 				{
 					Task.Delay(10);
 				}
 			});
-			return serverStarted;
+			return serverStopped;
 		}
 
 		private void Start()
 		{
 			isRunning = true;
 			netManager.Start(config.Port);
-
-			while (isRunning)
-			{
-				//netManager.PollEvents();
-				Thread.Sleep(tickRate);
-			}
 		}
 
-		public Task StopServerThread()
+		public Task StopServer()
 		{
 			isRunning = false;
 			netManager.Stop();
 			var serverStopped = Task.Run(() =>
 			{
-				while (serverThread.IsAlive)
+				while (netManager.IsRunning)
 				{
 					Task.Delay(10);
 				}

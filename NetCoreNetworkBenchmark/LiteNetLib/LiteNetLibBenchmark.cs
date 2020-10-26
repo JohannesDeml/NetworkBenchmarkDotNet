@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.LiteNetLib
@@ -19,7 +20,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task StartServer()
 		{
-			return echoServer.StartServerThread();
+			return echoServer.StartServer();
 		}
 
 		public Task StartClients()
@@ -77,7 +78,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task StopServer()
 		{
-			return echoServer.StopServerThread();
+			return echoServer.StopServer();
 		}
 
 		public Task StopClients()
