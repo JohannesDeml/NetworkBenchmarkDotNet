@@ -7,7 +7,7 @@ namespace NetCoreNetworkBenchmark.Enet
 	{
 		private BenchmarkConfiguration config;
 		private EchoServer echoServer;
-		private List<EchoClient> echoClients;
+		private List<EnetClient> echoClients;
 
 
 		public void Initialize(BenchmarkConfiguration config)
@@ -15,7 +15,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			this.config = config;
 			ENet.Library.Initialize();
 			echoServer = new EchoServer(config);
-			echoClients = new List<EchoClient>();
+			echoClients = new List<EnetClient>();
 		}
 
 		public Task StartServer()
@@ -27,7 +27,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			for (int i = 0; i < config.NumClients; i++)
 			{
-				echoClients.Add(new EchoClient(i, config));
+				echoClients.Add(new EchoClientThreaded(i, config));
 			}
 
 			return Task.CompletedTask;
