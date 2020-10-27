@@ -27,7 +27,7 @@ namespace NetCoreNetworkBenchmark
 	{
 		public readonly BenchmarkData BenchmarkData;
 		public TestType TestType = TestType.PingPong;
-		public NetworkLibrary Library = NetworkLibrary.LiteNetLib;
+		public NetworkLibrary Library = NetworkLibrary.ENet;
 		public int Port = 3333;
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace NetCoreNetworkBenchmark
 
 		public string Name = "Custom";
 
-		public int NumClients = 100;
+		public int NumClients = 1000;
 		public int ParallelMessagesPerClient = 1;
 		public int MessageByteSize = 32;
 		public MessagePayload MessagePayload = MessagePayload.Ones;
