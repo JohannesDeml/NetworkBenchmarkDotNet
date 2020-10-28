@@ -20,9 +20,9 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 	{
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoServer(BenchmarkConfiguration config): base(IPAddress.Any, config.Port)
+		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData): base(IPAddress.Any, config.Port)
 		{
-			benchmarkData = config.BenchmarkData;
+			this.benchmarkData = benchmarkData;
 		}
 
 		protected override void OnStarted()

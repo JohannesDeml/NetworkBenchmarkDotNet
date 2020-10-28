@@ -29,11 +29,11 @@ namespace NetCoreNetworkBenchmark.Enet
 		private readonly Address address;
 		private Peer peer;
 
-		public EnetClient(int id, BenchmarkConfiguration config)
+		public EnetClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.id = id;
 			this.config = config;
-			benchmarkData = config.BenchmarkData;
+			this.benchmarkData = benchmarkData;
 			message = config.Message;
 			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
 

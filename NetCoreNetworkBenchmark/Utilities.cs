@@ -71,7 +71,7 @@ namespace NetCoreNetworkBenchmark
 
 		public static void WriteVerbose(string text)
 		{
-			if (!Program.Config.Verbose)
+			if (!Benchmark.Config.Verbose)
 			{
 				return;
 			}
@@ -81,7 +81,7 @@ namespace NetCoreNetworkBenchmark
 
 		public static void WriteVerboseLine(string text)
 		{
-			if (!Program.Config.Verbose)
+			if (!Benchmark.Config.Verbose)
 			{
 				return;
 			}

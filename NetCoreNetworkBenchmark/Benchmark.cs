@@ -8,19 +8,23 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Text;
 using System.Threading;
+using ENet;
 
 namespace NetCoreNetworkBenchmark
 {
 	public static class Benchmark
 	{
 		public static readonly BenchmarkConfiguration Config = new BenchmarkConfiguration();
+		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
 
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose("-> Prepare Benchmark.");
 			Config.PrepareForNewBenchmark();
-			networkBenchmark.Initialize(Config);
+			BenchmarkData.PrepareBenchmark();
+			networkBenchmark.Initialize(Config, BenchmarkData);
 			Utilities.WriteVerbose(".");
 
 			var serverTask = networkBenchmark.StartServer();
@@ -46,15 +50,15 @@ namespace NetCoreNetworkBenchmark
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)
 		{
-			Config.BenchmarkData.Reset();
-			Config.BenchmarkData.StartBenchmark();
+			BenchmarkData.Reset();
+			BenchmarkData.StartBenchmark();
 			networkBenchmark.StartBenchmark();
 		}
 
 		public static void StopBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			networkBenchmark.StopBenchmark();
-			Config.BenchmarkData.StopBenchmark();
+			BenchmarkData.StopBenchmark();
 		}
 
 		public static void CleanupBenchmark(INetworkBenchmark networkBenchmark)
@@ -70,6 +74,39 @@ namespace NetCoreNetworkBenchmark
 			Utilities.WriteVerbose(".");
 			networkBenchmark.DisposeServer().Wait();
 			Utilities.WriteVerboseLine(" Done");
+		}
+
+		public static string PrintStatistics()
+		{
+			var sb = new StringBuilder();
+
+			sb.AppendLine($"#### {Config.Library}");
+			sb.AppendLine("```");
+			if (BenchmarkData.Errors > 0)
+			{
+				sb.AppendLine($"Errors: {BenchmarkData.Errors}");
+				sb.AppendLine();
+			}
+
+			sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
+			sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
+			sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
+			sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
+			sb.AppendLine($"Messages clients received: {BenchmarkData.MessagesClientReceived:n0}");
+			sb.AppendLine();
+
+			var totalBytes = BenchmarkData.MessagesClientReceived * Config.MessageByteSize;
+			var totalMb = totalBytes / (1024.0d * 1024.0d);
+			var latency = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
+
+			sb.AppendLine($"Total data: {totalMb:0.00} MB");
+			sb.AppendLine($"Data throughput: {totalMb / BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
+			sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived / BenchmarkData.Duration.TotalSeconds:n0} msg/s");
+			sb.AppendLine($"Message latency: {latency:0.000} μs");
+			sb.AppendLine("```");
+			sb.AppendLine();
+
+			return sb.ToString();
 		}
 	}
 }

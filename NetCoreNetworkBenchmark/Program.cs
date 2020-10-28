@@ -114,7 +114,7 @@ namespace NetCoreNetworkBenchmark
 			finally
 			{
 				Benchmark.CleanupBenchmark(networkBenchmark);
-				Console.Write(Benchmark.Config.PrintStatistics());
+				Console.Write(Benchmark.PrintStatistics());
 			}
 		}
 

@@ -26,10 +26,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly byte[] message;
 		private readonly int tickRate;
 
-		public EchoServer(BenchmarkConfiguration config)
+		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
-			benchmarkData = config.BenchmarkData;
+			this.benchmarkData = benchmarkData;
 			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
 
 			listener = new EventBasedNetListener();

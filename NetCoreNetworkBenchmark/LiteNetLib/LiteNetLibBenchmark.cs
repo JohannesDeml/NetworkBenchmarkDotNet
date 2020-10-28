@@ -16,14 +16,16 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 	internal class LiteNetLibBenchmark: INetworkBenchmark
 	{
 		private BenchmarkConfiguration config;
+		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
 		private List<EchoClient> echoClients;
 
 
-		public void Initialize(BenchmarkConfiguration config)
+		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
-			echoServer = new EchoServer(config);
+			this.benchmarkData = benchmarkData;
+			echoServer = new EchoServer(config, benchmarkData);
 			echoClients = new List<EchoClient>();
 		}
 
@@ -36,7 +38,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			for (int i = 0; i < config.NumClients; i++)
 			{
-				echoClients.Add(new EchoClient(i, config));
+				echoClients.Add(new EchoClient(i, config, benchmarkData));
 			}
 
 			return Task.CompletedTask;

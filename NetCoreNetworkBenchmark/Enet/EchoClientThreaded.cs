@@ -17,7 +17,7 @@ namespace NetCoreNetworkBenchmark.Enet
 	{
 		private readonly Thread connectAndListenThread;
 
-		public EchoClientThreaded(int id, BenchmarkConfiguration config): base(id, config)
+		public EchoClientThreaded(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
 		{
 			connectAndListenThread = new Thread(ConnectAndListen);
 			connectAndListenThread.Name = $"ENet Client {id}";

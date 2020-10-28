@@ -35,7 +35,7 @@ namespace NetCoreNetworkBenchmark
 
 	public class BenchmarkConfiguration
 	{
-		public readonly BenchmarkData BenchmarkData;
+
 		public TestType TestType = TestType.PingPong;
 		public NetworkLibrary Library = NetworkLibrary.ENet;
 		public int Port = 3333;
@@ -62,13 +62,11 @@ namespace NetCoreNetworkBenchmark
 
 		public BenchmarkConfiguration()
 		{
-			BenchmarkData = new BenchmarkData();
 		}
 
 		public void PrepareForNewBenchmark()
 		{
 			GenerateMessageBytes();
-			BenchmarkData.PrepareBenchmark();
 		}
 
 		private void GenerateMessageBytes()
@@ -111,39 +109,6 @@ namespace NetCoreNetworkBenchmark
 			sb.AppendLine($"* Message size: {MessageByteSize} bytes");
 			sb.AppendLine($"* Message Payload: {MessagePayload}");
 			sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
-			sb.AppendLine();
-
-			return sb.ToString();
-		}
-
-		public string PrintStatistics()
-		{
-			var sb = new StringBuilder();
-
-			sb.AppendLine($"#### {Library}");
-			sb.AppendLine("```");
-			if (BenchmarkData.Errors > 0)
-			{
-				sb.AppendLine($"Errors: {BenchmarkData.Errors}");
-				sb.AppendLine();
-			}
-
-			sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
-			sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
-			sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
-			sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
-			sb.AppendLine($"Messages clients received: {BenchmarkData.MessagesClientReceived:n0}");
-			sb.AppendLine();
-
-			var totalBytes = BenchmarkData.MessagesClientReceived * MessageByteSize;
-			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
-
-			sb.AppendLine($"Total data: {totalMb:0.00} MB");
-			sb.AppendLine($"Data throughput: {totalMb / BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
-			sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived / BenchmarkData.Duration.TotalSeconds:n0} msg/s");
-			sb.AppendLine($"Message latency: {latency:0.000} μs");
-			sb.AppendLine("```");
 			sb.AppendLine();
 
 			return sb.ToString();

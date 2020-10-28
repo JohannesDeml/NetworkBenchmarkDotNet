@@ -16,13 +16,15 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 	internal class NetCoreServerBenchmark: INetworkBenchmark
 	{
 		private BenchmarkConfiguration config;
+		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
 		private List<EchoClient> echoClients;
 
-		public void Initialize(BenchmarkConfiguration config)
+		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
-			this.echoServer = new EchoServer(this.config);
+			this.benchmarkData = benchmarkData;
+			this.echoServer = new EchoServer(config, benchmarkData);
 			this.echoClients = new List<EchoClient>(config.NumClients);
 		}
 
@@ -43,7 +45,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		{
 			for (int i = 0; i < config.NumClients; i++)
 			{
-				echoClients.Add(new EchoClient(config));
+				echoClients.Add(new EchoClient(config, benchmarkData));
 			}
 
 			return Task.CompletedTask;
