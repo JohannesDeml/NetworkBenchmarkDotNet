@@ -15,6 +15,8 @@ using BenchmarkDotNet.Attributes;
 namespace NetCoreNetworkBenchmark
 {
 	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10)]
+	[GcServer(true)]
+	[GcConcurrent(false)]
 	[RPlotExporter]
 	public class PredefinedBenchmark
 	{
