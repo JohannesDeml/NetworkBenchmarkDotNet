@@ -61,7 +61,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			peer.DisconnectNow(0);
 		}
 
-		public virtual async void Dispose()
+		public virtual void Dispose()
 		{
 			host.Flush();
 			host.Dispose();

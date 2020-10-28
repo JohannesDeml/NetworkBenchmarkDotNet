@@ -62,9 +62,16 @@ WarmupCount=1
 
 ![Benchmark Results](./Docs/benchmark.png)
 
+### Benchmark 1
+Runs the PingPong Test with t with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+This test is for getting an idea of an average roundtrip time.
+
+### Benchmark 2
+Runs the PingPong Test with t with **100** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+This test is for getting an idea of a more realistic scenario, in which the protocol also has to merge messages.
+
 ### Notes
 
-* The Benchmark runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of 1m messages are sent to the server and back to the clients. Message size is 32 bytes.
 * The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 
