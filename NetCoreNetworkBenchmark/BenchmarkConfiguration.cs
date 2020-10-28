@@ -4,26 +4,26 @@ using System.Text;
 
 namespace NetCoreNetworkBenchmark
 {
-	internal enum NetworkLibrary
+	public enum NetworkLibrary
 	{
 		ENet,
 		NetCoreServer,
 		LiteNetLib
 	}
 
-	internal enum TestType
+	public enum TestType
 	{
 		PingPong
 	}
 
-	internal enum MessagePayload
+	public enum MessagePayload
 	{
 		Random,
 		Zeros,
 		Ones
 	}
 
-	internal class BenchmarkConfiguration
+	public class BenchmarkConfiguration
 	{
 		public readonly BenchmarkData BenchmarkData;
 		public TestType TestType = TestType.PingPong;

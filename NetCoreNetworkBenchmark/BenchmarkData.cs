@@ -2,7 +2,7 @@
 
 namespace NetCoreNetworkBenchmark
 {
-	internal class BenchmarkData
+	public class BenchmarkData
 	{
 		public DateTime StartTime { get; private set; }
 		public DateTime StopTime { get; private set; }

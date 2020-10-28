@@ -6,7 +6,7 @@ using NetCoreNetworkBenchmark.NetCoreServer;
 
 namespace NetCoreNetworkBenchmark
 {
-	internal interface INetworkBenchmark
+	public interface INetworkBenchmark
 	{
 		public static INetworkBenchmark CreateNetworkBenchmark(NetworkLibrary library)
 		{
