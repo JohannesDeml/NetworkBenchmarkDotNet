@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 
@@ -20,31 +19,68 @@ namespace NetCoreNetworkBenchmark
 	[RPlotExporter]
 	public class PredefinedBenchmark
 	{
-		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
+		[ParamsAllValues]
 		public NetworkLibrary Library;
 
-		[Params(1000000)]
-		public int MessageTarget;
-
+		private int messageTarget;
 		private INetworkBenchmark libraryImpl;
+
+		[GlobalSetup(Target = nameof(Benchmark1))]
+		public void PrepareBenchmark1()
+		{
+			messageTarget = 1000 * 1000;
+			var config = Benchmark.Config;
+			config.Name = "1";
+			config.NumClients = 1000;
+			config.ParallelMessagesPerClient = 1;
+			config.MessageByteSize = 32;
+			PrepareBenchmark();
+		}
+
+		[GlobalSetup(Target = nameof(Benchmark2))]
+		public void PrepareBenchmark2()
+		{
+			messageTarget = 1000 * 1000;
+			var config = Benchmark.Config;
+			config.Name = "2";
+			config.NumClients = 100;
+			config.ParallelMessagesPerClient = 10;
+			config.MessageByteSize = 32;
+			PrepareBenchmark();
+		}
 
 		[GlobalSetup]
 		public void PrepareBenchmark()
 		{
-			Benchmark.Config.Verbose = false;
-			Benchmark.Config.Library = Library;
+			var config = Benchmark.Config;
+			config.Verbose = false;
+			config.Library = Library;
+			config.TestType = TestType.PingPong;
+			config.MessagePayload = MessagePayload.Random;
+
 			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
 			Benchmark.PrepareBenchmark(libraryImpl);
 		}
 
 		[Benchmark]
-		public long RunBenchmark()
+		public long Benchmark1()
+		{
+			return RunBenchmark();
+		}
+
+		[Benchmark]
+		public long Benchmark2()
+		{
+			return RunBenchmark();
+		}
+
+		private long RunBenchmark()
 		{
 			var benchmarkdata = Benchmark.BenchmarkData;
 			Benchmark.StartBenchmark(libraryImpl);
 			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 
-			while (receivedMessages < MessageTarget)
+			while (receivedMessages < messageTarget)
 			{
 				Thread.Sleep(1);
 				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
