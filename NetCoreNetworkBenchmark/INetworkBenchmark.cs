@@ -1,4 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="INetworkBenchmark.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using NetCoreNetworkBenchmark.Enet;
 using NetCoreNetworkBenchmark.LiteNetLib;

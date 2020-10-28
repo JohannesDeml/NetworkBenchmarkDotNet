@@ -1,4 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EchoClient.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -60,6 +70,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				Send(message, DeliveryMethod.ReliableUnordered);
 			}
+
 			netManager.TriggerUpdate();
 		}
 
@@ -70,10 +81,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				return Task.CompletedTask;
 			}
 
-			var clientDisconnected = Task.Factory.StartNew(() =>
-			{
-				peer.Disconnect();
-			}, TaskCreationOptions.LongRunning);
+			var clientDisconnected = Task.Factory.StartNew(() => { peer.Disconnect(); }, TaskCreationOptions.LongRunning);
 
 			return clientDisconnected;
 		}
@@ -81,10 +89,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		public Task Stop()
 		{
 			// If not disconnected, stopping consumes a lot of time
-			var stopClient = Task.Factory.StartNew(() =>
-			{
-				netManager.Stop(false);
-			}, TaskCreationOptions.LongRunning);
+			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 
 			return stopClient;
 		}
@@ -122,6 +127,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
 				Interlocked.Increment(ref benchmarkData.Errors);
 			}
+
 			this.peer = null;
 			IsConnected = false;
 		}

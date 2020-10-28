@@ -1,16 +1,23 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EchoClientThreaded.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Threading;
 using System.Threading.Tasks;
-using ENet;
 
 namespace NetCoreNetworkBenchmark.Enet
 {
-	internal class EchoClientThreaded : EnetClient
+	internal class EchoClientThreaded: EnetClient
 	{
-
 		private readonly Thread connectAndListenThread;
 
-		public EchoClientThreaded(int id, BenchmarkConfiguration config) : base(id, config)
+		public EchoClientThreaded(int id, BenchmarkConfiguration config): base(id, config)
 		{
 			connectAndListenThread = new Thread(ConnectAndListen);
 			connectAndListenThread.Name = $"ENet Client {id}";
