@@ -29,6 +29,7 @@ namespace NetCoreNetworkBenchmark
 		[GlobalSetup]
 		public void PrepareBenchmark()
 		{
+			Benchmark.Config.Verbose = false;
 			Benchmark.Config.Library = Library;
 			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
 			Benchmark.PrepareBenchmark(libraryImpl);
@@ -39,19 +40,23 @@ namespace NetCoreNetworkBenchmark
 		{
 			var benchmarkdata = Benchmark.BenchmarkData;
 			Benchmark.StartBenchmark(libraryImpl);
-			while (benchmarkdata.MessagesClientReceived < MessageTarget)
+			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
+
+			while (receivedMessages < MessageTarget)
 			{
 				Thread.Sleep(1);
+				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 			}
+
 			Benchmark.StopBenchmark(libraryImpl);
-			return benchmarkdata.MessagesClientReceived;
+			return receivedMessages;
 		}
 
 		[IterationCleanup]
 		public void CleanupIteration()
 		{
 			// Wait for messages from previous benchmark to be all sent
-			Thread.Sleep(50);
+			Thread.Sleep(100);
 		}
 
 		[GlobalCleanup]
