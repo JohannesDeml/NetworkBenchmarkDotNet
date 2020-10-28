@@ -56,6 +56,8 @@ WarmupCount=1
 | **RunBenchmark** | **NetCoreServer** |       **1000000** |  **8.855 s** | **0.0239 s** | **0.0158 s** |
 | **RunBenchmark** |    **LiteNetLib** |       **1000000** | **13.368 s** | **0.4677 s** | **0.3094 s** |
 
+![Benchmark Results](./Docs/benchmark.png)
+
 ### Notes
 
 * The Benchmark runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of 1m messages are sent to the server and back to the clients. Message size is 32 bytes.
