@@ -10,7 +10,6 @@
 
 using System.Text;
 using System.Threading;
-using ENet;
 
 namespace NetCoreNetworkBenchmark
 {

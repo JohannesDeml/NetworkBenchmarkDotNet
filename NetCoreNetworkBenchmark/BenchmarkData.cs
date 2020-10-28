@@ -22,6 +22,7 @@ namespace NetCoreNetworkBenchmark
 		/// Should server and clients listen for incoming messages
 		/// </summary>
 		public bool Listen { get; private set; }
+
 		/// <summary>
 		/// Is a benchmark running (and therefore all messages should be counted)
 		/// </summary>

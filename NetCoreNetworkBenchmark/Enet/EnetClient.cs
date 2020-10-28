@@ -92,6 +92,7 @@ namespace NetCoreNetworkBenchmark.Enet
 							Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 							OnReceiveMessage(netEvent);
 						}
+
 						netEvent.Packet.Dispose();
 
 						break;
