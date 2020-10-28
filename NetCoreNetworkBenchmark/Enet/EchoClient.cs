@@ -1,15 +1,22 @@
-﻿using System;
-using System.Threading;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EchoClient.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
 using System.Threading.Tasks;
-using ENet;
 
 namespace NetCoreNetworkBenchmark.Enet
 {
-	internal class EchoClient : EnetClient
+	internal class EchoClient: EnetClient
 	{
 		private Task listenTask;
 
-		public EchoClient(int id, BenchmarkConfiguration config) : base(id, config)
+		public EchoClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
 		{
 		}
 
@@ -27,6 +34,5 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			base.Dispose();
 		}
-
 	}
 }

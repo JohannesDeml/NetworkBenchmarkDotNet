@@ -1,5 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="LiteNetLibBenchmark.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.LiteNetLib
@@ -7,14 +18,16 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 	internal class LiteNetLibBenchmark: INetworkBenchmark
 	{
 		private BenchmarkConfiguration config;
+		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
 		private List<EchoClient> echoClients;
 
 
-		public void Initialize(BenchmarkConfiguration config)
+		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
-			echoServer = new EchoServer(config);
+			this.benchmarkData = benchmarkData;
+			echoServer = new EchoServer(config, benchmarkData);
 			echoClients = new List<EchoClient>();
 		}
 
@@ -27,7 +40,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		{
 			for (int i = 0; i < config.NumClients; i++)
 			{
-				echoClients.Add(new EchoClient(i, config));
+				echoClients.Add(new EchoClient(i, config, benchmarkData));
 			}
 
 			return Task.CompletedTask;
@@ -55,6 +68,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartBenchmark()
 		{
+			// Triggers Updates on the main thread, therefore it takes some time for all clients to send messages
 			for (int i = 0; i < echoClients.Count; i++)
 			{
 				echoClients[i].StartSendingMessages();

@@ -1,4 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EchoClient.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,11 +22,11 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		private readonly int initialMessages;
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoClient(BenchmarkConfiguration config): base(config.Address, config.Port)
+		public EchoClient(BenchmarkConfiguration config, BenchmarkData benchmarkData): base(config.Address, config.Port)
 		{
 			message = config.Message;
 			initialMessages = config.ParallelMessagesPerClient;
-			benchmarkData = config.BenchmarkData;
+			this.benchmarkData = benchmarkData;
 		}
 
 		protected override void OnConnected()

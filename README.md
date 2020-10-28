@@ -38,27 +38,31 @@ To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b`
 [All Results](./Benchmarks)
 
 
-```
-OS: Ubuntu 20.04.1 LTS
-CPU: Intel® Core™ i5-3570K CPU @ 3.40GHz × 4
-Mainboard:  Gigabyte Z77X-D3H Gb LAN (Atheros)
-RAM: G.Skill 16GB (2 x 8 GB) DDR3-1600 (Part number: F3-1600C11-8GNT)
-```
+``` ini
+BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
+Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
+.NET Core SDK=3.1.403
+  [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+  Job-CUQNUB : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
-|             | ENet            | LiteNetLib    | NetCoreServer |
-| ----------- | --------------- | ------------- | ------------- |
-| Benchmark 1 | 193,515 msg/s   | 65,142 msg/s  | 110,051 msg/s |
-| Benchmark 2 | 2,149,574 msg/s | 478,019 msg/s | 118,773 msg/s |
+Concurrent=False  Server=True  InvocationCount=1  
+IterationCount=10  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  
+
+```
+|       Method |       Library | MessageTarget |     Mean |    Error |   StdDev |
+|------------- |-------------- |-------------- |---------:|---------:|---------:|
+| **RunBenchmark** |          **ENet** |       **1000000** |  **5.301 s** | **0.0580 s** | **0.0345 s** |
+| **RunBenchmark** | **NetCoreServer** |       **1000000** |  **8.855 s** | **0.0239 s** | **0.0158 s** |
+| **RunBenchmark** |    **LiteNetLib** |       **1000000** | **13.368 s** | **0.4677 s** | **0.3094 s** |
+
+![Benchmark Results](./Docs/benchmark.png)
 
 ### Notes
 
-* Messages per second are messages that are sent from the client to the server and back.
-* Benchmark 1 runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. Message size is 32 bytes.
-* Benchmark 2 runs the pingpong test with **100** clients, which pingpong **1,000 messages** with the server. Message size is 32 bytes.
-* The tests perform better on Linux compared to Windows 10.
-* ENet and LiteNetLib merge messages, that's why they have better results in the second benchmark. 
-* LiteNetLib opens a new thread for every client and therefore has a lot more overhead in this benchmark. That overhead vanishes in a real world application, when the server only needs to run one server networking thread.
-* To get the actual round trip time, test with one parallel message (e.g. Benchmark 1).
+* The Benchmark runs the pingpong test with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of 1m messages are sent to the server and back to the clients. Message size is 32 bytes.
+* The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
+* Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 
 ## Installation
 

@@ -1,4 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Utilities.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using System.Text;
 using NDesk.Options;
 
@@ -61,7 +71,7 @@ namespace NetCoreNetworkBenchmark
 
 		public static void WriteVerbose(string text)
 		{
-			if (!Program.Config.Verbose)
+			if (!Benchmark.Config.Verbose)
 			{
 				return;
 			}
@@ -71,7 +81,7 @@ namespace NetCoreNetworkBenchmark
 
 		public static void WriteVerboseLine(string text)
 		{
-			if (!Program.Config.Verbose)
+			if (!Benchmark.Config.Verbose)
 			{
 				return;
 			}

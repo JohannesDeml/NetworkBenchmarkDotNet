@@ -1,4 +1,14 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="INetworkBenchmark.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using NetCoreNetworkBenchmark.Enet;
 using NetCoreNetworkBenchmark.LiteNetLib;
@@ -6,7 +16,7 @@ using NetCoreNetworkBenchmark.NetCoreServer;
 
 namespace NetCoreNetworkBenchmark
 {
-	internal interface INetworkBenchmark
+	public interface INetworkBenchmark
 	{
 		public static INetworkBenchmark CreateNetworkBenchmark(NetworkLibrary library)
 		{
@@ -30,7 +40,8 @@ namespace NetCoreNetworkBenchmark
 		/// Initialize the network library with a defined configuration
 		/// </summary>
 		/// <param name="config">Configuration to use for the upcoming benchmark</param>
-		void Initialize(BenchmarkConfiguration config);
+		/// <param name="benchmarkData">Data object to store statistics</param>
+		void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData);
 
 		/// <summary>
 		/// Start the server with the configuration defined during initialization.

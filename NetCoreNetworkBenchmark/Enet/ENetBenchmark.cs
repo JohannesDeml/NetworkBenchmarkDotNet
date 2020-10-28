@@ -1,4 +1,14 @@
-﻿using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ENetBenchmark.cs">
+//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// </copyright>
+// <author>
+//   Johannes Deml
+//   public@deml.io
+// </author>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.Enet
@@ -6,15 +16,17 @@ namespace NetCoreNetworkBenchmark.Enet
 	internal class ENetBenchmark: INetworkBenchmark
 	{
 		private BenchmarkConfiguration config;
+		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
 		private List<EnetClient> echoClients;
 
 
-		public void Initialize(BenchmarkConfiguration config)
+		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
+			this.benchmarkData = benchmarkData;
 			ENet.Library.Initialize();
-			echoServer = new EchoServer(config);
+			echoServer = new EchoServer(config, benchmarkData);
 			echoClients = new List<EnetClient>();
 		}
 
@@ -27,7 +39,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			for (int i = 0; i < config.NumClients; i++)
 			{
-				echoClients.Add(new EchoClientThreaded(i, config));
+				echoClients.Add(new EchoClientThreaded(i, config, benchmarkData));
 			}
 
 			return Task.CompletedTask;
