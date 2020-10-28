@@ -20,10 +20,10 @@ namespace NetCoreNetworkBenchmark
 	[RPlotExporter]
 	public class PredefinedBenchmark
 	{
-		//[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
-		public NetworkLibrary Library = NetworkLibrary.LiteNetLib;
+		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
+		public NetworkLibrary Library;
 
-		[Params(100000)]
+		[Params(1000000)]
 		public int MessageTarget;
 
 		private INetworkBenchmark libraryImpl;

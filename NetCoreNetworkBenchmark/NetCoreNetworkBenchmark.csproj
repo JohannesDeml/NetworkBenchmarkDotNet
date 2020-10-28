@@ -7,8 +7,8 @@
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
         <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.2.1</PackageVersion>
-        <AssemblyVersion>0.2.1</AssemblyVersion>
+        <PackageVersion>0.3.0</PackageVersion>
+        <AssemblyVersion>0.3.0</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU;x64</Platforms>
