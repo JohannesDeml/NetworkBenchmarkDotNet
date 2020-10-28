@@ -37,7 +37,7 @@ namespace NetCoreNetworkBenchmark
 	{
 
 		public TestType TestType = TestType.PingPong;
-		public NetworkLibrary Library = NetworkLibrary.ENet;
+		public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
 		public int Port = 3333;
 
 		/// <summary>

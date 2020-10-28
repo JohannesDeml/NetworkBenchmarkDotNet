@@ -65,6 +65,8 @@ namespace NetCoreNetworkBenchmark
 		{
 			Utilities.WriteVerbose("-> Clean up.");
 			networkBenchmark.DisconnectClients().Wait();
+			BenchmarkData.CleanupBenchmark();
+
 			networkBenchmark.StopClients().Wait();
 			networkBenchmark.DisposeClients().Wait();
 			Utilities.WriteVerbose(".");

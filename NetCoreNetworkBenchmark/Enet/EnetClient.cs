@@ -73,7 +73,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			host.Create();
 			peer = host.Connect(address, 4);
 
-			while (benchmarkData.Running)
+			while (benchmarkData.Listen)
 			{
 				host.Service(tickRate, out Event netEvent);
 
@@ -87,8 +87,11 @@ namespace NetCoreNetworkBenchmark.Enet
 						break;
 
 					case EventType.Receive:
-						OnReceiveMessage(netEvent);
-
+						if (benchmarkData.Running)
+						{
+							Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+							OnReceiveMessage(netEvent);
+						}
 						netEvent.Packet.Dispose();
 
 						break;
@@ -98,7 +101,6 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		protected virtual void OnReceiveMessage(Event netEvent)
 		{
-			Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 			netEvent.Packet.CopyTo(message);
 			SendUnreliable(message, 0, peer);
 		}

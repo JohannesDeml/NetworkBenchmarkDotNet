@@ -18,6 +18,13 @@ namespace NetCoreNetworkBenchmark
 		public DateTime StopTime { get; private set; }
 		public TimeSpan Duration { get; private set; }
 
+		/// <summary>
+		/// Should server and clients listen for incoming messages
+		/// </summary>
+		public bool Listen { get; private set; }
+		/// <summary>
+		/// Is a benchmark running (and therefore all messages should be counted)
+		/// </summary>
 		public bool Running { get; private set; }
 
 		public long MessagesClientSent;
@@ -37,7 +44,7 @@ namespace NetCoreNetworkBenchmark
 
 		public void PrepareBenchmark()
 		{
-			Running = true;
+			Listen = true;
 		}
 
 		public void StartBenchmark()
@@ -51,6 +58,11 @@ namespace NetCoreNetworkBenchmark
 			Running = false;
 			StopTime = DateTime.Now;
 			Duration = StopTime.Subtract(StartTime);
+		}
+
+		public void CleanupBenchmark()
+		{
+			Listen = false;
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			host.Create(address, config.NumClients);
 
-			while (benchmarkData.Running)
+			while (benchmarkData.Listen)
 			{
 				host.Service(tickRate, out Event netEvent);
 
@@ -68,20 +68,22 @@ namespace NetCoreNetworkBenchmark.Enet
 						break;
 
 					case EventType.Receive:
-						Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
-
 						if (benchmarkData.Running)
 						{
-							netEvent.Packet.CopyTo(message);
-							SendUnreliable(message, 0, netEvent.Peer);
-							Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+							Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+							OnReceiveMessage(netEvent);
 						}
-
 						netEvent.Packet.Dispose();
 
 						break;
 				}
 			}
+		}
+
+		private void OnReceiveMessage(Event netEvent)
+		{
+			netEvent.Packet.CopyTo(message);
+			SendUnreliable(message, 0, netEvent.Peer);
 		}
 
 		public Task StopServerThread()
@@ -108,6 +110,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
+			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 
 		private void SendUnreliable(byte[] data, byte channelID, Peer peer)
@@ -116,6 +119,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
 			peer.Send(channelID, ref packet);
+			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 	}
 }
