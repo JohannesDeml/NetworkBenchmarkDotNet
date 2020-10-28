@@ -10,6 +10,7 @@
 
 using System;
 using System.Threading;
+using BenchmarkDotNet.Running;
 using NDesk.Options;
 
 namespace NetCoreNetworkBenchmark
@@ -89,7 +90,8 @@ namespace NetCoreNetworkBenchmark
 
 			if (predefinedBenchmark)
 			{
-				RunPredefinedBenchmark();
+				BenchmarkRunner.Run<PredefinedBenchmark>();
+				//RunPredefinedBenchmark();
 				return;
 			}
 
