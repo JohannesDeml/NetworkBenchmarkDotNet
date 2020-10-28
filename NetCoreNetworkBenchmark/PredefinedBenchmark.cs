@@ -14,11 +14,12 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetCoreNetworkBenchmark
 {
-	[SimpleJob(launchCount: 0, warmupCount: 0, targetCount: 10)]
+	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10)]
+	[RPlotExporter]
 	public class PredefinedBenchmark
 	{
-		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
-		public NetworkLibrary Library;
+		//[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
+		public NetworkLibrary Library = NetworkLibrary.LiteNetLib;
 
 		[Params(100000)]
 		public int MessageTarget;

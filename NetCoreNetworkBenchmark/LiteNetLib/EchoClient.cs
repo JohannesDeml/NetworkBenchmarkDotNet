@@ -64,14 +64,17 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
-
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			Task.Factory.StartNew(() =>
 			{
-				Send(message, DeliveryMethod.ReliableUnordered);
-			}
+				var parallelMessagesPerClient = config.ParallelMessagesPerClient;
 
-			netManager.TriggerUpdate();
+				for (int i = 0; i < parallelMessagesPerClient; i++)
+				{
+					Send(message, DeliveryMethod.ReliableUnordered);
+				}
+
+				netManager.TriggerUpdate();
+			});
 		}
 
 		public Task Disconnect()

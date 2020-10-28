@@ -8,7 +8,9 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.LiteNetLib
@@ -66,10 +68,13 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartBenchmark()
 		{
+			var watch = Stopwatch.StartNew();
 			for (int i = 0; i < echoClients.Count; i++)
 			{
 				echoClients[i].StartSendingMessages();
 			}
+			watch.Stop();
+			Console.WriteLine(watch.ElapsedMilliseconds);
 		}
 
 		public void StopBenchmark()
