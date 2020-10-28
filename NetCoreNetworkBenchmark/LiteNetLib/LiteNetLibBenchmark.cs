@@ -68,13 +68,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartBenchmark()
 		{
-			var watch = Stopwatch.StartNew();
+			// Triggers Updates on the main thread, therefore it takes some time for all clients to send messages
 			for (int i = 0; i < echoClients.Count; i++)
 			{
 				echoClients[i].StartSendingMessages();
 			}
-			watch.Stop();
-			Console.WriteLine(watch.ElapsedMilliseconds);
 		}
 
 		public void StopBenchmark()
