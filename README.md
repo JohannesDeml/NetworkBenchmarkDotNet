@@ -8,28 +8,23 @@
 
 ## Description
 
-Benchmark for different low level [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) compatible libraries that are compatible with [Unity](https://unity3d.com), but also work as standalone console applications. The benchmark focuses on performance, latency and scalability.
+NCNB is a benchmark for low level networking libraries using UDP and can be used with [Unity](https://unity3d.com) and for [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) standalone server applications. The benchmark focuses on latency, performance and scalability.
 
 ### Supported Libraries
 
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
-  * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
-  * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
 * [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
+  * [Unity Client Example](https://github.com/JohannesDeml/ENetUnityMobile)
 * [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (master 252c8eb)
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
-
-### Todo
-
-- [ ] Test for maximum concurrent clients
-- [ ] Test for Garbage generation
-- [ ] Test on local network, instead of one machine
-- [x] Test for roundtrip time (Benchmark 1)
-- [x] Generate simple benchmark statistics
+  * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
+  * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
+  * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
+  * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
 
 ## Benchmarks
 
@@ -75,11 +70,13 @@ This test is for getting an idea of a more realistic scenario, in which the prot
 * The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 
+
+
 ## Installation
 
-Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) (>=3.1 recommended) installed.
+Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) >=3.1 installed.
 
-Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it.
+Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
 ## Usage
 
@@ -100,6 +97,41 @@ Then just open the solution file with Visual Studio/Rider/Visual Studio Code and
                                Options: [Random, Zeros, Ones]
   -d, --duration=VALUE       Duration fo the test in seconds (Default: 10)
 ```
+
+## Contributions are welcome!
+
+Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up per [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.
+
+### Rules for adding a Library
+
+Your new proposed library ... 
+
+* works with Unity as a Client
+* works with .Net Core for the server 
+* uses UDP
+* is Open Source (can still be commercial)
+* is stable enough not to break in the benchmarks
+* is interesting/relevant for others
+
+#### How to add a library
+
+1. Add a new folder inside the NetCoreNetworkBenchmark solution with the name of your library
+2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetCoreNetworkBenchmark/INetworkBenchmark.cs)
+3. Add your library name to the [NetworkLibrary](../../blob/master/NetCoreNetworkBenchmark/NetworkLibrary.cs) enum
+4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
+5. Use the `-l ` argument (or `BenchmarkConfiguration.Library`) to test your library and if everything works as expected.
+6. Run the benchmarks `./NetCoreNetworkBenchmark -b` and see if your library runs correct
+7. Create a PR including your benchmark md results 🎉
+
+### Rules for adding a benchmark
+
+Tell us why you think that benchmark is important and what it tests, that the other benchmarks don't do.  
+Ideas for benchmarks:
+
+- [x] Benchmark for roundtrip time (Benchmark 1)
+- [x] Benchmark for message merging (Benchmark 2)
+- [ ] Benchmark for garbage generation
+- [ ] Benchmark for maximum concurrent clients
 
 ## License
 

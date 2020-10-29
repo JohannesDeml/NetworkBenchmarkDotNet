@@ -14,18 +14,6 @@ using System.Text;
 
 namespace NetCoreNetworkBenchmark
 {
-	public enum NetworkLibrary
-	{
-		ENet,
-		NetCoreServer,
-		LiteNetLib
-	}
-
-	public enum TestType
-	{
-		PingPong
-	}
-
 	public enum MessagePayload
 	{
 		Random,
