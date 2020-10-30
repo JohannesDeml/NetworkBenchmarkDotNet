@@ -48,14 +48,14 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		public Task StartServer()
 		{
 			Start();
-			var serverStopped = Task.Run(() =>
+			var serverStarted = Task.Run(() =>
 			{
 				while (!netManager.IsRunning)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
-			return serverStopped;
+			return serverStarted;
 		}
 
 		private void Start()
@@ -70,7 +70,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				while (netManager.IsRunning)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 			return serverStopped;

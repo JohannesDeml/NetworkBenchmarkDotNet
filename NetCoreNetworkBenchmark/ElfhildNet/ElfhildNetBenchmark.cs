@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ElfhildNet;
 
@@ -58,7 +59,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				{
 					while (echoClients[i].State != ConnectionState.Connected)
 					{
-						await Task.Delay(10);
+						Thread.Sleep(10);
 					}
 				}
 			});
@@ -119,7 +120,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				{
 					while (!echoClients[i].IsDisposed)
 					{
-						Task.Delay(10);
+						Thread.Sleep(10);
 					}
 				}
 			});

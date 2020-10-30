@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetCoreNetworkBenchmark.LiteNetLib
@@ -57,7 +58,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				{
 					while (!echoClients[i].IsConnected)
 					{
-						Task.Delay(10);
+						Thread.Sleep(10);
 					}
 				}
 			});
@@ -117,7 +118,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 				{
 					while (!echoClients[i].IsDisposed)
 					{
-						Task.Delay(10);
+						Thread.Sleep(10);
 					}
 				}
 			});

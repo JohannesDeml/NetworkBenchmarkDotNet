@@ -10,8 +10,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ElfhildNet;
@@ -87,19 +85,14 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		private void OnConnectionRequest(Func<Connection> accept, Action reject, string token)
 		{
+			// TODO this method is never called
 			Utilities.WriteVerboseLine("Connection request received!");
 			Connection connection = accept();
 			connections.Add(connection);
 
-			connection.PacketReceived += (ByteBuffer byteBuffer) =>
-			{
-				OnNetworkReceive(connection, byteBuffer);
-			};
+			connection.PacketReceived += (ByteBuffer byteBuffer) => { OnNetworkReceive(connection, byteBuffer); };
 
-			connection.Disconnected += () =>
-			{
-				OnDisconnected(connection);
-			};
+			connection.Disconnected += () => { OnDisconnected(connection); };
 		}
 
 		private void OnDisconnected(Connection connection)
