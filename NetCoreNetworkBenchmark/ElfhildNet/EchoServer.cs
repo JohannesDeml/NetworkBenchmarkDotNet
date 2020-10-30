@@ -43,9 +43,21 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task StartServer()
 		{
-			Start();
-			// TODO is there an event to get when the server is fully started?
-			return Task.Delay(100);
+			netManager.Start(config.Port);
+			
+			var serverStopped = Task.Run(async () =>
+			{
+				while (!netManager.IsRunning)
+				{
+					 netManager.Poll();
+
+				     netManager.Update(0.05f); // 0.05f = delta time from server (on unity it is Time.deltaTime)
+
+					 await Task.Delay(10);
+				}
+			});
+
+			return serverStopped;
 		}
 
 		private void Start()
@@ -55,8 +67,17 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task StopServer()
 		{
-			// TODO missing a stop server function
-			return Task.CompletedTask;
+			netManager.Stop();
+
+			var serverStopped = Task.Run(() =>
+			{
+				while (netManager.IsRunning)
+				{
+					Task.Delay(10);
+				}
+			});
+		
+			return serverStopped;
 		}
 
 		public void Dispose()
@@ -91,17 +112,14 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
 			if (benchmarkData.Running)
-			{
+			{		
 				Buffer.BlockCopy(byteBuffer.data, byteBuffer.position, message, 0, byteBuffer.size);
 				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 
 				connection.BeginUnreliable();
-				// TODO Can I expect to current buffer to be empty?
+				// TODO Can I expect to current buffer to be empty? (yes)
 				connection.Current.PutBytesWithLength(message, 0, message.Length);
-				connection.BeginUnreliable();
-
-				// TODO What delta is needed here?
-				netManager.Update(tickRate);
+				connection.EndUnreliable();
 			}
 		}
 	}
