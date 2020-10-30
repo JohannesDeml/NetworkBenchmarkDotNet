@@ -79,24 +79,14 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			netManager.Update(deltaTickRate);
 		}
 
-		public Task Disconnect()
+		public void Disconnect()
 		{
 			if (State != ConnectionState.Connected)
 			{
-				return Task.CompletedTask;
+				return;
 			}
 
 			connection.Disconnect();
-
-			var clientDisconnected = Task.Run(() =>
-			{
-				while (State == ConnectionState.Connected)
-				{
-					Thread.Sleep(10);
-				}
-			});
-
-			return clientDisconnected;
 		}
 
 		public Task Stop()

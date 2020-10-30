@@ -87,14 +87,24 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task DisconnectClients()
 		{
-			var disconnectTasks = new List<Task>();
-
 			for (int i = 0; i < echoClients.Count; i++)
 			{
-				disconnectTasks.Add(echoClients[i].Disconnect());
+				echoClients[i].Disconnect();
 			}
 
-			return Task.WhenAll(disconnectTasks);
+			var clientsDisconnected = Task.Run(() =>
+			{
+				for (int i = 0; i < echoClients.Count; i++)
+				{
+					var client = echoClients[i];
+					while (client.State == ConnectionState.Connected)
+					{
+						Thread.Sleep(10);
+					}
+				}
+
+			});
+			return clientsDisconnected;
 		}
 
 		public Task StopServer()
