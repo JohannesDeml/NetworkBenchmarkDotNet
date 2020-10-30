@@ -17,7 +17,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 {
 	internal class EchoClient
 	{
-		public ConnectionState State => connection.State;
+		public ConnectionState State => connection?.State ?? ConnectionState.Disconnected;
 		public bool IsDisposed { get; private set; }
 
 		private readonly int id;
@@ -26,8 +26,10 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		private readonly byte[] message;
 		private readonly int tickRate;
+		private readonly float deltaTickRate;
 		private readonly NetManager netManager;
 		private Connection connection;
+		private Task listenTask;
 
 		public EchoClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
@@ -36,6 +38,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
 			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
+			deltaTickRate = tickRate / 1000.0f;
 
 			netManager = new NetManager();
 
@@ -44,12 +47,24 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public void Start()
 		{
-			connection = netManager.Connect(config.Address, config.Port, "ConnectionKey");
+			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
 
-			connection.PacketReceived += (ByteBuffer byteBuffer) => { OnNetworkReceive(connection, byteBuffer); };
-
-			connection.Disconnected += OnDisconnect;
 			IsDisposed = false;
+		}
+
+		private void ConnectAndListen()
+		{
+			connection = netManager.Connect(config.Address, config.Port, "ConnectionKey");
+			connection.PacketReceived += (ByteBuffer byteBuffer) => { OnNetworkReceive(connection, byteBuffer); };
+			connection.Disconnected += OnDisconnect;
+
+			while (benchmarkData.Listen)
+			{
+				netManager.Poll();
+				netManager.Update(deltaTickRate);
+
+				Thread.Sleep(tickRate);
+			}
 		}
 
 		public void StartSendingMessages()
@@ -61,7 +76,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				Send(message);
 			}
 
-			netManager.Update(0.1f);
+			netManager.Update(deltaTickRate);
 		}
 
 		public Task Disconnect()
@@ -73,7 +88,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			connection.Disconnect();
 
-			var clientDisconnected = Task.Run(async () =>
+			var clientDisconnected = Task.Run(() =>
 			{
 				while (State == ConnectionState.Connected)
 				{
@@ -86,8 +101,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task Stop()
 		{
-			// TODO stopping is missing
-			return Task.CompletedTask;
+			return listenTask;
 		}
 
 		public void Dispose()

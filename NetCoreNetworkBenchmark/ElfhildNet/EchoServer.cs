@@ -25,12 +25,14 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		private readonly List<Connection> connections;
 		private readonly byte[] message;
 		private readonly int tickRate;
+		private readonly float deltaTickRate;
 
 		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
+			deltaTickRate = tickRate / 1000.0f;
 
 			netManager = new NetManager();
 			connections = new List<Connection>();
@@ -64,7 +66,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			{
 				netManager.Poll();
 
-				netManager.Update(tickRate);
+				netManager.Update(deltaTickRate);
 
 				Thread.Sleep(tickRate);
 			}
