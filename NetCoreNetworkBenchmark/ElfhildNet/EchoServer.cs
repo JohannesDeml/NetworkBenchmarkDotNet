@@ -92,8 +92,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		private void OnConnectionRequest(Func<Connection> accept, Action reject, string token)
 		{
-			// TODO this method is never called
-			Utilities.WriteVerboseLine("Connection request received!");
 			Connection connection = accept();
 			connections.Add(connection);
 
@@ -113,14 +111,25 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			if (benchmarkData.Running)
 			{
-				Buffer.BlockCopy(byteBuffer.data, byteBuffer.position, message, 0, byteBuffer.size);
-				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+				while (byteBuffer.HasData)
+				{
+					Buffer.BlockCopy(byteBuffer.data, byteBuffer.position + ElfhildNetBenchmark.HeaderSize, message, 0, message.Length);
 
-				connection.BeginUnreliable();
-				// TODO Can I expect to current buffer to be empty? (yes)
-				connection.Current.PutBytesWithLength(message, 0, message.Length);
-				connection.EndUnreliable();
+					byteBuffer.position += message.Length + ElfhildNetBenchmark.HeaderSize;
+					Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+
+					Send(connection, message);
+				}
 			}
+		}
+
+		private void Send(Connection connection, byte[] bytes)
+		{
+			connection.BeginUnreliable();
+			connection.Current.PutBytesWithLength(message, 0, message.Length);
+			connection.EndUnreliable();
+
+			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 	}
 }

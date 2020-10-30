@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -64,7 +64,7 @@ namespace ElfhildNet
 
         private ByteBuffer()
         {
-            data = new byte[1300];
+            data = new byte[1500];
         }
 
         public byte[] data;

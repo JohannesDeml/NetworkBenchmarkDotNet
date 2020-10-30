@@ -109,24 +109,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			IsDisposed = true;
 		}
 
-		private void Send(byte[] bytes)
-		{
-			if (State != ConnectionState.Connected)
-			{
-				return;
-			}
-
-
-			connection.BeginUnreliable();
-
-			connection.Current.PutBytesWithLength(message, 0, message.Length);
-
-			connection.EndUnreliable();
-
-
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
-		}
-
 		private void OnDisconnect()
 		{
 			Utilities.WriteVerboseLine($"Client {id} disconnected.");
@@ -136,11 +118,30 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			if (benchmarkData.Running)
 			{
-				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-				Send(message);
+				while (byteBuffer.HasData)
+				{
+					Buffer.BlockCopy(byteBuffer.data, byteBuffer.position + ElfhildNetBenchmark.HeaderSize, message, 0, message.Length);
 
-				connection.Update(tickRate);
+					byteBuffer.position += message.Length + ElfhildNetBenchmark.HeaderSize;
+					Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+
+					Send(message);
+				}
 			}
+		}
+
+		private void Send(byte[] bytes)
+		{
+			if (State != ConnectionState.Connected)
+			{
+				return;
+			}
+
+			connection.BeginUnreliable();
+			connection.Current.PutBytesWithLength(message, 0, message.Length);
+			connection.EndUnreliable();
+
+			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 	}
 }

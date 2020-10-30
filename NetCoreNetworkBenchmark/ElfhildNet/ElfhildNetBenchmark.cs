@@ -19,6 +19,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 {
 	public class ElfhildNetBenchmark : INetworkBenchmark
 	{
+		public const int HeaderSize = 4;
 		private BenchmarkConfiguration config;
 		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
