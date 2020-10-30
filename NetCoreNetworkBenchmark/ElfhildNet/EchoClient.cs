@@ -9,8 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using ElfhildNet;
@@ -48,10 +46,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			connection = netManager.Connect(config.Address, config.Port, "ConnectionKey");
 
-			connection.PacketReceived += (ByteBuffer byteBuffer) =>
-			{
-				OnNetworkReceive(connection, byteBuffer);
-			};
+			connection.PacketReceived += (ByteBuffer byteBuffer) => { OnNetworkReceive(connection, byteBuffer); };
 
 			connection.Disconnected += OnDisconnect;
 			IsDisposed = false;
@@ -66,6 +61,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			{
 				Send(message);
 			}
+
 			connection.EndUnreliable();
 
 			connection.Update(tickRate);
@@ -84,7 +80,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			{
 				while (State == ConnectionState.Connected)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 
