@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoClient.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
@@ -116,11 +116,13 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				return;
 			}
 
+
 			connection.BeginUnreliable();
 
 			connection.Current.PutBytesWithLength(message, 0, message.Length);
 
 			connection.EndUnreliable();
+
 
 			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
@@ -135,9 +137,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			if (benchmarkData.Running)
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-				connection.BeginUnreliable();
 				Send(message);
-				connection.EndUnreliable();
 
 				connection.Update(tickRate);
 			}
