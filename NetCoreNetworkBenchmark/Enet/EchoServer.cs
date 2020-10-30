@@ -57,26 +57,38 @@ namespace NetCoreNetworkBenchmark.Enet
 		private void Start()
 		{
 			host.Create(address, config.NumClients);
+			Event netEvent;
 
 			while (benchmarkData.Listen)
 			{
-				host.Service(tickRate, out Event netEvent);
+				bool polled = false;
 
-				switch (netEvent.Type)
+				while (!polled)
 				{
-					case EventType.None:
-						break;
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						if (host.Service(tickRate, out netEvent) <= 0)
+							break;
 
-					case EventType.Receive:
-						if (benchmarkData.Running)
-						{
-							Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
-							OnReceiveMessage(netEvent);
-						}
+						polled = true;
+					}
 
-						netEvent.Packet.Dispose();
+					switch (netEvent.Type)
+					{
+						case EventType.None:
+							break;
 
-						break;
+						case EventType.Receive:
+							if (benchmarkData.Running)
+							{
+								Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+								OnReceiveMessage(netEvent);
+							}
+
+							netEvent.Packet.Dispose();
+
+							break;
+					}
 				}
 			}
 		}

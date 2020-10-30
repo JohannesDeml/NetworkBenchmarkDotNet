@@ -73,29 +73,45 @@ namespace NetCoreNetworkBenchmark.Enet
 			host.Create();
 			peer = host.Connect(address, 4);
 
+			Event netEvent;
+
 			while (benchmarkData.Listen)
 			{
-				host.Service(tickRate, out Event netEvent);
+				bool polled = false;
 
-				switch (netEvent.Type)
+				while (!polled)
 				{
-					case EventType.None:
-						break;
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						if (host.Service(tickRate, out netEvent) <= 0)
+							break;
 
-					case EventType.Connect:
-						//Console.WriteLine($"Client {_id} connected!");
-						break;
+						polled = true;
+					}
 
-					case EventType.Receive:
-						if (benchmarkData.Running)
-						{
-							Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-							OnReceiveMessage(netEvent);
-						}
+					switch (netEvent.Type)
+					{
+						case EventType.None:
+							break;
 
-						netEvent.Packet.Dispose();
+						case EventType.Disconnect:
+							if (benchmarkData.Running)
+							{
+								Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+							}
 
-						break;
+							break;
+
+						case EventType.Receive:
+							if (benchmarkData.Running)
+							{
+								Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+								OnReceiveMessage(netEvent);
+							}
+
+							netEvent.Packet.Dispose();
+							break;
+					}
 				}
 			}
 		}
