@@ -47,11 +47,11 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			
 			var serverStopped = Task.Run(async () =>
 			{
-				while (!netManager.IsRunning)
+				while (netManager.IsRunning)
 				{
 					 netManager.Poll();
 
-				     netManager.Update(0.05f); // 0.05f = delta time from server (on unity it is Time.deltaTime)
+				     netManager.Update(0.1f); // 0.1f = delta time from server (on unity it is Time.deltaTime)
 
 					 await Task.Delay(10);
 				}
@@ -69,11 +69,11 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			netManager.Stop();
 
-			var serverStopped = Task.Run(() =>
+			var serverStopped = Task.Run(async () =>
 			{
 				while (netManager.IsRunning)
 				{
-					Task.Delay(10);
+					await Task.Delay(10);
 				}
 			});
 		
