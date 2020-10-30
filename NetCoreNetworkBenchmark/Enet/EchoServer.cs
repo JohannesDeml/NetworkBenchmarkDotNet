@@ -48,7 +48,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			{
 				while (!serverThread.IsAlive)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 			return serverStarted;
@@ -93,7 +93,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			{
 				while (serverThread.IsAlive)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 			return serverStopped;

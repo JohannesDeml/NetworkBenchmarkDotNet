@@ -52,7 +52,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				while (!netManager.IsRunning)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 			return serverStarted;
@@ -70,7 +70,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			{
 				while (netManager.IsRunning)
 				{
-					Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
 			return serverStopped;
