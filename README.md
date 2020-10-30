@@ -12,7 +12,7 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
 
 ### Supported Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.5)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
@@ -21,7 +21,7 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.21)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
