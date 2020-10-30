@@ -33,7 +33,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task StartServer()
 		{
-			return echoServer.StartServer();
+			return echoServer.StartServerThread();
 		}
 
 		public Task StartClients()
@@ -53,7 +53,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				echoClients[i].Start();
 			}
 
-			var clientsConnected = Task.Run(async () =>
+			var clientsConnected = Task.Run( () =>
 			{
 				for (int i = 0; i < config.NumClients; i++)
 				{
@@ -63,7 +63,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 					}
 				}
 			});
-            
+
 			return clientsConnected;
 		}
 
@@ -93,7 +93,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task StopServer()
 		{
-			return echoServer.StopServer();
+			return echoServer.StopServerThread();
 		}
 
 		public Task StopClients()

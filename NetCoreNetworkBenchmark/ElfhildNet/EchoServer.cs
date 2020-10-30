@@ -20,6 +20,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 	{
 		private readonly BenchmarkConfiguration config;
 		private readonly BenchmarkData benchmarkData;
+		private readonly Thread serverThread;
 		private readonly NetManager netManager;
 		private readonly List<Connection> connections;
 		private readonly byte[] message;
@@ -37,44 +38,48 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			message = new byte[config.MessageByteSize];
 
 			netManager.ConnectionRequestEvent += OnConnectionRequest;
+
+			serverThread = new Thread(this.Start);
+			serverThread.Name = "Elfhild Server";
 		}
 
-		public Task StartServer()
+		public Task StartServerThread()
 		{
-			netManager.Start(config.Port);
-			
-			var serverStopped = Task.Run(async () =>
+			serverThread.Start();
+			var serverStarted = Task.Run(() =>
 			{
-				while (netManager.IsRunning)
+				while (!serverThread.IsAlive)
 				{
-					 netManager.Poll();
-
-				     netManager.Update(0.1f); // 0.1f = delta time from server (on unity it is Time.deltaTime)
-
-					 await Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
-
-			return serverStopped;
+			return serverStarted;
 		}
 
 		private void Start()
 		{
 			netManager.Start(config.Port);
+
+			while (benchmarkData.Listen)
+			{
+				netManager.Poll();
+
+				netManager.Update(tickRate);
+
+				Thread.Sleep(tickRate);
+			}
 		}
 
-		public Task StopServer()
+		public Task StopServerThread()
 		{
 			netManager.Stop();
-
-			var serverStopped = Task.Run(async () =>
+			var serverStopped = Task.Run(() =>
 			{
-				while (netManager.IsRunning)
+				while (serverThread.IsAlive || netManager.IsRunning)
 				{
-					await Task.Delay(10);
+					Thread.Sleep(10);
 				}
 			});
-		
 			return serverStopped;
 		}
 
@@ -105,7 +110,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
 			if (benchmarkData.Running)
-			{		
+			{
 				Buffer.BlockCopy(byteBuffer.data, byteBuffer.position, message, 0, byteBuffer.size);
 				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 
