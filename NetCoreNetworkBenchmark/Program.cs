@@ -115,53 +115,18 @@ namespace NetCoreNetworkBenchmark
 			}
 			finally
 			{
-				Benchmark.CleanupBenchmark(networkBenchmark);
+				try
+				{
+					Benchmark.CleanupBenchmark(networkBenchmark);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine($"Error when cleaning up Library {Benchmark.Config.Library}" +
+					                  $"\n{e.Message}\n{e.StackTrace}");
+				}
+
 				Console.Write(Benchmark.PrintStatistics());
 			}
-		}
-
-		private static void RunPredefinedBenchmark()
-		{
-			var config = Benchmark.Config;
-			config.Address = "127.0.0.1";
-			config.TestType = TestType.PingPong;
-			config.MessagePayload = MessagePayload.Random;
-			config.Verbose = false;
-			config.TickRateServer = 60;
-			config.TickRateClient = 60;
-			config.TestDurationInSeconds = 60;
-
-
-			config.Name = "1";
-			config.MessageByteSize = 32;
-			config.NumClients = 1000;
-			config.ParallelMessagesPerClient = 1;
-
-			Console.Write(config.PrintConfiguration());
-			RunWithAllLibraries();
-
-			config.Name = "2";
-			config.MessageByteSize = 32;
-			config.NumClients = 100;
-			config.ParallelMessagesPerClient = 1000;
-
-			Console.Write(config.PrintConfiguration());
-			RunWithAllLibraries();
-		}
-
-		private static void RunWithAllLibraries()
-		{
-			RunWithLibrary(NetworkLibrary.ENet);
-			RunWithLibrary(NetworkLibrary.LiteNetLib);
-			RunWithLibrary(NetworkLibrary.NetCoreServer);
-		}
-
-		private static void RunWithLibrary(NetworkLibrary library)
-		{
-			Benchmark.Config.Library = library;
-			Run();
-			Thread.Sleep(500);
-			GC.Collect();
 		}
 	}
 }
