@@ -88,7 +88,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task Stop()
 		{
-			// If not disconnected, stopping consumes a lot of time
 			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 
 			return stopClient;
