@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ElfhildNetBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
@@ -8,10 +8,12 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ElfhildNet;
+using NanoSockets;
 
 namespace NetCoreNetworkBenchmark.ElfhildNet
 {
@@ -25,6 +27,8 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
+			UDP.Initialize();
+
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			echoServer = new EchoServer(config, benchmarkData);
@@ -83,6 +87,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		public Task DisconnectClients()
 		{
 			var disconnectTasks = new List<Task>();
+
 			for (int i = 0; i < echoClients.Count; i++)
 			{
 				disconnectTasks.Add(echoClients[i].Disconnect());

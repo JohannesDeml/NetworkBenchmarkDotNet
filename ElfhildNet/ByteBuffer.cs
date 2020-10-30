@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -9,25 +9,29 @@ namespace ElfhildNet
     {
         static ByteBuffer Pool;
         static int PoolSize;
+		static object locker = new object();
 
         public static ByteBuffer Allocate()
         {
-            if (Pool == null)
-            {
-                return new ByteBuffer();
-            }
-            else
-            {
-                ByteBuffer val = Pool;
+			lock (locker)
+			{
+				if (Pool == null)
+				{
+					return new ByteBuffer();
+				}
+				else
+				{
+					ByteBuffer val = Pool;
 
-                Pool = Pool.Link;
+					Pool = Pool.Link;
 
-                val.Link = null;
+					val.Link = null;
 
-                PoolSize--;
+					PoolSize--;
 
-                return val;
-            }
+					return val;
+				}
+			}
         }
 
         public bool HasData
@@ -43,16 +47,19 @@ namespace ElfhildNet
 
         public static void Deallocate(ByteBuffer buffer)
         {
-            if (PoolSize < 1000)
-            {
-                PoolSize++;
+			lock (locker)
+			{
+				if (PoolSize < 1000)
+				{
+					PoolSize++;
 
-                buffer.Reset();
+					buffer.Reset();
 
-                buffer.Link = Pool;
+					buffer.Link = Pool;
 
-                Pool = buffer;
-            }
+					Pool = buffer;
+				}
+			}
         }
 
         private ByteBuffer()
@@ -200,10 +207,8 @@ namespace ElfhildNet
 
         public void PutBytesWithLength(byte[] data, int offset, int length)
         {
-
-                ResizeIfNeed(position + length + 4);
-            FastBitConverter.GetBytes(data, position, length);
-            Buffer.BlockCopy(data, offset, data, position + 4, length);
+            FastBitConverter.GetBytes(this.data, position, length);
+            Buffer.BlockCopy(data, offset, this.data, position + 4, length);
             position += length + 4;
         }
 

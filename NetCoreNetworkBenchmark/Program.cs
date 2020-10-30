@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Program.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
@@ -19,6 +19,7 @@ namespace NetCoreNetworkBenchmark
 	{
 		static void Main(string[] args)
 		{
+			
 			var config = Benchmark.Config;
 			var showHelp = false;
 			var predefinedBenchmark = false;
@@ -153,7 +154,8 @@ namespace NetCoreNetworkBenchmark
 		{
 			RunWithLibrary(NetworkLibrary.ENet);
 			RunWithLibrary(NetworkLibrary.LiteNetLib);
-			RunWithLibrary(NetworkLibrary.NetCoreServer);
+			RunWithLibrary(NetworkLibrary.NetCoreServer);			
+			RunWithLibrary(NetworkLibrary.ElfhildNet);
 		}
 
 		private static void RunWithLibrary(NetworkLibrary library)

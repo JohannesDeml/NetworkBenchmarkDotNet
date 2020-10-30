@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,7 +45,7 @@ namespace ElfhildNet
         private const int MaxMtuCheckAttempts = 8;
         */
 
-        private const int Mtu = 1232 - 68;
+        private const int Mtu = 1500 - 68;
 
         public int Ping
         {
@@ -111,7 +111,7 @@ namespace ElfhildNet
 
             AckBuffer.Put(sequence);
 
-            if (AckBuffer.position > (Mtu - 150))
+            if (AckBuffer.position > (Mtu - 50))
             {
                 Send(AckBuffer);
 
@@ -128,7 +128,7 @@ namespace ElfhildNet
 #endif
 
 
-            if (ReliableBuffer.position > (Mtu - 150))
+            if (ReliableBuffer.position > (Mtu - 50))
             {
                 ReliableBuffer = null;
             }
@@ -173,7 +173,7 @@ namespace ElfhildNet
             if (Current != UnreliableBuffer) throw new NotSupportedException();
 #endif
 
-            if (UnreliableBuffer.position > (Mtu - 150))
+            if (UnreliableBuffer.position > (Mtu - 50))
             {
 
                 Send(UnreliableBuffer);
