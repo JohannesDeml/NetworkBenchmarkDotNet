@@ -111,7 +111,10 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		private void OnDisconnect()
 		{
-			Utilities.WriteVerboseLine($"Client {id} disconnected.");
+			if (benchmarkData.Running)
+			{
+				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+			}
 		}
 
 		private void OnNetworkReceive(Connection connection, ByteBuffer byteBuffer)
