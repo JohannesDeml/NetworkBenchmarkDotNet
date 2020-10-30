@@ -53,7 +53,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				echoClients[i].Start();
 			}
 
-			var clientsConnected = Task.Run(() =>
+			var clientsConnected = Task.Run(async () =>
 			{
 				for (int i = 0; i < config.NumClients; i++)
 				{
@@ -63,6 +63,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 					}
 				}
 			});
+            
 			return clientsConnected;
 		}
 
@@ -123,6 +124,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 					}
 				}
 			});
+
 			return allDisposed;
 		}
 

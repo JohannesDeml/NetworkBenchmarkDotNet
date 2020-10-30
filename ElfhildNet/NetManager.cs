@@ -24,6 +24,15 @@ namespace ElfhildNet
         private Connection First;
         private Socket UdpSocketv4;
         private readonly Dictionary<Address, Connection> Connections = new Dictionary<Address, Connection>(new AddressComparer());
+        public bool IsRunning
+        {
+            get
+            {
+                return isRunning && First != null;
+            }
+        }
+
+        bool isRunning = true;
 
         private class AddressComparer : IEqualityComparer<Address>
         {
@@ -52,89 +61,89 @@ namespace ElfhildNet
 
                 try
                 {
-                    if((count = UDP.Receive(UdpSocketv4, ref address, buffer.data, buffer.data.Length)) > 0){
-
+                    if ((count = UDP.Receive(UdpSocketv4, ref address, buffer.data, buffer.data.Length)) > 0)
+                    {
                         buffer.size = count;
                         buffer.position = 0;
 
                         PacketType type = (PacketType)(buffer.GetByte());
 
-                    switch (type)
-                    {
-                        case PacketType.ConnectRequest:
-                            if (!Connections.ContainsKey(address))
-                            {
-                                string token = buffer.GetString();
-
-                                Connection conn = new Connection()
+                        switch (type)
+                        {
+                            case PacketType.ConnectRequest:
+                                if (!Connections.ContainsKey(address))
                                 {
-                                    RemoteEndPoint = address,
-                                    UdpSocketv4 = UdpSocketv4,
-                                    State = ConnectionState.Connected
-                                };
+                                    string token = buffer.GetString();
 
-                                Connections.Add(address, conn);
-
-                                ConnectionRequestEvent?.Invoke(() =>
-                                {
-                                    conn.Next = First;
-
-                                    First = conn;
-
-                                    conn.PushAck(1);
-
-                                    return conn;
-                                }, () =>
-                                {
-                                    ByteBuffer response = ByteBuffer.Allocate();
-
-                                    response.Put((byte)PacketType.ConnectionDenied);
-
-                                    UDP.Send(UdpSocketv4, ref address, response.data, response.position);
-
-                                    ByteBuffer.Deallocate(response);
-                                }, token);
-                            }
-                            break;
-                        case PacketType.Disconnected:
-                            {
-                                Connection conn;
-
-                                if (Connections.TryGetValue(address, out conn))
-                                {
-                                    switch (conn.State)
+                                    Connection conn = new Connection()
                                     {
-                                        case ConnectionState.Connecting:
-                                        case ConnectionState.Connected:
-                                            conn.OnDisconnect();
-                                            break;
+                                        RemoteEndPoint = address,
+                                        UdpSocketv4 = UdpSocketv4,
+                                        State = ConnectionState.Connected
+                                    };
+
+                                    Connections.Add(address, conn);
+
+                                    ConnectionRequestEvent?.Invoke(() =>
+                                    {
+                                        conn.Next = First;
+
+                                        First = conn;
+
+                                        conn.PushAck(1);
+
+                                        return conn;
+                                    }, () =>
+                                    {
+                                        ByteBuffer response = ByteBuffer.Allocate();
+
+                                        response.Put((byte)PacketType.ConnectionDenied);
+
+                                        UDP.Send(UdpSocketv4, ref address, response.data, response.position);
+
+                                        ByteBuffer.Deallocate(response);
+                                    }, token);
+                                }
+                                break;
+                            case PacketType.Disconnected:
+                                {
+                                    Connection conn;
+
+                                    if (Connections.TryGetValue(address, out conn))
+                                    {
+                                        switch (conn.State)
+                                        {
+                                            case ConnectionState.Connecting:
+                                            case ConnectionState.Connected:
+                                                conn.OnDisconnect();
+                                                break;
+                                        }
                                     }
                                 }
-                            }
-                            break;
-                        default:
-                            {
-                                Connection conn;
-
-                                if (Connections.TryGetValue(address, out conn))
+                                break;
+                            default:
                                 {
-                                    switch (conn.State)
+                                    Connection conn;
+
+                                    if (Connections.TryGetValue(address, out conn))
                                     {
-                                        case ConnectionState.Connecting:
-                                            conn.State = ConnectionState.Connected;
-                                            conn.ProcessPacket(type, buffer);
-                                            break;
-                                        case ConnectionState.Connected:
-                                            conn.ProcessPacket(type, buffer);
-                                            break;
+                                        switch (conn.State)
+                                        {
+                                            case ConnectionState.Connecting:
+                                                conn.State = ConnectionState.Connected;
+                                                conn.ProcessPacket(type, buffer);
+                                                break;
+                                            case ConnectionState.Connected:
+                                                conn.ProcessPacket(type, buffer);
+                                                break;
+                                        }
                                     }
                                 }
-                            }
-                            break;
+                                break;
+                        }
+
                     }
-               
-                    }
-               }
+                }
                 catch (Exception ex)
                 {
                     Connection conn;
@@ -158,7 +167,7 @@ namespace ElfhildNet
         public void Update(float delta)
         {
         begin:
-            if(First != null)
+            if (First != null)
             {
                 if (First.Update(delta))
                 {
@@ -191,8 +200,6 @@ namespace ElfhildNet
 
         public Connection Connect(string address, int port, string token)
         {
-            UDP.Initialize();
-
             UdpSocketv4 = UDP.Create(512 * 1024, 512 * 1024);
 
             Address connectionAddress = new Address();
@@ -225,11 +232,8 @@ namespace ElfhildNet
             return conn;
         }
 
-
         public void Start(int port)
         {
-            UDP.Initialize();
-
             Address listenAddress = new Address();
 
             listenAddress.Port = (ushort)port;
@@ -239,6 +243,25 @@ namespace ElfhildNet
             UDP.SetIP(ref listenAddress, "::0");
 
             UDP.Bind(UdpSocketv4, ref listenAddress);
+        }
+
+        public void Stop()
+        {
+            isRunning = false;
+
+            if (First != null)
+            {
+                First.Disconnect();
+
+                Connection conn = First.Next;
+
+                while (conn != null)
+                {
+                    conn.Disconnect();
+
+                    conn = conn.Next;
+                }
+            }
         }
     }
 }

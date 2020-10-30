@@ -56,15 +56,12 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
 
-			connection.BeginUnreliable();
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
 				Send(message);
 			}
 
-			connection.EndUnreliable();
-
-			connection.Update(tickRate);
+			netManager.Update(0.1f);
 		}
 
 		public Task Disconnect()
@@ -76,7 +73,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			connection.Disconnect();
 
-			var clientDisconnected = Task.Run(() =>
+			var clientDisconnected = Task.Run(async () =>
 			{
 				while (State == ConnectionState.Connected)
 				{
@@ -105,7 +102,12 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 				return;
 			}
 
+			connection.BeginUnreliable();
+
 			connection.Current.PutBytesWithLength(message, 0, message.Length);
+
+			connection.EndUnreliable();
+
 			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 
