@@ -65,6 +65,8 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			{
 				Send(message);
 			}
+
+			netManager.Update(0.1f);
 		}
 
 		public Task Disconnect()
@@ -76,11 +78,11 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			connection.Disconnect();
 
-			var clientDisconnected = Task.Run(() =>
+			var clientDisconnected = Task.Run(async () =>
 			{
 				while (State == ConnectionState.Connected)
 				{
-					Task.Delay(10);
+					await Task.Delay(10);
 				}
 			});
 
