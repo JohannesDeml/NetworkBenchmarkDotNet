@@ -24,7 +24,7 @@ namespace NetCoreNetworkBenchmark
 	public class BenchmarkConfiguration
 	{
 		public TestType TestType = TestType.PingPong;
-		public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
+		public NetworkLibrary Library = NetworkLibrary.ElfhildNet;
 		public int Port = 3333;
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace NetCoreNetworkBenchmark
 
 		public string Name = "Custom";
 
-		public int NumClients = 1000;
+		public int NumClients = 1;
 		public int ParallelMessagesPerClient = 1;
 		public int MessageByteSize = 32;
 		public MessagePayload MessagePayload = MessagePayload.Ones;

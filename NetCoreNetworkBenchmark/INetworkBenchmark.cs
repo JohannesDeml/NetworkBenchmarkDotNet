@@ -10,6 +10,7 @@
 
 using System;
 using System.Threading.Tasks;
+using NetCoreNetworkBenchmark.ElfhildNet;
 using NetCoreNetworkBenchmark.Enet;
 using NetCoreNetworkBenchmark.LiteNetLib;
 using NetCoreNetworkBenchmark.NetCoreServer;
@@ -24,6 +25,9 @@ namespace NetCoreNetworkBenchmark
 			{
 				case NetworkLibrary.ENet:
 					return new ENetBenchmark();
+
+				case NetworkLibrary.ElfhildNet:
+					return new ElfhildNetBenchmark();
 
 				case NetworkLibrary.NetCoreServer:
 					return new NetCoreServerBenchmark();

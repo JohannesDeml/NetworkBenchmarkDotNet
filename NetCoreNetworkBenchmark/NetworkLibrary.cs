@@ -13,6 +13,7 @@ namespace NetCoreNetworkBenchmark
 	public enum NetworkLibrary
 	{
 		ENet,
+		ElfhildNet,
 		NetCoreServer,
 		LiteNetLib
 	}
