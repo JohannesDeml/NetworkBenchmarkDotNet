@@ -124,5 +124,10 @@ namespace NetCoreNetworkBenchmark.Enet
 
 			return Task.CompletedTask;
 		}
+
+		public void Deinitialize()
+		{
+			ENet.Library.Deinitialize();
+		}
 	}
 }

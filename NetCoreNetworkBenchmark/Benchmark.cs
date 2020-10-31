@@ -74,6 +74,7 @@ namespace NetCoreNetworkBenchmark
 			networkBenchmark.StopServer().Wait();
 			Utilities.WriteVerbose(".");
 			networkBenchmark.DisposeServer().Wait();
+			networkBenchmark.Deinitialize();
 			Utilities.WriteVerboseLine(" Done");
 			Utilities.WriteVerboseLine("");
 		}

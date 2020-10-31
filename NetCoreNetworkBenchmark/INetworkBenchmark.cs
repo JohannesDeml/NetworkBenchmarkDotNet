@@ -101,5 +101,10 @@ namespace NetCoreNetworkBenchmark
 		/// </summary>
 		/// <returns>Awaitable Task for when disposing is finished.</returns>
 		Task DisposeServer();
+
+		/// <summary>
+		/// De-Initialize the network library
+		/// </summary>
+		void Deinitialize();
 	}
 }

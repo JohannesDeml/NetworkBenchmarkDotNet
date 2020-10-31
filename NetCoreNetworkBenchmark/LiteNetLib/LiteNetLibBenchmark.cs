@@ -131,5 +131,10 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			return Task.CompletedTask;
 		}
+
+		public void Deinitialize()
+		{
+			
+		}
 	}
 }
