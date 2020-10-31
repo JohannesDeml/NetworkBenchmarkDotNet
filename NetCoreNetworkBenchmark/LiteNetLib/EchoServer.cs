@@ -24,17 +24,15 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
-		private readonly int tickRate;
 
 		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
-			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
-			netManager.UpdateTime = tickRate;
+			netManager.UpdateTime = Utilities.CalculateTimeout(config.TickRateServer);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
 			netManager.UnsyncedEvents = true;
 

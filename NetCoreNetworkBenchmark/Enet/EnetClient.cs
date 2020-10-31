@@ -24,7 +24,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		private readonly BenchmarkData benchmarkData;
 
 		private readonly byte[] message;
-		private readonly int tickRate;
+		private readonly int timeout;
 		private readonly Host host;
 		private readonly Address address;
 		private Peer peer;
@@ -35,7 +35,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
-			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
+			timeout = Utilities.CalculateTimeout(this.config.TickRateClient);
 
 			host = new Host();
 			address = new Address();
@@ -83,7 +83,9 @@ namespace NetCoreNetworkBenchmark.Enet
 				{
 					if (host.CheckEvents(out netEvent) <= 0)
 					{
-						if (host.Service(tickRate, out netEvent) <= 0)
+						// blocks up to the timeout if no events are received
+						// if a packet is received earlier, it stops blocking
+						if (host.Service(timeout, out netEvent) <= 0)
 							break;
 
 						polled = true;
