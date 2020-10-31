@@ -150,5 +150,10 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			return Task.CompletedTask;
 		}
+
+		public void Deinitialize()
+		{
+			UDP.Deinitialize();
+		}
 	}
 }
