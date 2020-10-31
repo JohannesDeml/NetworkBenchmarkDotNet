@@ -23,25 +23,60 @@ namespace NetCoreNetworkBenchmark
 
 	public class BenchmarkConfiguration
 	{
-		public TestType TestType = TestType.PingPong;
-		public NetworkLibrary Library = NetworkLibrary.NetCoreServer;
-		public int Port = 3333;
-
 		/// <summary>
 		/// Target address. If you want to test locally its "127.0.0.1" for ipv4 and "::1" for ipv6
 		/// </summary>
 		public string Address = "127.0.0.1";
 
+		/// <summary>
+		/// Server port
+		/// </summary>
+		public int Port = 3333;
+
+		/// <summary>
+		/// Test type that is used in the benchmark
+		/// </summary>
+		public TestType TestType = TestType.PingPong;
+
+		/// <summary>
+		/// Library used in the benchmark
+		/// </summary>
+		public NetworkLibrary Library = NetworkLibrary.ENet;
+
+		/// <summary>
+		/// Output additional information about current step and errors to the console
+		/// </summary>
 		public bool Verbose = true;
 
-		public string Name = "Custom";
-
+		/// <summary>
+		/// Number of clients used for the test
+		/// </summary>
 		public int NumClients = 1000;
+
+		/// <summary>
+		/// Number of messages each client exchanges with the server in parallel
+		/// Interesting if you want to see how well messages are merged
+		/// </summary>
 		public int ParallelMessagesPerClient = 1;
+
+		/// <summary>
+		/// Size of each message
+		/// </summary>
 		public int MessageByteSize = 32;
+
+		/// <summary>
+		/// Message content, might be interesting for compression or packet sniffing
+		/// </summary>
 		public MessagePayload MessagePayload = MessagePayload.Ones;
 
+		/// <summary>
+		/// Number of Updates per second for each client
+		/// </summary>
 		public int TickRateClient = 60;
+
+		/// <summary>
+		/// Number of Updates per second for the server
+		/// </summary>
 		public int TickRateServer = 60;
 
 		public byte[] Message { get; private set; }
@@ -84,18 +119,19 @@ namespace NetCoreNetworkBenchmark
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine($"### Benchmark {Name} (v {Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version})");
-			sb.AppendLine($"* `{CreateCommandlineInstruction()}`");
+			sb.AppendLine($"### NCNB v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version}");
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
-			sb.AppendLine($"* Test: {TestType}");
+			sb.AppendLine($"* Test: {TestType} with {Library}");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
+			sb.AppendLine($"* TickRate per second: Client: {TickRateClient}, Server: {TickRateServer}");
 			sb.AppendLine($"* Number of clients: {NumClients}");
 			sb.AppendLine($"* Parallel messages per client: {ParallelMessagesPerClient:n0}");
 			sb.AppendLine($"* Message size: {MessageByteSize} bytes");
 			sb.AppendLine($"* Message Payload: {MessagePayload}");
 			sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
+			sb.AppendLine($"* Reproduce: `{CreateCommandlineInstruction()}`");
 			sb.AppendLine();
 
 			return sb.ToString();

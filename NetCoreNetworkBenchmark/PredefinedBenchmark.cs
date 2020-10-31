@@ -30,7 +30,6 @@ namespace NetCoreNetworkBenchmark
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.Name = "1";
 			config.NumClients = 1000;
 			config.ParallelMessagesPerClient = 1;
 			config.MessageByteSize = 32;
@@ -42,7 +41,6 @@ namespace NetCoreNetworkBenchmark
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.Name = "2";
 			config.NumClients = 100;
 			config.ParallelMessagesPerClient = 10;
 			config.MessageByteSize = 32;
