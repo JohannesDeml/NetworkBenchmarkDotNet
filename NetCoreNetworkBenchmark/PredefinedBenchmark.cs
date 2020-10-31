@@ -25,12 +25,12 @@ namespace NetCoreNetworkBenchmark
 		private int messageTarget;
 		private INetworkBenchmark libraryImpl;
 
+
 		[GlobalSetup(Target = nameof(Benchmark1))]
 		public void PrepareBenchmark1()
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.Name = "1";
 			config.NumClients = 1000;
 			config.ParallelMessagesPerClient = 1;
 			config.MessageByteSize = 32;
@@ -42,8 +42,7 @@ namespace NetCoreNetworkBenchmark
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.Name = "2";
-			config.NumClients = 100;
+			config.NumClients = 1000;
 			config.ParallelMessagesPerClient = 10;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
@@ -94,6 +93,7 @@ namespace NetCoreNetworkBenchmark
 		public void CleanupIteration()
 		{
 			// Wait for messages from previous benchmark to be all sent
+			// TODO this can be done in a cleaner way
 			Thread.Sleep(100);
 		}
 

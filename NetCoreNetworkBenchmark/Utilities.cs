@@ -88,5 +88,20 @@ namespace NetCoreNetworkBenchmark
 
 			Console.WriteLine(text);
 		}
+
+		/// <summary>
+		/// Calculate the timeout in milliseconds fore a given tickrate
+		/// </summary>
+		/// <param name="tickRate">Given tickrate</param>
+		/// <returns>0 if tickrate is <= 0, otherwise tick duration in ms</returns>
+		public static int CalculateTimeout(int tickRate)
+		{
+			if (tickRate <= 0)
+			{
+				return 0;
+			}
+
+			return Math.Max(1000 / tickRate, 1);
+		}
 	}
 }

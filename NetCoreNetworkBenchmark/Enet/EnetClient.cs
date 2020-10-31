@@ -24,7 +24,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		private readonly BenchmarkData benchmarkData;
 
 		private readonly byte[] message;
-		private readonly int tickRate;
+		private readonly int timeout;
 		private readonly Host host;
 		private readonly Address address;
 		private Peer peer;
@@ -35,7 +35,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
-			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
+			timeout = Utilities.CalculateTimeout(this.config.TickRateClient);
 
 			host = new Host();
 			address = new Address();
@@ -73,29 +73,47 @@ namespace NetCoreNetworkBenchmark.Enet
 			host.Create();
 			peer = host.Connect(address, 4);
 
+			Event netEvent;
+
 			while (benchmarkData.Listen)
 			{
-				host.Service(tickRate, out Event netEvent);
+				bool polled = false;
 
-				switch (netEvent.Type)
+				while (!polled)
 				{
-					case EventType.None:
-						break;
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						// blocks up to the timeout if no events are received
+						// if a packet is received earlier, it stops blocking
+						if (host.Service(timeout, out netEvent) <= 0)
+							break;
 
-					case EventType.Connect:
-						//Console.WriteLine($"Client {_id} connected!");
-						break;
+						polled = true;
+					}
 
-					case EventType.Receive:
-						if (benchmarkData.Running)
-						{
-							Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-							OnReceiveMessage(netEvent);
-						}
+					switch (netEvent.Type)
+					{
+						case EventType.None:
+							break;
 
-						netEvent.Packet.Dispose();
+						case EventType.Disconnect:
+							if (benchmarkData.Running)
+							{
+								Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+							}
 
-						break;
+							break;
+
+						case EventType.Receive:
+							if (benchmarkData.Running)
+							{
+								Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+								OnReceiveMessage(netEvent);
+							}
+
+							netEvent.Packet.Dispose();
+							break;
+					}
 				}
 			}
 		}

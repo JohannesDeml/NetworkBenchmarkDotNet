@@ -12,7 +12,7 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
 
 ### Supported Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.3)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.5)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
@@ -21,7 +21,7 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.20)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.21)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
@@ -39,7 +39,7 @@ BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=3.1.403
   [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-  Job-MXHSPZ : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+  Job-WOXISK : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
 Concurrent=False  Server=True  InvocationCount=1  
 IterationCount=10  LaunchCount=1  UnrollFactor=1  
@@ -48,14 +48,14 @@ WarmupCount=1
 ```
 |     Method |       Library |        Mean |     Error |    StdDev |
 |----------- |-------------- |------------:|----------:|----------:|
-| **Benchmark1** |          **ENet** |  **5,304.1 ms** | **120.23 ms** |  **71.55 ms** |
-| Benchmark2 |          ENet |    898.7 ms |  77.05 ms |  50.97 ms |
-| **Benchmark1** | **NetCoreServer** |  **8,490.2 ms** |  **46.09 ms** |  **30.49 ms** |
-| Benchmark2 | NetCoreServer |  8,683.1 ms |  37.25 ms |  24.64 ms |
-| **Benchmark1** |    **LiteNetLib** | **13,248.2 ms** | **240.54 ms** | **143.14 ms** |
-| Benchmark2 |    LiteNetLib |  2,961.5 ms |  49.71 ms |  32.88 ms |
+| **Benchmark1** |          **ENet** |  **5,270.0 ms** | **171.39 ms** | **101.99 ms** |
+| Benchmark2 |          ENet |    908.3 ms |  84.13 ms |  55.64 ms |
+| **Benchmark1** | **NetCoreServer** |  **8,826.7 ms** | **272.59 ms** | **180.30 ms** |
+| Benchmark2 | NetCoreServer |  9,389.2 ms | 236.10 ms | 140.50 ms |
+| **Benchmark1** |    **LiteNetLib** | **13,276.9 ms** | **290.76 ms** | **192.32 ms** |
+| Benchmark2 |    LiteNetLib |  2,985.0 ms |  33.39 ms |  22.09 ms |
 
-![Benchmark Results](./Docs/benchmark.png)
+![Benchmark Results](./Docs/NetCoreNetworkBenchmark.PredefinedBenchmark-barplot.png)
 
 ### Benchmark 1
 Runs the PingPong Test with t with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  

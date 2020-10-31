@@ -27,7 +27,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 		private readonly BenchmarkData benchmarkData;
 
 		private readonly byte[] message;
-		private readonly int tickRate;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private NetPeer peer;
@@ -38,11 +37,11 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
-			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			netManager.UpdateTime = Utilities.CalculateTimeout(config.TickRateClient);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;
 
@@ -88,7 +87,6 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public Task Stop()
 		{
-			// If not disconnected, stopping consumes a lot of time
 			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 
 			return stopClient;

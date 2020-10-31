@@ -23,13 +23,13 @@ namespace NetCoreNetworkBenchmark.Enet
 		private readonly Host host;
 		private readonly Address address;
 		private readonly byte[] message;
-		private readonly int tickRate;
+		private readonly int timeout;
 
 		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
-			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
+			timeout = Utilities.CalculateTimeout(this.config.TickRateServer);
 
 			host = new Host();
 			address = new Address();
@@ -57,26 +57,48 @@ namespace NetCoreNetworkBenchmark.Enet
 		private void Start()
 		{
 			host.Create(address, config.NumClients);
+			Event netEvent;
 
 			while (benchmarkData.Listen)
 			{
-				host.Service(tickRate, out Event netEvent);
+				bool polled = false;
 
-				switch (netEvent.Type)
+				while (!polled)
 				{
-					case EventType.None:
-						break;
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						// blocks up to the timeout if no events are received
+						// if a packet is received earlier, it stops blocking
+						if (host.Service(timeout, out netEvent) <= 0)
+							break;
 
-					case EventType.Receive:
-						if (benchmarkData.Running)
-						{
-							Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
-							OnReceiveMessage(netEvent);
-						}
+						polled = true;
+					}
 
-						netEvent.Packet.Dispose();
+					switch (netEvent.Type)
+					{
+						case EventType.None:
+							break;
 
-						break;
+						case EventType.Receive:
+							if (benchmarkData.Running)
+							{
+								Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+								OnReceiveMessage(netEvent);
+							}
+
+							netEvent.Packet.Dispose();
+
+							break;
+
+						case EventType.Timeout:
+							if (benchmarkData.Running)
+							{
+								Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
+							}
+
+							break;
+					}
 				}
 			}
 		}

@@ -75,14 +75,15 @@ namespace NetCoreNetworkBenchmark
 			Utilities.WriteVerbose(".");
 			networkBenchmark.DisposeServer().Wait();
 			Utilities.WriteVerboseLine(" Done");
+			Utilities.WriteVerboseLine("");
 		}
 
 		public static string PrintStatistics()
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine($"#### {Config.Library}");
 			sb.AppendLine("```");
+			sb.AppendLine($"Results {Config.TestType} with {Config.Library}");
 			if (BenchmarkData.Errors > 0)
 			{
 				sb.AppendLine($"Errors: {BenchmarkData.Errors}");
