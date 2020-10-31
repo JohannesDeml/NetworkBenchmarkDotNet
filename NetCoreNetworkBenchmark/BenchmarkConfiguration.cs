@@ -14,13 +14,6 @@ using System.Text;
 
 namespace NetCoreNetworkBenchmark
 {
-	public enum MessagePayload
-	{
-		Random,
-		Zeros,
-		Ones
-	}
-
 	public class BenchmarkConfiguration
 	{
 		/// <summary>
@@ -79,8 +72,14 @@ namespace NetCoreNetworkBenchmark
 		/// </summary>
 		public int TickRateServer = 60;
 
-		public byte[] Message { get; private set; }
+		/// <summary>
+		/// Time the test will run
+		/// This time excludes preparations such as clients connecting to the server.
+		/// This time excludes cleanup such as clients disconnecting from the server.
+		/// </summary>
 		public int TestDurationInSeconds = 10;
+
+		public byte[] Message { get; private set; }
 
 		public BenchmarkConfiguration()
 		{

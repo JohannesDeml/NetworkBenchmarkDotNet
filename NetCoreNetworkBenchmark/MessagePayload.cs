@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NetworkLibrary.cs">
+// <copyright file="MessagePayload.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -10,21 +10,22 @@
 
 namespace NetCoreNetworkBenchmark
 {
-	public enum NetworkLibrary
+	public enum MessagePayload
 	{
 		/// <summary>
-		/// https://github.com/nxrighthere/ENet-CSharp
+		/// Random bytes that always use the seed of 0
+		/// They are always the same bytes for a gives message size
 		/// </summary>
-		ENet,
+		Random,
 
 		/// <summary>
-		/// https://github.com/chronoxor/NetCoreServer
+		/// Each byte is 0x00
 		/// </summary>
-		NetCoreServer,
+		Zeros,
 
 		/// <summary>
-		/// https://github.com/RevenantX/LiteNetLib
+		/// Each byte is 0xff
 		/// </summary>
-		LiteNetLib
+		Ones
 	}
 }
