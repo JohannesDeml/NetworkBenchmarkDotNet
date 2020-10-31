@@ -147,5 +147,10 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 			return disposeAll;
 		}
+
+		public void Deinitialize()
+		{
+			
+		}
 	}
 }
