@@ -22,7 +22,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		private readonly BenchmarkData benchmarkData;
 		private readonly Thread serverThread;
 		private readonly NetManager netManager;
-		private readonly List<Connection> connections;
 		private readonly byte[] message;
 		private readonly int tickRate;
 		private readonly float deltaTickRate;
@@ -35,7 +34,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			deltaTickRate = tickRate / 1000.0f;
 
 			netManager = new NetManager();
-			connections = new List<Connection>();
 
 			message = new byte[config.MessageByteSize];
 
@@ -93,7 +91,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		private void OnConnectionRequest(Func<Connection> accept, Action reject, string token)
 		{
 			Connection connection = accept();
-			connections.Add(connection);
 
 			connection.PacketReceived += (ByteBuffer byteBuffer) => { OnNetworkReceive(connection, byteBuffer); };
 
@@ -102,7 +99,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		private void OnDisconnected(Connection connection)
 		{
-			connections.Remove(connection);
 		}
 
 		private void OnNetworkReceive(Connection connection, ByteBuffer byteBuffer)
