@@ -38,7 +38,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
-			tickRate = Math.Max(1000 / this.config.TickRateClient, 1);
+			tickRate = Math.Max(1000 / this.config.ClientTickRate, 1);
 			deltaTickRate = tickRate / 1000.0f;
 
 			netManager = new NetManager();
@@ -78,7 +78,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
+			var parallelMessagesPerClient = config.ParallelMessages;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{

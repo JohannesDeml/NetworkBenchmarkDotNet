@@ -10,7 +10,6 @@
 
 using System;
 using System.Text;
-using NDesk.Options;
 
 namespace NetCoreNetworkBenchmark
 {
@@ -36,37 +35,6 @@ namespace NetCoreNetworkBenchmark
 		public static string EnumToString<T>() where T: Enum
 		{
 			return EnumToString(typeof(T));
-		}
-
-		public static bool ParseOption<TEnum>(string value, out TEnum target) where TEnum: Enum
-		{
-			if (Enum.TryParse(typeof(TEnum), value, true, out var parsedValue))
-			{
-				target = (TEnum) parsedValue;
-				if (target != null && (Enum.IsDefined(typeof(TEnum), target) || target.ToString().Contains(",")))
-				{
-					return true;
-				}
-			}
-
-			throw new OptionException(
-				$"Option \"{value}\" not valid for type {typeof(TEnum).Name}\n" +
-				$"Valid Options: {EnumToString<TEnum>()}", nameof(value));
-		}
-
-		public static bool ParseOption(string value, out int target, int minValue = 0, int maxValue = Int32.MaxValue)
-		{
-			if (int.TryParse(value, out var parsedValue))
-			{
-				target = parsedValue;
-				if (target >= minValue && target <= maxValue)
-				{
-					return true;
-				}
-			}
-
-			throw new OptionException($"Option {value} not valid\n" +
-			                          $"Allowed Range: [{minValue} , {maxValue}]", nameof(value));
 		}
 
 		public static void WriteVerbose(string text)

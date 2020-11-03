@@ -17,73 +17,75 @@ namespace NetCoreNetworkBenchmark
 	public class BenchmarkConfiguration
 	{
 		/// <summary>
-		/// Target address. If you want to test locally its "127.0.0.1" for ipv4 and "::1" for ipv6
+		/// Run the predefined benchmark
+		/// Ignores all other settings below
 		/// </summary>
-		public string Address = "127.0.0.1";
-
-		/// <summary>
-		/// Server port
-		/// </summary>
-		public int Port = 3333;
+		public bool PredefinedBenchmark { get; set; }
 
 		/// <summary>
 		/// Test type that is used in the benchmark
 		/// </summary>
-		public TestType TestType = TestType.PingPong;
+		public TestType Test { get; set; }
 
 		/// <summary>
 		/// Library used in the benchmark
 		/// </summary>
-		public NetworkLibrary Library = NetworkLibrary.ElfhildNet;
-
-		/// <summary>
-		/// Output additional information about current step and errors to the console
-		/// </summary>
-		public bool Verbose = true;
-
-		/// <summary>
-		/// Number of clients used for the test
-		/// </summary>
-		public int NumClients = 1000;
-
-		/// <summary>
-		/// Number of messages each client exchanges with the server in parallel
-		/// Interesting if you want to see how well messages are merged
-		/// </summary>
-		public int ParallelMessagesPerClient = 1;
-
-		/// <summary>
-		/// Size of each message
-		/// </summary>
-		public int MessageByteSize = 32;
-
-		/// <summary>
-		/// Message content, might be interesting for compression or packet sniffing
-		/// </summary>
-		public MessagePayload MessagePayload = MessagePayload.Ones;
-
-		/// <summary>
-		/// Number of Updates per second for each client
-		/// </summary>
-		public int TickRateClient = 60;
-
-		/// <summary>
-		/// Number of Updates per second for the server
-		/// </summary>
-		public int TickRateServer = 60;
+		public NetworkLibrary Library { get; set; }
 
 		/// <summary>
 		/// Time the test will run
 		/// This time excludes preparations such as clients connecting to the server.
 		/// This time excludes cleanup such as clients disconnecting from the server.
 		/// </summary>
-		public int TestDurationInSeconds = 10;
+		public int Duration { get; set; }
+
+		/// <summary>
+		/// Target address. If you want to test locally its "127.0.0.1" for ipv4 and "::1" for ipv6
+		/// </summary>
+		public string Address { get; set; }
+
+		/// <summary>
+		/// Server port
+		/// </summary>
+		public int Port { get; set; }
+
+		/// <summary>
+		/// Number of clients used for the test
+		/// </summary>
+		public int Clients { get; set; }
+
+		/// <summary>
+		/// Number of messages each client exchanges with the server in parallel
+		/// Interesting if you want to see how well messages are merged
+		/// </summary>
+		public int ParallelMessages { get; set; }
+
+		/// <summary>
+		/// Size of each message
+		/// </summary>
+		public int MessageByteSize { get; set; }
+
+		/// <summary>
+		/// Message content, might be interesting for compression or packet sniffing
+		/// </summary>
+		public MessagePayload MessagePayload { get; set; }
+
+		/// <summary>
+		/// Output additional information about current step and errors to the console
+		/// </summary>
+		public bool Verbose { get; set; }
+
+		/// <summary>
+		/// Number of Updates per second for each client
+		/// </summary>
+		public int ClientTickRate { get; set; }
+
+		/// <summary>
+		/// Number of Updates per second for the server
+		/// </summary>
+		public int ServerTickRate { get; set; }
 
 		public byte[] Message { get; private set; }
-
-		public BenchmarkConfiguration()
-		{
-		}
 
 		public void PrepareForNewBenchmark()
 		{
@@ -122,14 +124,14 @@ namespace NetCoreNetworkBenchmark
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
-			sb.AppendLine($"* Test: {TestType} with {Library}");
+			sb.AppendLine($"* Test: {Test} with {Library}");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
-			sb.AppendLine($"* TickRate per second: Client: {TickRateClient}, Server: {TickRateServer}");
-			sb.AppendLine($"* Number of clients: {NumClients}");
-			sb.AppendLine($"* Parallel messages per client: {ParallelMessagesPerClient:n0}");
+			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
+			sb.AppendLine($"* Number of clients: {Clients}");
+			sb.AppendLine($"* Parallel messages per client: {ParallelMessages:n0}");
 			sb.AppendLine($"* Message size: {MessageByteSize} bytes");
 			sb.AppendLine($"* Message Payload: {MessagePayload}");
-			sb.AppendLine($"* Defined duration: {TestDurationInSeconds} seconds");
+			sb.AppendLine($"* Defined duration: {Duration} seconds");
 			sb.AppendLine($"* Reproduce: `{CreateCommandlineInstruction()}`");
 			sb.AppendLine();
 
@@ -140,17 +142,31 @@ namespace NetCoreNetworkBenchmark
 		{
 			var sb = new StringBuilder("./NetCoreNetworkBenchmark");
 
-			sb.Append($" -t {TestType}");
+			sb.Append($" -t {Test}");
 			sb.Append($" -l {Library}");
 			sb.Append($" -a {Address}");
 			sb.Append($" -p {Port}");
-			sb.Append($" -c {NumClients}");
+			sb.Append($" -c {Clients}");
 			sb.Append($" -s {MessageByteSize}");
 			sb.Append($" -x {MessagePayload}");
-			sb.Append($" -m {ParallelMessagesPerClient}");
-			sb.Append($" -d {TestDurationInSeconds}");
+			sb.Append($" -m {ParallelMessages}");
+			sb.Append($" -d {Duration}");
 
 			return sb.ToString();
+		}
+
+		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkConfiguration config)
+		{
+			config.PredefinedBenchmark = true;
+			config.Test = TestType.PingPong;
+			config.Address = "127.0.0.1";
+			config.Port = 3333;
+			config.Duration = 60;
+			config.Verbose = false;
+			config.MessagePayload = MessagePayload.Random;
+			config.MessageByteSize = 32;
+			config.ServerTickRate = 60;
+			config.ClientTickRate = 60;
 		}
 	}
 }

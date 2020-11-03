@@ -35,7 +35,7 @@ namespace NetCoreNetworkBenchmark.Enet
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
-			timeout = Utilities.CalculateTimeout(this.config.TickRateClient);
+			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
 
 			host = new Host();
 			address = new Address();
@@ -48,7 +48,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
+			var parallelMessagesPerClient = config.ParallelMessages;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{

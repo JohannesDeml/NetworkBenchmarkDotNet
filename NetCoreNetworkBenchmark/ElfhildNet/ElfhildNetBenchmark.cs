@@ -31,8 +31,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			this.config = config;
 			this.benchmarkData = benchmarkData;
-			this.config.NumClients = 500;
-			this.config.ParallelMessagesPerClient = 50;
 			echoServer = new EchoServer(config, benchmarkData);
 			echoClients = new List<EchoClient>();
 		}
@@ -44,7 +42,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task StartClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients.Add(new EchoClient(i, config, benchmarkData));
 			}
@@ -54,14 +52,14 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients[i].Start();
 			}
 
 			var clientsConnected = Task.Run( () =>
 			{
-				for (int i = 0; i < config.NumClients; i++)
+				for (int i = 0; i < config.Clients; i++)
 				{
 					while (echoClients[i].State != ConnectionState.Connected)
 					{

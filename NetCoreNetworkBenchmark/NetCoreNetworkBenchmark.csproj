@@ -7,8 +7,8 @@
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
         <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.3.1</PackageVersion>
-        <AssemblyVersion>0.3.1</AssemblyVersion>
+        <PackageVersion>0.4.0</PackageVersion>
+        <AssemblyVersion>0.4.0</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU;x64</Platforms>
@@ -17,13 +17,20 @@
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
       <PackageReference Include="ENet-CSharp" Version="2.4.5" />
-      <PackageReference Include="NDesk.Options" Version="0.2.1" />
       <PackageReference Include="NetCoreServer" Version="3.0.21" />
+      <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ElfhildNet\ElfhildNet.csproj" />
       <ProjectReference Include="..\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 
@@ -37,6 +44,13 @@
 
     <PropertyGroup>
         <RetainVMGarbageCollection>true</RetainVMGarbageCollection>
+        <StartupObject>NetCoreNetworkBenchmark.Program</StartupObject>
+        <Version>0.4.0</Version>
+        <Description>NCNB is a benchmark for low level networking libraries using UDP and can be used with Unity and for .Net Core standalone server applications. The benchmark focuses on latency, performance and scalability.</Description>
+        <RepositoryUrl>https://github.com/JohannesDeml/NetCoreNetworkBenchmark</RepositoryUrl>
+        <PackageTags>sockets, UDP, benchmark, network, Unity, network-benchmark</PackageTags>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/JohannesDeml/NetCoreNetworkBenchmark</PackageProjectUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

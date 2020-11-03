@@ -32,7 +32,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
-			netManager.UpdateTime = Utilities.CalculateTimeout(config.TickRateServer);
+			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
 			netManager.UnsyncedEvents = true;
 
@@ -83,7 +83,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		private void OnConnectionRequest(ConnectionRequest request)
 		{
-			if (netManager.ConnectedPeerList.Count > config.NumClients)
+			if (netManager.ConnectedPeerList.Count > config.Clients)
 			{
 				Console.WriteLine("Too many clients try to connect to the server");
 				request.Reject();

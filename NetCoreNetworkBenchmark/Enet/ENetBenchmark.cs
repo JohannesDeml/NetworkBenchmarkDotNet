@@ -38,7 +38,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task StartClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients.Add(new EchoClientThreaded(i, config, benchmarkData));
 			}
@@ -48,14 +48,14 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients[i].Start();
 			}
 
 			var clientsConnected = Task.Run(() =>
 			{
-				for (int i = 0; i < config.NumClients; i++)
+				for (int i = 0; i < config.Clients; i++)
 				{
 					while (!echoClients[i].IsConnected)
 					{

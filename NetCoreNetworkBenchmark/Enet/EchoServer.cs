@@ -29,7 +29,7 @@ namespace NetCoreNetworkBenchmark.Enet
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
-			timeout = Utilities.CalculateTimeout(this.config.TickRateServer);
+			timeout = Utilities.CalculateTimeout(this.config.ServerTickRate);
 
 			host = new Host();
 			address = new Address();
@@ -56,7 +56,7 @@ namespace NetCoreNetworkBenchmark.Enet
 
 		private void Start()
 		{
-			host.Create(address, config.NumClients);
+			host.Create(address, config.Clients);
 			Event netEvent;
 
 			while (benchmarkData.Listen)

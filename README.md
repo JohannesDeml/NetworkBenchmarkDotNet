@@ -39,7 +39,7 @@ BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=3.1.403
   [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-  Job-WOXISK : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+  Job-QYXZWQ : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
 Concurrent=False  Server=True  InvocationCount=1  
 IterationCount=10  LaunchCount=1  UnrollFactor=1  
@@ -48,12 +48,12 @@ WarmupCount=1
 ```
 |     Method |       Library |        Mean |     Error |    StdDev |
 |----------- |-------------- |------------:|----------:|----------:|
-| **Benchmark1** |          **ENet** |  **5,270.0 ms** | **171.39 ms** | **101.99 ms** |
-| Benchmark2 |          ENet |    908.3 ms |  84.13 ms |  55.64 ms |
-| **Benchmark1** | **NetCoreServer** |  **8,826.7 ms** | **272.59 ms** | **180.30 ms** |
-| Benchmark2 | NetCoreServer |  9,389.2 ms | 236.10 ms | 140.50 ms |
-| **Benchmark1** |    **LiteNetLib** | **13,276.9 ms** | **290.76 ms** | **192.32 ms** |
-| Benchmark2 |    LiteNetLib |  2,985.0 ms |  33.39 ms |  22.09 ms |
+| **Benchmark1** |          **ENet** |  **5,375.7 ms** | **174.01 ms** | **115.10 ms** |
+| Benchmark2 |          ENet |    921.5 ms |  29.62 ms |  19.59 ms |
+| **Benchmark1** | **NetCoreServer** |  **8,326.7 ms** | **192.85 ms** | **127.56 ms** |
+| Benchmark2 | NetCoreServer |  8,943.6 ms |  63.25 ms |  37.64 ms |
+| **Benchmark1** |    **LiteNetLib** | **12,763.4 ms** | **437.03 ms** | **289.07 ms** |
+| Benchmark2 |    LiteNetLib |  3,556.3 ms |  57.70 ms |  34.34 ms |
 
 ![Benchmark Results](./Docs/NetCoreNetworkBenchmark.PredefinedBenchmark-barplot.png)
 
@@ -62,8 +62,8 @@ Runs the PingPong Test with t with **1,000** clients, which pingpong **1 message
 This test is for getting an idea of an average roundtrip time.
 
 ### Benchmark 2
-Runs the PingPong Test with t with **100** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
-This test is for getting an idea of a more realistic scenario, in which the protocol also has to merge messages.
+Runs the PingPong Test with t with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+This test is for multiplexing / message merging performance.
 
 ### Notes
 
@@ -81,26 +81,30 @@ Then just open the solution file with Visual Studio/Rider/Visual Studio Code and
 ## Usage
 
 ```
-  -h, -?, --help             Show help
-  -b, --benchmark            Run predefined full benchmark with all tests and 
-                               libraries, ignores all other settings
-  -t, --test=VALUE           Test (Default: PingPong)
-                               Options: [PingPong]
-  -l, --library=VALUE        Library target (Default: LiteNetLib)
-                               Options: [ENet, NetCoreServer, LiteNetLib]
-  -a, --address=VALUE        Address to use (Default: 127.0.0.1)
-  -p, --port=VALUE           Port (Default: 3333)
-  -c, --clients=VALUE        # Simultaneous clients (Default: 1000)
-  -m, --messages=VALUE       # Parallel messages per client (Default: 1)
-  -s, --size=VALUE           Message byte size sent by clients (Default: 32)
-  -x, --messageload=VALUE    Message load sent by clients (Default: Ones)
-                               Options: [Random, Zeros, Ones]
-  -d, --duration=VALUE       Duration fo the test in seconds (Default: 10)
+Usage:
+  NetCoreNetworkBenchmark [options]
+
+Options:
+  -b, --predefined-benchmark                       Run predefined benchmarks [default: False]
+  -t, --test <PingPong>                            Test type [default: PingPong]
+  -l, --library <ENet|LiteNetLib|NetCoreServer>    Library target [default: ENet]
+  -d, --duration <duration>                        Test duration in seconds [default: 10]
+  --address <address>                              IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
+  --port <port>                                    Socket Port [default: 3333]
+  --clients <clients>                              # Simultaneous clients [default: 1000]
+  --parallel-messages <parallel-messages>          # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>          Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>            Message load sent by clients [default: Random]
+  --verbose                                        Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>            Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>            Server ticks per second if supported [default: 60]
+  --version                                        Show version information
+  -?, -h, --help                                   Show help and usage information
 ```
 
 ## Contributions are welcome!
 
-Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up per [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.
+Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up via [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.
 
 ### Rules for adding a Library
 

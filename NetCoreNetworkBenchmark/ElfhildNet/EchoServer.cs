@@ -31,7 +31,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
-			tickRate = Math.Max(1000 / this.config.TickRateServer, 1);
+			tickRate = Math.Max(1000 / this.config.ServerTickRate, 1);
 			deltaTickRate = tickRate / 1000.0f;
 
 			netManager = new NetManager();
