@@ -21,9 +21,9 @@ namespace NetCoreNetworkBenchmark
 		{
 			var rootCommand = new RootCommand
 			{
-				new Option<bool>(
+				new Option<PredefinedBenchmark>(
 					new [] {"--predefined-benchmark", "-b"},
-					getDefaultValue:() => false,
+					getDefaultValue:() => PredefinedBenchmark.None,
 					"Run predefined benchmarks"),
 				new Option<TestType>(
 					new [] {"--test", "-t"},
@@ -82,14 +82,24 @@ namespace NetCoreNetworkBenchmark
 			rootCommand.Handler = CommandHandler.Create<BenchmarkConfiguration>((config) =>
 			{
 				Benchmark.Config = config;
-				if (config.PredefinedBenchmark)
+				var mode = config.PredefinedBenchmark;
+				if (mode == PredefinedBenchmark.None)
 				{
-					BenchmarkRunner.Run<PredefinedBenchmark>();
+					Console.Write(config.PrintConfiguration());
+					Run();
 					return 0;
 				}
 
-				Console.Write(config.PrintConfiguration());
-				Run();
+				if ((mode & PredefinedBenchmark.Performance) != 0)
+				{
+					BenchmarkRunner.Run<PerformanceBenchmark>();
+				}
+
+				if ((mode & PredefinedBenchmark.Garbage) != 0)
+				{
+					BenchmarkRunner.Run<GarbageBenchmark>();
+				}
+
 				return 0;
 			});
 

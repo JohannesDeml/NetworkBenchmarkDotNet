@@ -20,7 +20,7 @@ namespace NetCoreNetworkBenchmark
 		/// Run the predefined benchmark
 		/// Ignores all other settings below
 		/// </summary>
-		public bool PredefinedBenchmark { get; set; }
+		public PredefinedBenchmark PredefinedBenchmark { get; set; }
 
 		/// <summary>
 		/// Test type that is used in the benchmark
@@ -156,7 +156,6 @@ namespace NetCoreNetworkBenchmark
 
 		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkConfiguration config)
 		{
-			config.PredefinedBenchmark = true;
 			config.Test = TestType.PingPong;
 			config.Address = "127.0.0.1";
 			config.Port = 3333;
