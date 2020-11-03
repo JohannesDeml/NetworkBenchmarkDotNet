@@ -81,21 +81,25 @@ Then just open the solution file with Visual Studio/Rider/Visual Studio Code and
 ## Usage
 
 ```
-  -h, -?, --help             Show help
-  -b, --benchmark            Run predefined full benchmark with all tests and 
-                               libraries, ignores all other settings
-  -t, --test=VALUE           Test (Default: PingPong)
-                               Options: [PingPong]
-  -l, --library=VALUE        Library target (Default: LiteNetLib)
-                               Options: [ENet, NetCoreServer, LiteNetLib]
-  -a, --address=VALUE        Address to use (Default: 127.0.0.1)
-  -p, --port=VALUE           Port (Default: 3333)
-  -c, --clients=VALUE        # Simultaneous clients (Default: 1000)
-  -m, --messages=VALUE       # Parallel messages per client (Default: 1)
-  -s, --size=VALUE           Message byte size sent by clients (Default: 32)
-  -x, --messageload=VALUE    Message load sent by clients (Default: Ones)
-                               Options: [Random, Zeros, Ones]
-  -d, --duration=VALUE       Duration fo the test in seconds (Default: 10)
+Usage:
+  NetCoreNetworkBenchmark [options]
+
+Options:
+  -b, --predefined-benchmark                       Run predefined benchmarks [default: False]
+  -t, --test <PingPong>                            Test type [default: PingPong]
+  -l, --library <ENet|LiteNetLib|NetCoreServer>    Library target [default: ENet]
+  -d, --duration <duration>                        Test duration in seconds [default: 10]
+  --address <address>                              IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
+  --port <port>                                    Socket Port [default: 3333]
+  --clients <clients>                              # Simultaneous clients [default: 1000]
+  --parallel-messages <parallel-messages>          # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>          Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>            Message load sent by clients [default: Random]
+  --verbose                                        Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>            Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>            Server ticks per second if supported [default: 60]
+  --version                                        Show version information
+  -?, -h, --help                                   Show help and usage information
 ```
 
 ## Contributions are welcome!

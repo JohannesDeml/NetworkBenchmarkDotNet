@@ -24,7 +24,7 @@ namespace NetCoreNetworkBenchmark
 				new Option<bool>(
 					new [] {"--predefined-benchmark", "-b"},
 					getDefaultValue:() => false,
-					"Run predefined full benchmark with all tests and libraries, ignores all other settings"),
+					"Run predefined benchmarks"),
 				new Option<TestType>(
 					new [] {"--test", "-t"},
 					getDefaultValue:() => TestType.PingPong,
@@ -68,11 +68,11 @@ namespace NetCoreNetworkBenchmark
 				new Option<int>(
 					"--client-tick-rate",
 					getDefaultValue:() => 60,
-					"Number of ticks per second for clients, for libraries that use ticks"),
+					"Client ticks per second if supported"),
 				new Option<int>(
 					"--server-tick-rate",
 					getDefaultValue:() => 60,
-					"Number of ticks per second for the server, for libraries that use ticks")
+					"Server ticks per second if supported")
 
 			};
 
