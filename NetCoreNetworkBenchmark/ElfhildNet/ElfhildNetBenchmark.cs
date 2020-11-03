@@ -19,7 +19,6 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 {
 	public class ElfhildNetBenchmark : INetworkBenchmark
 	{
-		public const int HeaderSize = 4;
 		private BenchmarkConfiguration config;
 		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
@@ -32,6 +31,8 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 
 			this.config = config;
 			this.benchmarkData = benchmarkData;
+			this.config.NumClients = 500;
+			this.config.ParallelMessagesPerClient = 50;
 			echoServer = new EchoServer(config, benchmarkData);
 			echoClients = new List<EchoClient>();
 		}

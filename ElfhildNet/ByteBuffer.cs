@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -49,7 +49,7 @@ namespace ElfhildNet
         {
 			lock (locker)
 			{
-				if (PoolSize < 1000)
+				if (PoolSize < 5000)
 				{
 					PoolSize++;
 
@@ -212,7 +212,13 @@ namespace ElfhildNet
             position += length + 4;
         }
 
-        public void PutBytesWithLength(byte[] data)
+		public void PutBytes(byte[] data, int offset, int length)
+		{
+			Buffer.BlockCopy(data, offset, this.data, position, length);
+			this.position += length;
+		}
+
+		public void PutBytesWithLength(byte[] data)
         {
             ResizeIfNeed(position + data.Length + 4);
             FastBitConverter.GetBytes(this.data, position, data.Length);
@@ -402,6 +408,8 @@ namespace ElfhildNet
             this.position += size * 8;
             return arr;
         }
+
+
 
         public ulong[] GetULongArray()
         {

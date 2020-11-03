@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using ElfhildNet;
@@ -60,14 +61,20 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		{
 			netManager.Start(config.Port);
 
+			Stopwatch timer = Stopwatch.StartNew();
+
+			ByteBuffer buffer = ByteBuffer.Allocate();
+
 			while (benchmarkData.Listen)
 			{
-				netManager.Poll();
+				netManager.Poll(buffer, tickRate);
 
-				netManager.Update(deltaTickRate);
+				netManager.Update((float)timer.Elapsed.TotalSeconds);
 
-				Thread.Sleep(tickRate);
+				timer.Restart();
 			}
+
+			ByteBuffer.Deallocate(buffer);
 		}
 
 		public Task StopServerThread()
@@ -109,9 +116,10 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 			{
 				while (byteBuffer.HasData)
 				{
-					Buffer.BlockCopy(byteBuffer.data, byteBuffer.position + ElfhildNetBenchmark.HeaderSize, message, 0, message.Length);
+					Buffer.BlockCopy(byteBuffer.data, byteBuffer.position, message, 0, message.Length);
 
-					byteBuffer.position += message.Length + ElfhildNetBenchmark.HeaderSize;
+					byteBuffer.position += message.Length;
+
 					Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
 					Send(connection, message);
@@ -122,7 +130,7 @@ namespace NetCoreNetworkBenchmark.ElfhildNet
 		private void Send(Connection connection, byte[] bytes)
 		{
 			connection.BeginUnreliable();
-			connection.Current.PutBytesWithLength(message, 0, message.Length);
+			connection.Current.PutBytes(message, 0, message.Length);
 			connection.EndUnreliable();
 
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
