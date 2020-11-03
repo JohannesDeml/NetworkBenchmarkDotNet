@@ -29,8 +29,10 @@ namespace NetCoreNetworkBenchmark
 		[GlobalSetup(Target = nameof(Benchmark1))]
 		public void PrepareBenchmark1()
 		{
-			messageTarget = 1000 * 1000;
+			Benchmark.ApplyPredefinedConfiguration();
 			var config = Benchmark.Config;
+
+			messageTarget = 1000 * 1000;
 			config.Clients = 1000;
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
@@ -40,8 +42,10 @@ namespace NetCoreNetworkBenchmark
 		[GlobalSetup(Target = nameof(Benchmark2))]
 		public void PrepareBenchmark2()
 		{
-			messageTarget = 1000 * 1000;
+			Benchmark.ApplyPredefinedConfiguration();
 			var config = Benchmark.Config;
+
+			messageTarget = 1000 * 1000;
 			config.Clients = 1000;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
@@ -52,10 +56,7 @@ namespace NetCoreNetworkBenchmark
 		public void PrepareBenchmark()
 		{
 			var config = Benchmark.Config;
-			config.Verbose = false;
 			config.Library = Library;
-			config.Test = TestType.PingPong;
-			config.MessagePayload = MessagePayload.Random;
 
 			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
 			Benchmark.PrepareBenchmark(libraryImpl);

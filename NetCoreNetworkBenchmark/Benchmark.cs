@@ -18,6 +18,16 @@ namespace NetCoreNetworkBenchmark
 		public static BenchmarkConfiguration Config;
 		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
 
+		public static void ApplyPredefinedConfiguration()
+		{
+			if (Config == null)
+			{
+				Config = new BenchmarkConfiguration();
+			}
+
+			BenchmarkConfiguration.ApplyPredefinedBenchmarkConfiguration(ref Config);
+		}
+
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose("-> Prepare Benchmark.");

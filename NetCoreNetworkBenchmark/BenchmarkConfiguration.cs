@@ -154,5 +154,19 @@ namespace NetCoreNetworkBenchmark
 
 			return sb.ToString();
 		}
+
+		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkConfiguration config)
+		{
+			config.PredefinedBenchmark = true;
+			config.Test = TestType.PingPong;
+			config.Address = "127.0.0.1";
+			config.Port = 3333;
+			config.Duration = 60;
+			config.Verbose = false;
+			config.MessagePayload = MessagePayload.Random;
+			config.MessageByteSize = 32;
+			config.ServerTickRate = 60;
+			config.ClientTickRate = 60;
+		}
 	}
 }
