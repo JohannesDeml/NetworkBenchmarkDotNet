@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using NanoSockets;
@@ -49,122 +49,122 @@ namespace ElfhildNet
 
         public event Action<Func<Connection>, Action, string> ConnectionRequestEvent;
 
-        public void Poll()
-        {
-            Address address = new Address();
+		public bool Poll(ByteBuffer buffer, int timeout)
+		{
+			Address address = new Address();
 
-            ByteBuffer buffer = ByteBuffer.Allocate();
+			if (UDP.Poll(UdpSocketv4, timeout) > 0)
+			{
+				int count = 0;
 
-            while (UDP.Poll(UdpSocketv4, 0) > 0)
-            {
-                int count = 0;
+				try
+				{
+					if ((count = UDP.Receive(UdpSocketv4, ref address, buffer.data, buffer.data.Length)) > 0)
+					{
 
-                try
-                {
-                    if ((count = UDP.Receive(UdpSocketv4, ref address, buffer.data, buffer.data.Length)) > 0)
-                    {
-                        buffer.size = count;
-                        buffer.position = 0;
+						buffer.size = count;
+						buffer.position = 0;
 
-                        PacketType type = (PacketType)(buffer.GetByte());
+						PacketType type = (PacketType)(buffer.GetByte());
 
-                        switch (type)
-                        {
-                            case PacketType.ConnectRequest:
-                                if (!Connections.ContainsKey(address))
-                                {
-                                    string token = buffer.GetString();
+						switch (type)
+						{
+							case PacketType.ConnectRequest:
+								if (!Connections.ContainsKey(address))
+								{
+									string token = buffer.GetString();
 
-                                    Connection conn = new Connection()
-                                    {
-                                        RemoteEndPoint = address,
-                                        UdpSocketv4 = UdpSocketv4,
-                                        State = ConnectionState.Connected
-                                    };
+									Connection conn = new Connection()
+									{
+										RemoteEndPoint = address,
+										UdpSocketv4 = UdpSocketv4,
+										State = ConnectionState.Connected
+									};
 
-                                    Connections.Add(address, conn);
+									Connections.Add(address, conn);
 
-                                    ConnectionRequestEvent?.Invoke(() =>
-                                    {
-                                        conn.Next = First;
+									ConnectionRequestEvent?.Invoke(() =>
+									{
+										conn.Next = First;
 
-                                        First = conn;
+										First = conn;
 
-                                        conn.PushAck(1);
+										conn.PushAck(1);
 
-                                        return conn;
-                                    }, () =>
-                                    {
-                                        ByteBuffer response = ByteBuffer.Allocate();
+										return conn;
+									}, () =>
+									{
+										ByteBuffer response = ByteBuffer.Allocate();
 
-                                        response.Put((byte)PacketType.ConnectionDenied);
+										response.Put((byte)PacketType.ConnectionDenied);
 
-                                        UDP.Send(UdpSocketv4, ref address, response.data, response.position);
+										UDP.Send(UdpSocketv4, ref address, response.data, response.position);
 
-                                        ByteBuffer.Deallocate(response);
-                                    }, token);
-                                }
-                                break;
-                            case PacketType.Disconnected:
-                                {
-                                    Connection conn;
+										ByteBuffer.Deallocate(response);
+									}, token);
+								}
+								break;
+							case PacketType.Disconnected:
+								{
+									Connection conn;
 
-                                    if (Connections.TryGetValue(address, out conn))
-                                    {
-                                        switch (conn.State)
-                                        {
-                                            case ConnectionState.Connecting:
-                                            case ConnectionState.Connected:
-                                                conn.OnDisconnect();
-                                                break;
-                                        }
-                                    }
-                                }
-                                break;
-                            default:
-                                {
-                                    Connection conn;
+									if (Connections.TryGetValue(address, out conn))
+									{
+										switch (conn.State)
+										{
+											case ConnectionState.Connecting:
+											case ConnectionState.Connected:
+												conn.OnDisconnect();
+												break;
+										}
+									}
+								}
+								break;
+							default:
+								{
+									Connection conn;
 
-                                    if (Connections.TryGetValue(address, out conn))
-                                    {
-                                        switch (conn.State)
-                                        {
-                                            case ConnectionState.Connecting:
-                                                conn.State = ConnectionState.Connected;
-                                                conn.ProcessPacket(type, buffer);
-                                                break;
-                                            case ConnectionState.Connected:
-                                                conn.ProcessPacket(type, buffer);
-                                                break;
-                                        }
-                                    }
-                                }
-                                break;
-                        }
+									if (Connections.TryGetValue(address, out conn))
+									{
+										switch (conn.State)
+										{
+											case ConnectionState.Connecting:
+												conn.State = ConnectionState.Connected;
+												conn.ProcessPacket(type, buffer);
+												break;
+											case ConnectionState.Connected:
+												conn.ProcessPacket(type, buffer);
+												break;
+										}
+									}
+								}
+								break;
+						}
 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Connection conn;
+						return true;
+					}
+				}
+				catch (Exception ex)
+				{
+					Connection conn;
 
-                    if (Connections.TryGetValue(address, out conn))
-                    {
-                        switch (conn.State)
-                        {
-                            case ConnectionState.Connecting:
-                            case ConnectionState.Connected:
-                                conn.OnDisconnect();
-                                break;
-                        }
-                    }
-                }
-            }
+					if (Connections.TryGetValue(address, out conn))
+					{
+						switch (conn.State)
+						{
+							case ConnectionState.Connecting:
+							case ConnectionState.Connected:
+								conn.OnDisconnect();
+								break;
+						}
+					}
+				}
+			}
 
-            ByteBuffer.Deallocate(buffer);
-        }
+			return false;
+		}
 
-        public void Update(float delta)
+		public void Update(float delta)
         {
         begin:
             if (First != null)
