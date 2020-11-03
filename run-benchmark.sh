@@ -1,1 +1,10 @@
-./NetCoreNetworkBenchmark/bin/x64/Release/netcoreapp3.1/NetCoreNetworkBenchmark -b
+#!/bin/bash
+
+if [ -z "$1" ]
+then
+  mode="All"
+else 
+  mode="$1"
+fi
+
+./bin/NetCoreNetworkingBenchmark-Linux/NetCoreNetworkBenchmark -b "$mode"
