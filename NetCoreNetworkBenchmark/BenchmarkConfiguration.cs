@@ -124,14 +124,11 @@ namespace NetCoreNetworkBenchmark
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
-			sb.AppendLine($"* Test: {Test} with {Library}");
+			sb.AppendLine($"* Test: {Test} with {Library} for {Duration} seconds");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
-			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Number of clients: {Clients}");
-			sb.AppendLine($"* Parallel messages per client: {ParallelMessages:n0}");
-			sb.AppendLine($"* Message size: {MessageByteSize} bytes");
-			sb.AppendLine($"* Message Payload: {MessagePayload}");
-			sb.AppendLine($"* Defined duration: {Duration} seconds");
+			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize}bytes, Payload: {MessagePayload}");
+			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Reproduce: `{CreateCommandlineInstruction()}`");
 			sb.AppendLine();
 
@@ -142,15 +139,17 @@ namespace NetCoreNetworkBenchmark
 		{
 			var sb = new StringBuilder("./NetCoreNetworkBenchmark");
 
-			sb.Append($" -t {Test}");
-			sb.Append($" -l {Library}");
-			sb.Append($" -a {Address}");
-			sb.Append($" -p {Port}");
-			sb.Append($" -c {Clients}");
-			sb.Append($" -s {MessageByteSize}");
-			sb.Append($" -x {MessagePayload}");
-			sb.Append($" -m {ParallelMessages}");
-			sb.Append($" -d {Duration}");
+			sb.Append($" --test {Test}");
+			sb.Append($" --library {Library}");
+			sb.Append($" --duration {Duration}");
+			sb.Append($" --address {Address}");
+			sb.Append($" --port {Port}");
+			sb.Append($" --clients {Clients}");
+			sb.Append($" --parallel-messages {ParallelMessages}");
+			sb.Append($" --message-byte-size {MessageByteSize}");
+			sb.Append($" --message-payload {MessagePayload}");
+			sb.Append($" --client-tick-rate {ClientTickRate}");
+			sb.Append($" --server-tick-rate {ServerTickRate}");
 
 			return sb.ToString();
 		}
