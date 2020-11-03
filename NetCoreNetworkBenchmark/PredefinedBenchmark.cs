@@ -31,8 +31,8 @@ namespace NetCoreNetworkBenchmark
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.NumClients = 1000;
-			config.ParallelMessagesPerClient = 1;
+			config.Clients = 1000;
+			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
 		}
@@ -42,8 +42,8 @@ namespace NetCoreNetworkBenchmark
 		{
 			messageTarget = 1000 * 1000;
 			var config = Benchmark.Config;
-			config.NumClients = 1000;
-			config.ParallelMessagesPerClient = 10;
+			config.Clients = 1000;
+			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
 		}
@@ -54,7 +54,7 @@ namespace NetCoreNetworkBenchmark
 			var config = Benchmark.Config;
 			config.Verbose = false;
 			config.Library = Library;
-			config.TestType = TestType.PingPong;
+			config.Test = TestType.PingPong;
 			config.MessagePayload = MessagePayload.Random;
 
 			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);

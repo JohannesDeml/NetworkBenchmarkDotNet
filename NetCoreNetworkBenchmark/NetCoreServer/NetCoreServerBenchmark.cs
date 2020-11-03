@@ -26,7 +26,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			this.echoServer = new EchoServer(config, benchmarkData);
-			this.echoClients = new List<EchoClient>(config.NumClients);
+			this.echoClients = new List<EchoClient>(config.Clients);
 		}
 
 		public Task StartServer()
@@ -44,7 +44,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task StartClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients.Add(new EchoClient(config, benchmarkData));
 			}
@@ -54,14 +54,14 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < config.NumClients; i++)
+			for (int i = 0; i < config.Clients; i++)
 			{
 				echoClients[i].Connect();
 			}
 
 			var clientsConnected = Task.Run(() =>
 			{
-				for (int i = 0; i < config.NumClients; i++)
+				for (int i = 0; i < config.Clients; i++)
 				{
 					while (!echoClients[i].IsConnected)
 					{
@@ -121,7 +121,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 
 			var disposeAll = Task.Run(() =>
 			{
-				for (int i = 0; i < config.NumClients; i++)
+				for (int i = 0; i < config.Clients; i++)
 				{
 					while (!echoClients[i].IsDisposed)
 					{

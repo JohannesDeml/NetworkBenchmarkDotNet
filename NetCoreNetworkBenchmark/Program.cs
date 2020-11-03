@@ -9,94 +9,91 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Threading;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using BenchmarkDotNet.Running;
-using NDesk.Options;
 
 namespace NetCoreNetworkBenchmark
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
-			var config = Benchmark.Config;
-			var showHelp = false;
-			var predefinedBenchmark = false;
-
-			var options = new OptionSet()
+			var rootCommand = new RootCommand
 			{
-				{
-					"h|?|help", "Show help",
-					v => showHelp = (v != null)
-				},
-				{
-					"b|benchmark", "Run predefined full benchmark with all tests and libraries, ignores all other settings",
-					v => predefinedBenchmark = (v != null)
-				},
-				{
-					"t|test=", $"Test (Default: {config.TestType})\nOptions: {Utilities.EnumToString<TestType>()}",
-					v => Utilities.ParseOption(v, out config.TestType)
-				},
-				{
-					"l|library=", $"Library target (Default: {config.Library})\nOptions: {Utilities.EnumToString<NetworkLibrary>()}",
-					v => Utilities.ParseOption(v, out config.Library)
-				},
-				{
-					"a|address=", $"Address to use (Default: {config.Address})",
-					v => config.Address = v
-				},
-				{
-					"p|port=", $"Port (Default: {config.Port})",
-					v => Utilities.ParseOption(v, out config.Port, 0, 65535)
-				},
-				{
-					"c|clients=", $"# Simultaneous clients (Default: {config.NumClients})",
-					v => Utilities.ParseOption(v, out config.NumClients, 1, 1024 * 1024)
-				},
-				{
-					"m|messages=", $"# Parallel messages per client (Default: {config.ParallelMessagesPerClient})",
-					v => Utilities.ParseOption(v, out config.ParallelMessagesPerClient, 1, 1024 * 1024)
-				},
-				{
-					"s|size=", $"Message byte size sent by clients (Default: {config.MessageByteSize})",
-					v => Utilities.ParseOption(v, out config.MessageByteSize, 1, 1024 * 1024)
-				},
-				{
-					"x|messageload=", $"Message load sent by clients (Default: {config.MessagePayload})\nOptions: {Utilities.EnumToString<MessagePayload>()}",
-					v => Utilities.ParseOption(v, out config.MessagePayload)
-				},
-				{
-					"d|duration=", $"Duration fo the test in seconds (Default: {config.TestDurationInSeconds})",
-					v => Utilities.ParseOption(v, out config.TestDurationInSeconds, 1)
-				}
+				new Option<bool>(
+					new [] {"--predefined-benchmark", "-b"},
+					getDefaultValue:() => false,
+					"Run predefined full benchmark with all tests and libraries, ignores all other settings"),
+				new Option<TestType>(
+					new [] {"--test", "-t"},
+					getDefaultValue:() => TestType.PingPong,
+					"Test type"),
+				new Option<NetworkLibrary>(
+					new [] {"--library", "-l"},
+					getDefaultValue:() => NetworkLibrary.ENet,
+					"Library target"),
+				new Option<int>(
+					new [] {"--duration", "-d"},
+					getDefaultValue:() => 10,
+					"Test duration in seconds"),
+				new Option<string>(
+					"--address",
+					getDefaultValue:() => "127.0.0.1",
+					"IP Address, can be ipv4 or ipv6"),
+				new Option<int>(
+					"--port",
+					getDefaultValue:() => 3333,
+					"Socket Port"),
+				new Option<int>(
+					"--clients",
+					getDefaultValue:() => 1000,
+					"# Simultaneous clients"),
+				new Option<int>(
+					"--parallel-messages",
+					getDefaultValue:() => 1,
+					"# Parallel messages per client"),
+				new Option<int>(
+					"--message-byte-size",
+					getDefaultValue:() => 32,
+					"Message byte size sent by clients"),
+				new Option<MessagePayload>(
+					"--message-payload",
+					getDefaultValue:() => MessagePayload.Random,
+					"Message load sent by clients"),
+				new Option<bool>(
+					"--verbose",
+					getDefaultValue:() => true,
+					"Verbose output of test steps and errors"),
+				new Option<int>(
+					"--client-tick-rate",
+					getDefaultValue:() => 60,
+					"Number of ticks per second for clients, for libraries that use ticks"),
+				new Option<int>(
+					"--server-tick-rate",
+					getDefaultValue:() => 60,
+					"Number of ticks per second for the server, for libraries that use ticks")
+
 			};
 
-			try
-			{
-				options.Parse(args);
-			}
-			catch (OptionException e)
-			{
-				Console.WriteLine($"Error when parsing options\n{e.Message}\n");
-				showHelp = true;
-			}
+			rootCommand.Name = "NetCoreNetworkBenchmark";
+			rootCommand.Description = "Benchmark Low Level .Net Core Networking libraries for UDP socket performance";
 
-			if (showHelp)
+			rootCommand.Handler = CommandHandler.Create<BenchmarkConfiguration>((config) =>
 			{
-				Console.WriteLine("Usage:");
-				options.WriteOptionDescriptions(Console.Out);
-				return;
-			}
+				Benchmark.Config = config;
+				if (config.PredefinedBenchmark)
+				{
+					BenchmarkRunner.Run<PredefinedBenchmark>();
+					return 0;
+				}
 
-			if (predefinedBenchmark)
-			{
-				BenchmarkRunner.Run<PredefinedBenchmark>();
-				//RunPredefinedBenchmark();
-				return;
-			}
+				Console.Write(config.PrintConfiguration());
+				Run();
+				return 0;
+			});
 
-			Console.Write(config.PrintConfiguration());
-			Run();
+			return rootCommand.Invoke(args);
 		}
 
 		private static void Run()

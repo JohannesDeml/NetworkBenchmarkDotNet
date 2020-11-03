@@ -15,7 +15,7 @@ namespace NetCoreNetworkBenchmark
 {
 	public static class Benchmark
 	{
-		public static readonly BenchmarkConfiguration Config = new BenchmarkConfiguration();
+		public static BenchmarkConfiguration Config;
 		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
 
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
@@ -41,7 +41,7 @@ namespace NetCoreNetworkBenchmark
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
 			Benchmark.StartBenchmark(networkBenchmark);
 
-			Thread.Sleep(Config.TestDurationInSeconds * 1000);
+			Thread.Sleep(Config.Duration * 1000);
 
 			Benchmark.StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
@@ -84,7 +84,7 @@ namespace NetCoreNetworkBenchmark
 			var sb = new StringBuilder();
 
 			sb.AppendLine("```");
-			sb.AppendLine($"Results {Config.TestType} with {Config.Library}");
+			sb.AppendLine($"Results {Config.Test} with {Config.Library}");
 			if (BenchmarkData.Errors > 0)
 			{
 				sb.AppendLine($"Errors: {BenchmarkData.Errors}");

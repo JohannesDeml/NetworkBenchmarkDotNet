@@ -25,7 +25,7 @@ namespace NetCoreNetworkBenchmark.NetCoreServer
 		public EchoClient(BenchmarkConfiguration config, BenchmarkData benchmarkData): base(config.Address, config.Port)
 		{
 			message = config.Message;
-			initialMessages = config.ParallelMessagesPerClient;
+			initialMessages = config.ParallelMessages;
 			this.benchmarkData = benchmarkData;
 		}
 

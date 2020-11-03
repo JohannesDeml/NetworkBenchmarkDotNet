@@ -41,7 +41,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.IPv6Enabled = IPv6Mode.Disabled;
-			netManager.UpdateTime = Utilities.CalculateTimeout(config.TickRateClient);
+			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;
 
@@ -63,7 +63,7 @@ namespace NetCoreNetworkBenchmark.LiteNetLib
 
 		public void StartSendingMessages()
 		{
-			var parallelMessagesPerClient = config.ParallelMessagesPerClient;
+			var parallelMessagesPerClient = config.ParallelMessages;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
