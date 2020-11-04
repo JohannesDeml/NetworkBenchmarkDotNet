@@ -20,7 +20,7 @@ namespace NetCoreNetworkBenchmark
 		/// Run the predefined benchmark
 		/// Ignores all other settings below
 		/// </summary>
-		public PredefinedBenchmark PredefinedBenchmark { get; set; }
+		public BenchmarkMode Benchmark { get; set; }
 
 		/// <summary>
 		/// Test type that is used in the benchmark
@@ -120,7 +120,7 @@ namespace NetCoreNetworkBenchmark
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine($"### NCNB v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version}");
+			sb.AppendLine($"### NCNB v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");

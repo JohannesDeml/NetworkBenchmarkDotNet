@@ -28,47 +28,45 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
 
 ## Benchmarks
 
-To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b`
-
-[All Results](./Benchmarks)
+To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b All`
 
 
 ``` ini
-
-BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
+Results v0.5.0, BenchmarkDotNet v0.12.1, OS ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=3.1.403
   [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-  Job-QYXZWQ : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
-
-Concurrent=False  Server=True  InvocationCount=1  
-IterationCount=10  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  
-
 ```
-|     Method |       Library |        Mean |     Error |    StdDev |
-|----------- |-------------- |------------:|----------:|----------:|
-| **Benchmark1** |          **ENet** |  **5,375.7 ms** | **174.01 ms** | **115.10 ms** |
-| Benchmark2 |          ENet |    921.5 ms |  29.62 ms |  19.59 ms |
-| **Benchmark1** | **NetCoreServer** |  **8,326.7 ms** | **192.85 ms** | **127.56 ms** |
-| Benchmark2 | NetCoreServer |  8,943.6 ms |  63.25 ms |  37.64 ms |
-| **Benchmark1** |    **LiteNetLib** | **12,763.4 ms** | **437.03 ms** | **289.07 ms** |
-| Benchmark2 |    LiteNetLib |  3,556.3 ms |  57.70 ms |  34.34 ms |
+| Benchmark       | ENet                           | LiteNetLib                     | NetCoreServer                  |
+| --------------- | ------------------------------ | ------------------------------ | ------------------------------ |
+| **Performance** |                                |                                |                                |
+| Performance1    | **192,034 msg/s** (5,207.4 ms) | **78,447 msg/s** (12,747.5 ms) | **109,813 msg/s** (9,106.4 ms) |
+| Performance2    | **1,075,153 msg/s** (930.1 ms) | **286,566 msg/s** (3,489.6 ms) | **114,481 msg/s** (8,735.1 ms) |
+| **Garbage**     |                                |                                |                                |
+| Alloc           | **0.512 MB**                   | **81.161 MB**                  | **161.978 MB**                 |
+| GC Pauses       | **83.4 ms** (max 8.4 ms)       | **101.1 ms** (max 2.9 ms)      | **74.5 ms** (max 2.5 ms)       |
 
-![Benchmark Results](./Docs/NetCoreNetworkBenchmark.PredefinedBenchmark-barplot.png)
+![Benchmark Results](./Docs/NetCoreNetworkBenchmark.PerformanceBenchmark-barplot.png)
 
-### Benchmark 1
-Runs the PingPong Test with t with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+### Benchmark Performance1
+Runs the benchmark with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
-### Benchmark 2
-Runs the PingPong Test with t with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+### Benchmark Performance2
+Runs the benchmark with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance.
+
+### Benchmark Garbage
+
+Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
+This test collects information about generated garbage while running the benchmark.
 
 ### Notes
 
 * The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
+* Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the benchmarks, it's all about how they perform while sending and receiving (lots of) messages.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
+* To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
 
 
 
@@ -85,21 +83,21 @@ Usage:
   NetCoreNetworkBenchmark [options]
 
 Options:
-  -b, --predefined-benchmark                       Run predefined benchmarks [default: False]
-  -t, --test <PingPong>                            Test type [default: PingPong]
-  -l, --library <ENet|LiteNetLib|NetCoreServer>    Library target [default: ENet]
-  -d, --duration <duration>                        Test duration in seconds [default: 10]
-  --address <address>                              IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
-  --port <port>                                    Socket Port [default: 3333]
-  --clients <clients>                              # Simultaneous clients [default: 1000]
-  --parallel-messages <parallel-messages>          # Parallel messages per client [default: 1]
-  --message-byte-size <message-byte-size>          Message byte size sent by clients [default: 32]
-  --message-payload <Ones|Random|Zeros>            Message load sent by clients [default: Random]
-  --verbose                                        Verbose output of test steps and errors [default: True]
-  --client-tick-rate <client-tick-rate>            Client ticks per second if supported [default: 60]
-  --server-tick-rate <server-tick-rate>            Server ticks per second if supported [default: 60]
-  --version                                        Show version information
-  -?, -h, --help                                   Show help and usage information
+  -b, --benchmark <All|Custom|Garbage|Performance>    Run predefined benchmarks [default: Custom]
+  -t, --test <PingPong>                               Test type [default: PingPong]
+  -l, --library <ENet|LiteNetLib|NetCoreServer>       Library target [default: ENet]
+  -d, --duration <duration>                           Test duration in seconds [default: 10]
+  --address <address>                                 IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
+  --port <port>                                       Socket Port [default: 3333]
+  --clients <clients>                                 # Simultaneous clients [default: 1000]
+  --parallel-messages <parallel-messages>             # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>             Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>               Message load sent by clients [default: Random]
+  --verbose                                           Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>               Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>               Server ticks per second if supported [default: 60]
+  --version                                           Show version information
+  -?, -h, --help                                      Show help and usage information
 ```
 
 ## Contributions are welcome!
@@ -124,7 +122,7 @@ Your new proposed library ...
 3. Add your library name to the [NetworkLibrary](../../blob/master/NetCoreNetworkBenchmark/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
 5. Use the `-l ` argument (or `BenchmarkConfiguration.Library`) to test your library and if everything works as expected.
-6. Run the benchmarks `./NetCoreNetworkBenchmark -b` and see if your library runs correct
+6. Run the benchmarks `./NetCoreNetworkBenchmark -b All` and see if your library runs correct
 7. Create a PR including your benchmark md results 🎉
 
 ### Rules for adding a benchmark
@@ -134,7 +132,8 @@ Ideas for benchmarks:
 
 - [x] Benchmark for roundtrip time (Benchmark 1)
 - [x] Benchmark for message merging (Benchmark 2)
-- [ ] Benchmark for garbage generation
+- [x] Benchmark for garbage generation
+- [ ] Benchmark .Net 5.0 once it's stable
 - [ ] Benchmark for maximum concurrent clients
 
 ## License

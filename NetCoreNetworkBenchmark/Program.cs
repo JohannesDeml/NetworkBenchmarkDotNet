@@ -11,6 +11,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
 namespace NetCoreNetworkBenchmark
@@ -21,9 +22,9 @@ namespace NetCoreNetworkBenchmark
 		{
 			var rootCommand = new RootCommand
 			{
-				new Option<PredefinedBenchmark>(
-					new [] {"--predefined-benchmark", "-b"},
-					getDefaultValue:() => PredefinedBenchmark.None,
+				new Option<BenchmarkMode>(
+					new [] {"--benchmark", "-b"},
+					getDefaultValue:() => BenchmarkMode.Custom,
 					"Run predefined benchmarks"),
 				new Option<TestType>(
 					new [] {"--test", "-t"},
@@ -82,22 +83,25 @@ namespace NetCoreNetworkBenchmark
 			rootCommand.Handler = CommandHandler.Create<BenchmarkConfiguration>((config) =>
 			{
 				Benchmark.Config = config;
-				var mode = config.PredefinedBenchmark;
-				if (mode == PredefinedBenchmark.None)
+				var mode = config.Benchmark;
+				Console.Write(config.PrintConfiguration());
+
+				if (mode == BenchmarkMode.Custom)
 				{
-					Console.Write(config.PrintConfiguration());
 					Run();
 					return 0;
 				}
 
-				if ((mode & PredefinedBenchmark.Performance) != 0)
+				if ((mode & BenchmarkMode.Performance) != 0)
 				{
 					BenchmarkRunner.Run<PerformanceBenchmark>();
+					Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 				}
 
-				if ((mode & PredefinedBenchmark.Garbage) != 0)
+				if ((mode & BenchmarkMode.Garbage) != 0)
 				{
 					BenchmarkRunner.Run<GarbageBenchmark>();
+					Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
 				}
 
 				return 0;

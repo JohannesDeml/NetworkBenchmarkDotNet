@@ -13,12 +13,12 @@ using System;
 namespace NetCoreNetworkBenchmark
 {
 	[Flags]
-	public enum PredefinedBenchmark
+	public enum BenchmarkMode
 	{
 		/// <summary>
 		/// Run benchmark defined by commandline args
 		/// </summary>
-		None = 0,
+		Custom = 0,
 		/// <summary>
 		/// Run Benchmark Performance1, Performance 2
 		/// Benchmark wih high CCU and high message count to get accurate performance numbers
@@ -32,6 +32,6 @@ namespace NetCoreNetworkBenchmark
 		/// <summary>
 		/// Run all predefined benchmarks
 		/// </summary>
-		All = 1 << 2 - 1
+		All = (1 << 2) - 1
 	}
 }
