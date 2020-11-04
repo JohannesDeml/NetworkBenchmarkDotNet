@@ -64,7 +64,7 @@ This test collects information about generated garbage while running the benchma
 ### Notes
 
 * The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
-* Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the benchmarks, it's all about how they perform while sending and receiving (lots of) messages.
+* Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the Garbage benchmark.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 * To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
 
