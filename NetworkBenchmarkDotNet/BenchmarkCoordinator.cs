@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Benchmark.cs">
+// <copyright file="BenchmarkCoordinator.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -13,19 +13,19 @@ using System.Threading;
 
 namespace NetworkBenchmark
 {
-	public static class Benchmark
+	public static class BenchmarkCoordinator
 	{
-		public static BenchmarkConfiguration Config;
+		public static BenchmarkSetup Config;
 		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
 
 		public static void ApplyPredefinedConfiguration()
 		{
 			if (Config == null)
 			{
-				Config = new BenchmarkConfiguration();
+				Config = new BenchmarkSetup();
 			}
 
-			BenchmarkConfiguration.ApplyPredefinedBenchmarkConfiguration(ref Config);
+			BenchmarkSetup.ApplyPredefinedBenchmarkConfiguration(ref Config);
 		}
 
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
@@ -49,11 +49,11 @@ namespace NetworkBenchmark
 		public static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
-			Benchmark.StartBenchmark(networkBenchmark);
+			BenchmarkCoordinator.StartBenchmark(networkBenchmark);
 
 			Thread.Sleep(Config.Duration * 1000);
 
-			Benchmark.StopBenchmark(networkBenchmark);
+			BenchmarkCoordinator.StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
 		}
 

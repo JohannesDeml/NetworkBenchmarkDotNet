@@ -22,7 +22,7 @@ namespace NetworkBenchmark.NetCoreServer
 		private readonly int initialMessages;
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoClient(BenchmarkConfiguration config, BenchmarkData benchmarkData): base(config.Address, config.Port)
+		public EchoClient(BenchmarkSetup config, BenchmarkData benchmarkData): base(config.Address, config.Port)
 		{
 			message = config.Message;
 			initialMessages = config.ParallelMessages;

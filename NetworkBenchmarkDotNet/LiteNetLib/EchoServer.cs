@@ -19,13 +19,13 @@ namespace NetworkBenchmark.LiteNetLib
 {
 	internal class EchoServer
 	{
-		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
 
-		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
+		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;

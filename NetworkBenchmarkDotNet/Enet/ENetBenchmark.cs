@@ -16,13 +16,13 @@ namespace NetworkBenchmark.Enet
 {
 	internal class ENetBenchmark: INetworkBenchmark
 	{
-		private BenchmarkConfiguration config;
+		private BenchmarkSetup config;
 		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
 		private List<EnetClient> echoClients;
 
 
-		public void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData)
+		public void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;

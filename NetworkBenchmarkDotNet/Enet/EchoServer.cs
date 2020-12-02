@@ -17,7 +17,7 @@ namespace NetworkBenchmark.Enet
 {
 	internal class EchoServer
 	{
-		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 		private readonly Thread serverThread;
 		private readonly Host host;
@@ -25,7 +25,7 @@ namespace NetworkBenchmark.Enet
 		private readonly byte[] message;
 		private readonly int timeout;
 
-		public EchoServer(BenchmarkConfiguration config, BenchmarkData benchmarkData)
+		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;

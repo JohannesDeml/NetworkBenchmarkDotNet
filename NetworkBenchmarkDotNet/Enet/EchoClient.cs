@@ -16,7 +16,7 @@ namespace NetworkBenchmark.Enet
 	{
 		private Task listenTask;
 
-		public EchoClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
 		{
 		}
 

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkConfiguration.cs">
+// <copyright file="BenchmarkSetup.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -14,7 +14,7 @@ using System.Text;
 
 namespace NetworkBenchmark
 {
-	public class BenchmarkConfiguration
+	public class BenchmarkSetup
 	{
 		/// <summary>
 		/// Run the predefined benchmark
@@ -120,7 +120,7 @@ namespace NetworkBenchmark
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine($"### NCNB v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
+			sb.AppendLine($"### NBN v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
@@ -154,7 +154,7 @@ namespace NetworkBenchmark
 			return sb.ToString();
 		}
 
-		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkConfiguration config)
+		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkSetup config)
 		{
 			config.Test = TestType.PingPong;
 			config.Address = "127.0.0.1";

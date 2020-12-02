@@ -13,15 +13,15 @@ using BenchmarkDotNet.Diagnosers;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id:"Garbage Collection Benchmark")]
+	[Config(typeof(BenchmarkConfig))]
 	[EventPipeProfiler(EventPipeProfile.GcVerbose)]
 	public class GarbageBenchmark : APredefinedBenchmark
 	{
 		[GlobalSetup(Target = nameof(Garbage))]
 		public void PrepareGarbageBenchmark()
 		{
-			Benchmark.ApplyPredefinedConfiguration();
-			var config = Benchmark.Config;
+			BenchmarkCoordinator.ApplyPredefinedConfiguration();
+			var config = BenchmarkCoordinator.Config;
 
 			MessageTarget = 1000 * 10;
 			config.Clients = 10;

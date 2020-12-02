@@ -23,7 +23,7 @@ namespace NetworkBenchmark.LiteNetLib
 		public bool IsDisposed { get; private set; }
 
 		private readonly int id;
-		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 
 		private readonly byte[] message;
@@ -31,7 +31,7 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly NetManager netManager;
 		private NetPeer peer;
 
-		public EchoClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.id = id;
 			this.config = config;

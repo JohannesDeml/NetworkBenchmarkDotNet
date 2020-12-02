@@ -80,9 +80,9 @@ namespace NetworkBenchmark
 			rootCommand.Name = "NetworkBenchmarkDotNet";
 			rootCommand.Description = "Benchmark Low Level .Net Core Networking libraries for UDP socket performance";
 
-			rootCommand.Handler = CommandHandler.Create<BenchmarkConfiguration>((config) =>
+			rootCommand.Handler = CommandHandler.Create<BenchmarkSetup>((config) =>
 			{
-				Benchmark.Config = config;
+				BenchmarkCoordinator.Config = config;
 				var mode = config.Benchmark;
 				Console.Write(config.PrintConfiguration());
 
@@ -112,31 +112,31 @@ namespace NetworkBenchmark
 
 		private static void Run()
 		{
-			var networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(Benchmark.Config.Library);
+			var networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(BenchmarkCoordinator.Config.Library);
 
 			try
 			{
-				Benchmark.PrepareBenchmark(networkBenchmark);
-				Benchmark.RunTimedBenchmark(networkBenchmark);
+				BenchmarkCoordinator.PrepareBenchmark(networkBenchmark);
+				BenchmarkCoordinator.RunTimedBenchmark(networkBenchmark);
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine($"Error when running Library {Benchmark.Config.Library}" +
+				Console.WriteLine($"Error when running Library {BenchmarkCoordinator.Config.Library}" +
 				                  $"\n{e.Message}\n{e.StackTrace}");
 			}
 			finally
 			{
 				try
 				{
-					Benchmark.CleanupBenchmark(networkBenchmark);
+					BenchmarkCoordinator.CleanupBenchmark(networkBenchmark);
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine($"Error when cleaning up Library {Benchmark.Config.Library}" +
+					Console.WriteLine($"Error when cleaning up Library {BenchmarkCoordinator.Config.Library}" +
 					                  $"\n{e.Message}\n{e.StackTrace}");
 				}
 
-				Console.Write(Benchmark.PrintStatistics());
+				Console.Write(BenchmarkCoordinator.PrintStatistics());
 			}
 		}
 	}

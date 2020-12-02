@@ -20,7 +20,7 @@ namespace NetworkBenchmark.Enet
 		public bool IsDisposed { get; private set; }
 
 		private int id;
-		private readonly BenchmarkConfiguration config;
+		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 
 		private readonly byte[] message;
@@ -29,7 +29,7 @@ namespace NetworkBenchmark.Enet
 		private readonly Address address;
 		private Peer peer;
 
-		public EnetClient(int id, BenchmarkConfiguration config, BenchmarkData benchmarkData)
+		public EnetClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.id = id;
 			this.config = config;

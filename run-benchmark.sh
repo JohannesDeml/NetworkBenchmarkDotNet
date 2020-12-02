@@ -7,4 +7,4 @@ else
   mode="$1"
 fi
 
-./bin/NetCoreNetworkingBenchmark-Linux/NetCoreNetworkBenchmark -b "$mode"
+./bin/NetworkingBenchmarkDotNet-Linux/NetworkingBenchmarkDotNet -b "$mode"

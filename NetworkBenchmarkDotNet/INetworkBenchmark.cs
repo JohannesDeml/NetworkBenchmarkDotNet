@@ -41,7 +41,7 @@ namespace NetworkBenchmark
 		/// </summary>
 		/// <param name="config">Configuration to use for the upcoming benchmark</param>
 		/// <param name="benchmarkData">Data object to store statistics</param>
-		void Initialize(BenchmarkConfiguration config, BenchmarkData benchmarkData);
+		void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData);
 
 		/// <summary>
 		/// Start the server with the configuration defined during initialization.

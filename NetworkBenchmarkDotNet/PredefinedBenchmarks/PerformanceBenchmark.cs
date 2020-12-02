@@ -12,15 +12,15 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id:"Performance Benchmark")]
+	[Config(typeof(BenchmarkConfig))]
 	[RPlotExporter]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{
 		[GlobalSetup(Target = nameof(Performance1))]
 		public void PreparePerformanceBenchmark1()
 		{
-			Benchmark.ApplyPredefinedConfiguration();
-			var config = Benchmark.Config;
+			BenchmarkCoordinator.ApplyPredefinedConfiguration();
+			var config = BenchmarkCoordinator.Config;
 
 			MessageTarget = 1000 * 1000;
 			config.Clients = 1000;
@@ -32,8 +32,8 @@ namespace NetworkBenchmark
 		[GlobalSetup(Target = nameof(Performance2))]
 		public void PreparePerformanceBenchmark2()
 		{
-			Benchmark.ApplyPredefinedConfiguration();
-			var config = Benchmark.Config;
+			BenchmarkCoordinator.ApplyPredefinedConfiguration();
+			var config = BenchmarkCoordinator.Config;
 
 			MessageTarget = 1000 * 1000;
 			config.Clients = 1000;

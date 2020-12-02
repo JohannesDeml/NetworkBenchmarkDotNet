@@ -39,7 +39,7 @@ namespace NetworkBenchmark
 
 		public static void WriteVerbose(string text)
 		{
-			if (!Benchmark.Config.Verbose)
+			if (!BenchmarkCoordinator.Config.Verbose)
 			{
 				return;
 			}
@@ -49,7 +49,7 @@ namespace NetworkBenchmark
 
 		public static void WriteVerboseLine(string text)
 		{
-			if (!Benchmark.Config.Verbose)
+			if (!BenchmarkCoordinator.Config.Verbose)
 			{
 				return;
 			}

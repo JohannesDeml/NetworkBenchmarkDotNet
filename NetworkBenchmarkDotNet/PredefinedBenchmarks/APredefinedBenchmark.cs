@@ -13,8 +13,6 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[GcServer(true)]
-	[GcConcurrent(false)]
 	public abstract class APredefinedBenchmark
 	{
 		[ParamsAllValues]
@@ -27,17 +25,17 @@ namespace NetworkBenchmark
 		[GlobalSetup]
 		public void PrepareBenchmark()
 		{
-			var config = Benchmark.Config;
+			var config = BenchmarkCoordinator.Config;
 			config.Library = Library;
 
 			LibraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
-			Benchmark.PrepareBenchmark(LibraryImpl);
+			BenchmarkCoordinator.PrepareBenchmark(LibraryImpl);
 		}
 
 		protected long RunBenchmark()
 		{
-			var benchmarkdata = Benchmark.BenchmarkData;
-			Benchmark.StartBenchmark(LibraryImpl);
+			var benchmarkdata = BenchmarkCoordinator.BenchmarkData;
+			BenchmarkCoordinator.StartBenchmark(LibraryImpl);
 			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 
 			while (receivedMessages < MessageTarget)
@@ -46,7 +44,7 @@ namespace NetworkBenchmark
 				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 			}
 
-			Benchmark.StopBenchmark(LibraryImpl);
+			BenchmarkCoordinator.StopBenchmark(LibraryImpl);
 			return receivedMessages;
 		}
 
@@ -61,7 +59,7 @@ namespace NetworkBenchmark
 		[GlobalCleanup]
 		public void CleanupBenchmark()
 		{
-			Benchmark.CleanupBenchmark(LibraryImpl);
+			BenchmarkCoordinator.CleanupBenchmark(LibraryImpl);
 		}
 	}
 }
