@@ -12,7 +12,7 @@ using System;
 using System.Threading;
 using ENet;
 
-namespace NetCoreNetworkBenchmark.Enet
+namespace NetworkBenchmark.Enet
 {
 	internal abstract class EnetClient
 	{

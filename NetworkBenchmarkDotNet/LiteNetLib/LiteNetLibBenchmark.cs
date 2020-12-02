@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NetCoreNetworkBenchmark.LiteNetLib
+namespace NetworkBenchmark.LiteNetLib
 {
 	internal class LiteNetLibBenchmark: INetworkBenchmark
 	{

@@ -10,11 +10,11 @@
 
 using System;
 using System.Threading.Tasks;
-using NetCoreNetworkBenchmark.Enet;
-using NetCoreNetworkBenchmark.LiteNetLib;
-using NetCoreNetworkBenchmark.NetCoreServer;
+using NetworkBenchmark.Enet;
+using NetworkBenchmark.LiteNetLib;
+using NetworkBenchmark.NetCoreServer;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	public interface INetworkBenchmark
 	{

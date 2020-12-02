@@ -10,7 +10,7 @@
 
 using System;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	[Flags]
 	public enum BenchmarkMode

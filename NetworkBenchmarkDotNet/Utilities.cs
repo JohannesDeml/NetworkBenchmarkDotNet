@@ -11,7 +11,7 @@
 using System;
 using System.Text;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	internal static class Utilities
 	{

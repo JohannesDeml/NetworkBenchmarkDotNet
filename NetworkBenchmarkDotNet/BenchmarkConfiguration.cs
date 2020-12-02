@@ -12,7 +12,7 @@ using System;
 using System.Reflection;
 using System.Text;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	public class BenchmarkConfiguration
 	{

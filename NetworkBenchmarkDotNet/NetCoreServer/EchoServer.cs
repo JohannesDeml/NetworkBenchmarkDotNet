@@ -14,7 +14,7 @@ using System.Net.Sockets;
 using System.Threading;
 using NetCoreServer;
 
-namespace NetCoreNetworkBenchmark.NetCoreServer
+namespace NetworkBenchmark.NetCoreServer
 {
 	class EchoServer: UdpServer
 	{

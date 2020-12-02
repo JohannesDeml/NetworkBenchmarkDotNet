@@ -11,7 +11,7 @@
 using System.Text;
 using System.Threading;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	public static class Benchmark
 	{

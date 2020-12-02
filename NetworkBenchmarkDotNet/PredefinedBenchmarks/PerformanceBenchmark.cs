@@ -10,7 +10,7 @@
 
 using BenchmarkDotNet.Attributes;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id:"Performance Benchmark")]
 	[RPlotExporter]

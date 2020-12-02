@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ENet;
 
-namespace NetCoreNetworkBenchmark.Enet
+namespace NetworkBenchmark.Enet
 {
 	internal class EchoServer
 	{

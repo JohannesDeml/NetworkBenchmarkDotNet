@@ -11,7 +11,7 @@
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	[GcServer(true)]
 	[GcConcurrent(false)]

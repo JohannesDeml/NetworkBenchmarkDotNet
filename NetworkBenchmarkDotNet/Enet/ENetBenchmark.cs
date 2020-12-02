@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NetCoreNetworkBenchmark.Enet
+namespace NetworkBenchmark.Enet
 {
 	internal class ENetBenchmark: INetworkBenchmark
 	{

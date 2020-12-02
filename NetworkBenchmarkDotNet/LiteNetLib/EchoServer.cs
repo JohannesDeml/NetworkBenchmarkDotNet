@@ -15,7 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LiteNetLib;
 
-namespace NetCoreNetworkBenchmark.LiteNetLib
+namespace NetworkBenchmark.LiteNetLib
 {
 	internal class EchoServer
 	{

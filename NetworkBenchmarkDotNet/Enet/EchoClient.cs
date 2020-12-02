@@ -10,7 +10,7 @@
 
 using System.Threading.Tasks;
 
-namespace NetCoreNetworkBenchmark.Enet
+namespace NetworkBenchmark.Enet
 {
 	internal class EchoClient: EnetClient
 	{

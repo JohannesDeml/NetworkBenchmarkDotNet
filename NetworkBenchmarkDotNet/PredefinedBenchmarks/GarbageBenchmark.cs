@@ -11,7 +11,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnosers;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id:"Garbage Collection Benchmark")]
 	[EventPipeProfiler(EventPipeProfile.GcVerbose)]

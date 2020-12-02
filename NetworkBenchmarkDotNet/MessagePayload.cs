@@ -8,7 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	public enum MessagePayload
 	{

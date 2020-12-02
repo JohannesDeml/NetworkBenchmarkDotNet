@@ -14,7 +14,7 @@ using System.CommandLine.Invocation;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
-namespace NetCoreNetworkBenchmark
+namespace NetworkBenchmark
 {
 	class Program
 	{
