@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreNetworkBenchmark", "NetCoreNetworkBenchmark\NetCoreNetworkBenchmark.csproj", "{A1025393-381A-4EB0-98C7-36A0FA7A4685}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkBenchmarkDotNet", "NetworkBenchmarkDotNet\NetworkBenchmarkDotNet.csproj", "{A1025393-381A-4EB0-98C7-36A0FA7A4685}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
-# .Net Core Network Benchmark
+# Network Benchmark .NET
 
-*Low Level .Net Core Networking libraries benchmarked for UDP socket performance*
+*Low Level .NET Core / .NET 5 Networking libraries benchmarked for UDP socket performance*
 
 ![Screenshot](./Docs/screenshot.png)
 
@@ -8,7 +8,7 @@
 
 ## Description
 
-NCNB is a benchmark for low level networking libraries using UDP and can be used with [Unity](https://unity3d.com) and for [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) standalone server applications. The benchmark focuses on latency, performance and scalability.
+NBN is a benchmark for low level networking libraries using UDP and can be used with [Unity](https://unity3d.com) and for [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) standalone server applications. The benchmark focuses on latency, performance and scalability.
 
 ### Supported Libraries
 
@@ -28,7 +28,7 @@ NCNB is a benchmark for low level networking libraries using UDP and can be used
 
 ## Benchmarks
 
-To reproduce the benchmarks, run `./NetCoreNetworkBenchmark -b All`
+To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`
 
 
 ``` ini
@@ -117,7 +117,7 @@ Your new proposed library ...
 
 #### How to add a library
 
-1. Add a new folder inside the NetCoreNetworkBenchmark solution with the name of your library
+1. Add a new folder inside the NetworkBenchmarkDotNet solution with the name of your library
 2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetCoreNetworkBenchmark/INetworkBenchmark.cs)
 3. Add your library name to the [NetworkLibrary](../../blob/master/NetCoreNetworkBenchmark/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`

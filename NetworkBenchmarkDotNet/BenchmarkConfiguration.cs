@@ -137,7 +137,7 @@ namespace NetCoreNetworkBenchmark
 
 		public string CreateCommandlineInstruction()
 		{
-			var sb = new StringBuilder("./NetCoreNetworkBenchmark");
+			var sb = new StringBuilder("./NetworkBenchmarkDotNet");
 
 			sb.Append($" --test {Test}");
 			sb.Append($" --library {Library}");

@@ -77,7 +77,7 @@ namespace NetCoreNetworkBenchmark
 
 			};
 
-			rootCommand.Name = "NetCoreNetworkBenchmark";
+			rootCommand.Name = "NetworkBenchmarkDotNet";
 			rootCommand.Description = "Benchmark Low Level .Net Core Networking libraries for UDP socket performance";
 
 			rootCommand.Handler = CommandHandler.Create<BenchmarkConfiguration>((config) =>
