@@ -13,6 +13,8 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
+	[GcServer(true)]
+	[GcConcurrent(false)]
 	public abstract class APredefinedBenchmark
 	{
 		[ParamsAllValues]

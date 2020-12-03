@@ -4,7 +4,7 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetCoreNetworkBenchmark/all.svg)](../../releases)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases)
 
 ## Description
 
@@ -17,7 +17,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
   * [Unity Client Example](https://github.com/JohannesDeml/ENetUnityMobile)
-* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (master 252c8eb)
+* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.4)
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
@@ -32,31 +32,38 @@ To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`
 
 
 ``` ini
-Results v0.5.0, BenchmarkDotNet v0.12.1, OS ubuntu 20.04
+Results v0.5.1, BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
-.NET Core SDK=3.1.403
-  [Host]     : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
+.NET Core SDK=3.1.404
+  [Host]     : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+  Job-CXRHAN : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
+
+Concurrent=False  Server=True  InvocationCount=1  
+IterationCount=10  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  
 ```
-| Benchmark       | ENet                           | LiteNetLib                     | NetCoreServer                  |
-| --------------- | ------------------------------ | ------------------------------ | ------------------------------ |
-| **Performance** |                                |                                |                                |
-| Performance1    | **192,034 msg/s** (5,207.4 ms) | **78,447 msg/s** (12,747.5 ms) | **109,813 msg/s** (9,106.4 ms) |
-| Performance2    | **1,075,153 msg/s** (930.1 ms) | **286,566 msg/s** (3,489.6 ms) | **114,481 msg/s** (8,735.1 ms) |
-| **Garbage**     |                                |                                |                                |
-| Alloc           | **0.512 MB**                   | **81.161 MB**                  | **161.978 MB**                 |
-| GC Pauses       | **83.4 ms** (max 8.4 ms)       | **101.1 ms** (max 2.9 ms)      | **74.5 ms** (max 2.5 ms)       |
+| Benchmark       | ENet                        | LiteNetLib                  | NetCoreServer               |
+| --------------- | --------------------------- | --------------------------- | --------------------------- |
+| **Performance** |                             |                             |                             |
+| Performance1    | **167,841 msg/s** (5.958 s) | **68,129 msg/s** (14.678 s) | **90,612 msg/s** (11.036 s) |
+| Performance2    | **993,048 msg/s** (1.007 s) | **267,379 msg/s** (3.740 s) | **91,215 msg/s** (10.963 s) |
+| **Garbage**     |                             |                             |                             |
+| Alloc           | **0.512 MB**                | **81.968 MB**               | **161.892 MB**              |
+| GC Pauses       | **107.5 ms** (max 19.6 ms)  | **106.6 ms** (max 2.7 ms)   | **86.8 ms** (max 10.6 ms)   |
 
-![Benchmark Results](./Docs/NetCoreNetworkBenchmark.PerformanceBenchmark-barplot.png)
+![Benchmark Results](./Docs/NetworkBenchmarkDotNet.PerformanceBenchmark-barplot.png)
 
-### Benchmark Performance1
+### Benchmark [Performance1](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+
 Runs the benchmark with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
-### Benchmark Performance2
+### Benchmark [Performance2](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+
 Runs the benchmark with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance.
 
-### Benchmark Garbage
+### Benchmark [Garbage](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/GarbageBenchmark.cs)
 
 Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
 This test collects information about generated garbage while running the benchmark.
@@ -80,7 +87,7 @@ Then just open the solution file with Visual Studio/Rider/Visual Studio Code and
 
 ```
 Usage:
-  NetCoreNetworkBenchmark [options]
+  NetworkBenchmarkDotNet [options]
 
 Options:
   -b, --benchmark <All|Custom|Garbage|Performance>    Run predefined benchmarks [default: Custom]
@@ -118,11 +125,11 @@ Your new proposed library ...
 #### How to add a library
 
 1. Add a new folder inside the NetworkBenchmarkDotNet solution with the name of your library
-2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetCoreNetworkBenchmark/INetworkBenchmark.cs)
-3. Add your library name to the [NetworkLibrary](../../blob/master/NetCoreNetworkBenchmark/NetworkLibrary.cs) enum
+2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetworkBenchmarkDotNet/INetworkBenchmark.cs)
+3. Add your library name to the [NetworkLibrary](../../blob/master/NetworkBenchmarkDotNet/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
-5. Use the `-l ` argument (or `BenchmarkConfiguration.Library`) to test your library and if everything works as expected.
-6. Run the benchmarks `./NetCoreNetworkBenchmark -b All` and see if your library runs correct
+5. Use the `-l ` argument (or `BenchmarkSetup.Library`) to test your library and if everything works as expected.
+6. Run the benchmarks `./NetworkBenchmarkDotNet -b All` and see if your library runs correct
 7. Create a PR including your benchmark md results 🎉
 
 ### Rules for adding a benchmark

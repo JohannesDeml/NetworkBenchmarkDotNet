@@ -5,12 +5,12 @@
         <Title>.Net Core Networking Benchmark</Title>
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
-        <RootNamespace>DotNetCoreNetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.5.0</PackageVersion>
-        <AssemblyVersion>0.5.0</AssemblyVersion>
+        <RootNamespace>NetworkingBenchmark</RootNamespace>
+        <PackageVersion>0.5.1</PackageVersion>
+        <AssemblyVersion>0.5.1</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
-        <Platforms>AnyCPU;x64</Platforms>
+        <Platforms>AnyCPU</Platforms>
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
@@ -46,10 +46,6 @@
         <PackageTags>sockets, UDP, benchmark, network, Unity, network-benchmark</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/JohannesDeml/NetworkBenchmarkDotNet</PackageProjectUrl>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
     
 </Project>

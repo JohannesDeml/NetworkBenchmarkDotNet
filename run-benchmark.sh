@@ -7,4 +7,4 @@ else
   mode="$1"
 fi
 
-sudo ./bin/NetworkBenchmarkDotNet-Linux/NetworkBenchmarkDotNet -b "$mode"
+./bin/NetworkBenchmarkDotNet-Linux/NetworkBenchmarkDotNet -b "$mode"
