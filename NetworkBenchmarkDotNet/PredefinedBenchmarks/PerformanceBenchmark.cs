@@ -23,7 +23,7 @@ namespace NetworkBenchmark
 			var config = BenchmarkCoordinator.Config;
 
 			MessageTarget = 1000 * 1000;
-			config.Clients = 1000;
+			config.Clients = 500;
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
@@ -36,7 +36,7 @@ namespace NetworkBenchmark
 			var config = BenchmarkCoordinator.Config;
 
 			MessageTarget = 1000 * 1000;
-			config.Clients = 1000;
+			config.Clients = 500;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
