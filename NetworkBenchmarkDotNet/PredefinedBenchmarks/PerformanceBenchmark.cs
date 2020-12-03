@@ -13,7 +13,6 @@ using BenchmarkDotNet.Attributes;
 namespace NetworkBenchmark
 {
 	[Config(typeof(BenchmarkConfig))]
-	[RPlotExporter]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{
 		[GlobalSetup(Target = nameof(Performance1))]
