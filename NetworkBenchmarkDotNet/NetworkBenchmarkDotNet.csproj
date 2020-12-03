@@ -11,7 +11,7 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU;x64</Platforms>
-        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

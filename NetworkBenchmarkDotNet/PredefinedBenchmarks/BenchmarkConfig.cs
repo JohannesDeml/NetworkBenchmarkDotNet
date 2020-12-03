@@ -11,7 +11,6 @@
 using System.Globalization;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
@@ -45,7 +44,6 @@ namespace NetworkBenchmark
 			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Microsecond,
 				false, true, 100);
 			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
-			AddDiagnoser(MemoryDiagnoser.Default);
 		}
 	}
 }
