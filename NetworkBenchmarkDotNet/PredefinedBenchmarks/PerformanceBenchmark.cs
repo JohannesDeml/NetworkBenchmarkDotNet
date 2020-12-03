@@ -12,7 +12,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id: "Performance Benchmark")]
+	[Config(typeof(BenchmarkConfig))]
 	[RPlotExporter]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{

@@ -13,7 +13,7 @@ using BenchmarkDotNet.Diagnosers;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id: "Performance Benchmark")]
+	[Config(typeof(BenchmarkConfig))]
 	[EventPipeProfiler(EventPipeProfile.GcVerbose)]
 	public class GarbageBenchmark : APredefinedBenchmark
 	{
