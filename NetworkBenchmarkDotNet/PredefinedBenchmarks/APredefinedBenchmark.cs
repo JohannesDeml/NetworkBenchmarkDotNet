@@ -8,13 +8,12 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[GcServer(true)]
-	[GcConcurrent(false)]
 	public abstract class APredefinedBenchmark
 	{
 		[ParamsAllValues]
@@ -29,6 +28,7 @@ namespace NetworkBenchmark
 		{
 			var config = BenchmarkCoordinator.Config;
 			config.Library = Library;
+			Console.Write(config.PrintSetup());
 
 			LibraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
 			BenchmarkCoordinator.PrepareBenchmark(LibraryImpl);

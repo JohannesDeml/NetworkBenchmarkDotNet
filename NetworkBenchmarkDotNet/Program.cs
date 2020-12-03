@@ -84,14 +84,16 @@ namespace NetworkBenchmark
 			{
 				BenchmarkCoordinator.Config = config;
 				var mode = config.Benchmark;
-				Console.Write(config.PrintConfiguration());
+
 
 				if (mode == BenchmarkMode.Custom)
 				{
+					Console.Write(config.PrintSetup());
 					Run();
 					return 0;
 				}
 
+				Console.Write(config.PrintEnvironment());
 				if ((mode & BenchmarkMode.Performance) != 0)
 				{
 					BenchmarkRunner.Run<PerformanceBenchmark>();
