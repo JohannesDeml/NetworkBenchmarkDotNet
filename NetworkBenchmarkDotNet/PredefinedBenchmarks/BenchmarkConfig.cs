@@ -30,11 +30,7 @@ namespace NetworkBenchmark
 				.WithIterationCount(10)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(false);
-
-			AddJob(baseConfig
-				.WithRuntime(CoreRuntime.Core31)
-				.WithPlatform(Platform.X64));
+				.WithGcForce(true);
 
 			AddJob(baseConfig
 				.WithRuntime(CoreRuntime.Core50)
