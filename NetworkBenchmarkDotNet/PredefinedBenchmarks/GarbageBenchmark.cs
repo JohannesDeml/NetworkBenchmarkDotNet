@@ -35,5 +35,10 @@ namespace NetworkBenchmark
 		{
 			return RunBenchmark();
 		}
+
+		public override string ToString()
+		{
+			return "GarbageBenchmark";
+		}
 	}
 }

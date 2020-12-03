@@ -95,7 +95,7 @@ Options:
   -l, --library <ENet|LiteNetLib|NetCoreServer>       Library target [default: ENet]
   -d, --duration <duration>                           Test duration in seconds [default: 10]
   --address <address>                                 IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
-  --port <port>                                       Socket Port [default: 3333]
+  --port <port>                                       Socket Port [default: 3330]
   --clients <clients>                                 # Simultaneous clients [default: 1000]
   --parallel-messages <parallel-messages>             # Parallel messages per client [default: 1]
   --message-byte-size <message-byte-size>             Message byte size sent by clients [default: 32]

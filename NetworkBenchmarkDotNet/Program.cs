@@ -44,7 +44,7 @@ namespace NetworkBenchmark
 					"IP Address, can be ipv4 or ipv6"),
 				new Option<int>(
 					"--port",
-					getDefaultValue:() => 3333,
+					getDefaultValue:() => 3330,
 					"Socket Port"),
 				new Option<int>(
 					"--clients",

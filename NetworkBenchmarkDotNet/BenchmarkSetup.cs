@@ -170,7 +170,7 @@ namespace NetworkBenchmark
 		{
 			config.Test = TestType.PingPong;
 			config.Address = "127.0.0.1";
-			config.Port = 3333;
+			config.Port = 3330;
 			config.Duration = 60;
 			config.Verbose = false;
 			config.MessagePayload = MessagePayload.Random;
