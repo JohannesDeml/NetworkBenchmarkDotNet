@@ -6,12 +6,13 @@
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
         <RootNamespace>NetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.5.1</PackageVersion>
-        <AssemblyVersion>0.5.1</AssemblyVersion>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
