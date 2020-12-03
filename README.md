@@ -53,17 +53,17 @@ WarmupCount=1
 
 ![Benchmark Results](./Docs/NetworkBenchmarkDotNet.PerformanceBenchmark-barplot.png)
 
-### Benchmark [Performance1](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+### Benchmark [Performance1](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
 
 Runs the benchmark with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
-### Benchmark [Performance2](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+### Benchmark [Performance2](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
 
 Runs the benchmark with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance.
 
-### Benchmark [Garbage](../../NetworkBenchmarkDotNet/PredefinedBenchmarks/GarbageBenchmark.cs)
+### Benchmark [Garbage](./NetworkBenchmarkDotNet/PredefinedBenchmarks/GarbageBenchmark.cs)
 
 Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
 This test collects information about generated garbage while running the benchmark.
