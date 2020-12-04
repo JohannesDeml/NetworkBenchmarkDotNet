@@ -36,6 +36,10 @@ namespace NetworkBenchmark
 				.WithRuntime(CoreRuntime.Core50)
 				.WithPlatform(Platform.X64));
 
+			AddJob(baseConfig
+				.WithRuntime(CoreRuntime.Core31)
+				.WithPlatform(Platform.X64));
+
 			AddColumn(new NumClientsColumn());
 			AddColumn(new MessagesPerSecondColumn());
 			AddExporter(MarkdownExporter.GitHub);

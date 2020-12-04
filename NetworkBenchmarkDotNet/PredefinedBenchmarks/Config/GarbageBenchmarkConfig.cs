@@ -32,9 +32,13 @@ namespace NetworkBenchmark
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true);
-
+			
 			AddJob(baseConfig
 				.WithRuntime(CoreRuntime.Core50)
+				.WithPlatform(Platform.X64));
+
+			AddJob(baseConfig
+				.WithRuntime(CoreRuntime.Core31)
 				.WithPlatform(Platform.X64));
 
 			AddExporter(MarkdownExporter.GitHub);

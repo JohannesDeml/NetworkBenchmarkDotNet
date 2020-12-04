@@ -4,7 +4,7 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)[![.NET Core 3.1](https://img.shields.io/badge/.NET_Core-3.1-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
 ## Description
 
@@ -81,7 +81,7 @@ This test collects information about generated garbage while running the benchma
 
 ## Installation
 
-Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) >=3.1 installed.
+Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) 3.1 & 5.0 installed.
 
 Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
