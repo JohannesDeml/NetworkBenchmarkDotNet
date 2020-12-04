@@ -43,22 +43,34 @@ namespace NetworkBenchmark
 
 		public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style)
 		{
-			System.Reflection.MethodInfo mi = benchmarkCase.Descriptor.WorkloadMethod;
+			var type = benchmarkCase.Descriptor.Type;
 
-			if (mi.DeclaringType == null)
+			if (type == null)
 			{
-				return "No Declaring type";
+				return "No type set";
 			}
 
-			var instance = (PerformanceBenchmark) Activator.CreateInstance(mi.DeclaringType);
-			if (mi.DeclaringType == null || instance == null)
+			if (type != typeof(PerformanceBenchmark))
+			{
+				return $"Not type of {nameof(PerformanceBenchmark)}";
+			}
+
+			var instance = (PerformanceBenchmark) Activator.CreateInstance(type);
+			if (instance == null)
 			{
 				return "Could not create instance";
 			}
 
-			int numClients = instance.Clients;
-			var cultureInfo = summary.GetCultureInfo();
-			return numClients.ToString("N0", cultureInfo);
+			try
+			{
+				int numClients = instance.Clients;
+				var cultureInfo = summary.GetCultureInfo();
+				return numClients.ToString("N0", cultureInfo);
+			}
+			catch (Exception e)
+			{
+				return "Error";
+			}
 		}
 
 		public bool IsAvailable(Summary summary)
