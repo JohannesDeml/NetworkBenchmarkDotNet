@@ -4,7 +4,7 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 ## Description
 
@@ -32,7 +32,8 @@ To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`
 
 
 ``` ini
-Results v0.5.1, BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
+Results v0.5.1 with Background Tasks: NetData
+BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=3.1.404
   [Host]     : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
@@ -74,6 +75,7 @@ This test collects information about generated garbage while running the benchma
 * Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the Garbage benchmark.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 * To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
+* Since Benchmark [0.5.1](../../releases/tag/0.5.1) the Service [NetData](https://github.com/netdata/netdata) is running in the background of the linux test machine. This decreases the performance by 7%-21%. Having NetData run in the background is a more realistic server setup and helps collect information about UDP errors and such to understand bottlenecks of the libraries.
 
 
 
