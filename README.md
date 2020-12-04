@@ -21,7 +21,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 5.0.2)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.21)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
