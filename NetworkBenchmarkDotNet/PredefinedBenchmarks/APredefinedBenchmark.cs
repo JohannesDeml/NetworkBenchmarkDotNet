@@ -16,28 +16,27 @@ namespace NetworkBenchmark
 {
 	public abstract class APredefinedBenchmark
 	{
-		[ParamsAllValues]
-		public NetworkLibrary Library;
+		public abstract int MessageTarget { get; }
+		protected abstract NetworkLibrary LibraryTarget { get; }
 
-		protected int MessageTarget;
-		protected INetworkBenchmark LibraryImpl;
+		private INetworkBenchmark libraryImpl;
 
 
 		[GlobalSetup]
 		public void PrepareBenchmark()
 		{
 			var config = BenchmarkCoordinator.Config;
-			config.Library = Library;
+			config.Library = LibraryTarget;
 			Console.Write(config.PrintSetup());
 
-			LibraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
-			BenchmarkCoordinator.PrepareBenchmark(LibraryImpl);
+			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(LibraryTarget);
+			BenchmarkCoordinator.PrepareBenchmark(libraryImpl);
 		}
 
 		protected long RunBenchmark()
 		{
 			var benchmarkdata = BenchmarkCoordinator.BenchmarkData;
-			BenchmarkCoordinator.StartBenchmark(LibraryImpl);
+			BenchmarkCoordinator.StartBenchmark(libraryImpl);
 			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 
 			while (receivedMessages < MessageTarget)
@@ -46,7 +45,7 @@ namespace NetworkBenchmark
 				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 			}
 
-			BenchmarkCoordinator.StopBenchmark(LibraryImpl);
+			BenchmarkCoordinator.StopBenchmark(libraryImpl);
 			return receivedMessages;
 		}
 
@@ -61,7 +60,7 @@ namespace NetworkBenchmark
 		[GlobalCleanup]
 		public void CleanupBenchmark()
 		{
-			BenchmarkCoordinator.CleanupBenchmark(LibraryImpl);
+			BenchmarkCoordinator.CleanupBenchmark(libraryImpl);
 		}
 	}
 }

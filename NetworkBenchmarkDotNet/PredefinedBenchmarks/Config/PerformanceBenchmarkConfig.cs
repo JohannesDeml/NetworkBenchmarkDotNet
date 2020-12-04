@@ -20,9 +20,9 @@ using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
-	public class BenchmarkConfig : ManualConfig
+	public class PerformanceBenchmarkConfig : ManualConfig
 	{
-		public BenchmarkConfig()
+		public PerformanceBenchmarkConfig()
 		{
 			Job baseConfig = Job.Default
 				.WithLaunchCount(1)
@@ -36,8 +36,10 @@ namespace NetworkBenchmark
 				.WithRuntime(CoreRuntime.Core50)
 				.WithPlatform(Platform.X64));
 
+			AddColumn(new NumClientsColumn());
+			AddColumn(new MessagesPerSecondColumn());
 			AddExporter(MarkdownExporter.GitHub);
-			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Microsecond,
+			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
 				false, true, 100);
 			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
 		}

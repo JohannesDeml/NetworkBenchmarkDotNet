@@ -12,17 +12,24 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(BenchmarkConfig))]
+	[Config(typeof(PerformanceBenchmarkConfig))]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{
+		[ParamsAllValues]
+		public NetworkLibrary Library { get; set; }
+
+		public int Clients => 500;
+		public override int MessageTarget => 1000 * 10;
+
+		protected override NetworkLibrary LibraryTarget => Library;
+
 		[GlobalSetup(Target = nameof(Performance1))]
 		public void PreparePerformanceBenchmark1()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 1000;
-			config.Clients = 500;
+			config.Clients = Clients;
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
@@ -34,8 +41,7 @@ namespace NetworkBenchmark
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 1000;
-			config.Clients = 500;
+			config.Clients = Clients;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();

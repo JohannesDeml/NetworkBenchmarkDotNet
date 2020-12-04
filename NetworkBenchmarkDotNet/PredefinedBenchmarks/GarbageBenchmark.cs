@@ -13,17 +13,22 @@ using BenchmarkDotNet.Diagnosers;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(BenchmarkConfig))]
+	[Config(typeof(GarbageBenchmarkConfig))]
 	[EventPipeProfiler(EventPipeProfile.GcVerbose)]
 	public class GarbageBenchmark : APredefinedBenchmark
 	{
+		[ParamsAllValues]
+		public NetworkLibrary Library { get; set; }
+
+		public override int MessageTarget => 10000;
+		protected override NetworkLibrary LibraryTarget => Library;
+
 		[GlobalSetup(Target = nameof(Garbage))]
 		public void PrepareGarbageBenchmark()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 10;
 			config.Clients = 10;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 128;
