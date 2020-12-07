@@ -40,15 +40,15 @@ namespace NetworkBenchmark
 					"Test duration in seconds"),
 				new Option<string>(
 					"--address",
-					getDefaultValue:() => "127.0.0.1",
-					"IP Address, can be ipv4 or ipv6"),
+					getDefaultValue:() => "::1",
+					"IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1)"),
 				new Option<int>(
 					"--port",
 					getDefaultValue:() => 3330,
 					"Socket Port"),
 				new Option<int>(
 					"--clients",
-					getDefaultValue:() => 1000,
+					getDefaultValue:() => 500,
 					"# Simultaneous clients"),
 				new Option<int>(
 					"--parallel-messages",
