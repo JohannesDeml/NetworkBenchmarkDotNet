@@ -40,7 +40,10 @@ namespace NetworkBenchmark.LiteNetLib
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
-			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			if (!config.Address.Contains(':'))
+			{
+				netManager.IPv6Enabled = IPv6Mode.Disabled;
+			}
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;

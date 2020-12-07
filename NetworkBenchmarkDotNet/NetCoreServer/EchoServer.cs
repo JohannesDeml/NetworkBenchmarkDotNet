@@ -20,7 +20,7 @@ namespace NetworkBenchmark.NetCoreServer
 	{
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData): base(IPAddress.Any, config.Port)
+		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData): base(IPAddress.Parse(config.Address), config.Port)
 		{
 			this.benchmarkData = benchmarkData;
 		}

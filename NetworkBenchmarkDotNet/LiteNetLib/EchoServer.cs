@@ -33,7 +33,10 @@ namespace NetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
-			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			if (!config.Address.Contains(':'))
+			{
+				netManager.IPv6Enabled = IPv6Mode.Disabled;
+			}
 			netManager.UnsyncedEvents = true;
 
 			message = new byte[config.MessageByteSize];
