@@ -19,7 +19,7 @@ namespace NetworkBenchmark
 		public NetworkLibrary Library { get; set; }
 
 		public int Clients => 500;
-		public override int MessageTarget => 1000 * 1000;
+		public override int MessageTarget => 1000 * 500;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 

@@ -27,7 +27,7 @@ namespace NetworkBenchmark
 			Job baseConfig = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
-				.WithIterationCount(10)
+				.WithIterationCount(20)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true);
