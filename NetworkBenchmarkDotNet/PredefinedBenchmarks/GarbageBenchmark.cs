@@ -20,7 +20,9 @@ namespace NetworkBenchmark
 		[ParamsAllValues]
 		public NetworkLibrary Library { get; set; }
 
+		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
 		public override int MessageTarget => 10000;
+		public override int ClientCount => 10;
 		protected override NetworkLibrary LibraryTarget => Library;
 
 		[GlobalSetup(Target = nameof(Garbage))]
@@ -29,7 +31,6 @@ namespace NetworkBenchmark
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			config.Clients = 10;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 128;
 			PrepareBenchmark();

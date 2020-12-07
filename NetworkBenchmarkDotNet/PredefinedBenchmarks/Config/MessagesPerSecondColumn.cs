@@ -48,35 +48,28 @@ namespace NetworkBenchmark
 				return "No type set";
 			}
 
-			if (type != typeof(PerformanceBenchmark))
+			if (!type.IsSubclassOf(typeof(APredefinedBenchmark)))
 			{
-				return $"Not type of {nameof(PerformanceBenchmark)}";
+				return $"Not subclass of {nameof(APredefinedBenchmark)}";
 			}
 
-			var instance = (PerformanceBenchmark) Activator.CreateInstance(type);
+			var instance = (APredefinedBenchmark) Activator.CreateInstance(type);
 			if (instance == null)
 			{
 				return "Could not create instance";
 			}
 
-			try
-			{
-				int messageCount = instance.MessageTarget;
-				var statistics = summary[benchmarkCase].ResultStatistics;
-				var meanSeconds = TimeUnit.Convert(statistics.Mean, TimeUnit.Nanosecond, TimeUnit.Second);
-				var msgPerSecond = messageCount / meanSeconds;
+			int messageCount = instance.MessageTarget;
+			var statistics = summary[benchmarkCase].ResultStatistics;
+			var meanSeconds = TimeUnit.Convert(statistics.Mean, TimeUnit.Nanosecond, TimeUnit.Second);
+			var msgPerSecond = messageCount / meanSeconds;
 
 
-				var cultureInfo = summary.GetCultureInfo();
-				if (style.PrintUnitsInContent)
-					return msgPerSecond.ToString("N0", cultureInfo) + " msg/s";
+			var cultureInfo = summary.GetCultureInfo();
+			if (style.PrintUnitsInContent)
+				return msgPerSecond.ToString("N0", cultureInfo) + " msg/s";
 
-				return msgPerSecond.ToString("N0", cultureInfo);
-			}
-			catch (Exception e)
-			{
-				return "Error";
-			}
+			return msgPerSecond.ToString("N0", cultureInfo);
 		}
 
 		public bool IsAvailable(Summary summary)

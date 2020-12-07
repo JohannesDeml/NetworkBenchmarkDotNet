@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkConfig.cs">
+// <copyright file="InDepthBenchmarkConfig.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -21,9 +21,9 @@ using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
-	public class PerformanceBenchmarkConfig : ManualConfig
+	public class InDepthBenchmarkConfig : ManualConfig
 	{
-		public PerformanceBenchmarkConfig()
+		public InDepthBenchmarkConfig()
 		{
 			Job baseConfig = Job.Default
 				.WithLaunchCount(1)
@@ -35,6 +35,10 @@ namespace NetworkBenchmark
 
 			AddJob(baseConfig
 				.WithRuntime(CoreRuntime.Core50)
+				.WithPlatform(Platform.X64));
+
+			AddJob(baseConfig
+				.WithRuntime(CoreRuntime.Core31)
 				.WithPlatform(Platform.X64));
 
 			AddColumn(new NumClientsColumn());

@@ -50,27 +50,21 @@ namespace NetworkBenchmark
 				return "No type set";
 			}
 
-			if (type != typeof(PerformanceBenchmark))
+			if (!type.IsSubclassOf(typeof(APredefinedBenchmark)))
 			{
-				return $"Not type of {nameof(PerformanceBenchmark)}";
+				return $"Not subclass of {nameof(APredefinedBenchmark)}";
 			}
 
-			var instance = (PerformanceBenchmark) Activator.CreateInstance(type);
+			var instance = (APredefinedBenchmark) Activator.CreateInstance(type);
 			if (instance == null)
 			{
 				return "Could not create instance";
 			}
 
-			try
-			{
-				int numClients = instance.Clients;
-				var cultureInfo = summary.GetCultureInfo();
-				return numClients.ToString("N0", cultureInfo);
-			}
-			catch (Exception e)
-			{
-				return "Error";
-			}
+
+			int numClients = instance.ClientCount;
+			var cultureInfo = summary.GetCultureInfo();
+			return numClients.ToString("N0", cultureInfo);
 		}
 
 		public bool IsAvailable(Summary summary)

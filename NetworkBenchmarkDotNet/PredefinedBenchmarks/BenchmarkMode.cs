@@ -25,13 +25,18 @@ namespace NetworkBenchmark
 		/// </summary>
 		Performance = 1 << 0,
 		/// <summary>
+		/// Run Benchmark In Depth
+		/// Benchmark For ENEt with different settings and environments
+		/// </summary>
+		InDepth = 1 << 1,
+		/// <summary>
 		/// Run Benchmark Garbage
 		/// Benchmark which collects GC information
 		/// </summary>
-		Garbage = 1 << 1,
+		Garbage = 1 << 2,
 		/// <summary>
-		/// Run all predefined benchmarks
+		/// Run all predefined benchmarks, that are relevant
 		/// </summary>
-		All = (1 << 2) - 1
+		All = (1 << 2) - 1,
 	}
 }

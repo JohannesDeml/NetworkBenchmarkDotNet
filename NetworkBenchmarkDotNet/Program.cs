@@ -100,6 +100,12 @@ namespace NetworkBenchmark
 					Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 				}
 
+				if ((mode & BenchmarkMode.InDepth) != 0)
+				{
+					BenchmarkRunner.Run<InDepthBenchmark>();
+					Console.WriteLine($"Finished {BenchmarkMode.InDepth} Benchmark");
+				}
+
 				if ((mode & BenchmarkMode.Garbage) != 0)
 				{
 					BenchmarkRunner.Run<GarbageBenchmark>();
