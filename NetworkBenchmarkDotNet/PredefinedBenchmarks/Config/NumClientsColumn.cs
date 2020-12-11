@@ -17,6 +17,7 @@ namespace NetworkBenchmark
 {
 	/// <summary>
 	/// Show the number of clients used. In an own column, since params can't be sorted
+	/// waiting for https://github.com/dotnet/BenchmarkDotNet/pull/1612
 	/// </summary>
 	public class NumClientsColumn : IColumn
 	{
@@ -44,21 +45,22 @@ namespace NetworkBenchmark
 		public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style)
 		{
 			var type = benchmarkCase.Descriptor.Type;
-
-			if (type == null)
-			{
-				return "No type set";
-			}
+			var report = summary[benchmarkCase];
 
 			if (!type.IsSubclassOf(typeof(APredefinedBenchmark)))
 			{
-				return $"Not subclass of {nameof(APredefinedBenchmark)}";
+				return string.Empty;
+			}
+
+			if (!report.Success || !report.BuildResult.IsBuildSuccess || report.ExecuteResults.Count == 0)
+			{
+				return "NA";
 			}
 
 			var instance = (APredefinedBenchmark) Activator.CreateInstance(type);
 			if (instance == null)
 			{
-				return "Could not create instance";
+				return "NA";
 			}
 
 

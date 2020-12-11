@@ -18,7 +18,7 @@ namespace NetworkBenchmark
 {
 	public class MessagesPerSecondColumn : IColumn
 	{
-		public string Id => "Message Throughput";
+		public string Id => "MessagesPerSecond";
 
 		public string ColumnName => "Throughput";
 
@@ -42,25 +42,26 @@ namespace NetworkBenchmark
 		public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style)
 		{
 			var type = benchmarkCase.Descriptor.Type;
-
-			if (type == null)
-			{
-				return "No type set";
-			}
+			var report = summary[benchmarkCase];
 
 			if (!type.IsSubclassOf(typeof(APredefinedBenchmark)))
 			{
-				return $"Not subclass of {nameof(APredefinedBenchmark)}";
+				return string.Empty;
+			}
+
+			if (!report.Success || !report.BuildResult.IsBuildSuccess || report.ExecuteResults.Count == 0)
+			{
+				return "NA";
 			}
 
 			var instance = (APredefinedBenchmark) Activator.CreateInstance(type);
 			if (instance == null)
 			{
-				return "Could not create instance";
+				return "NA";
 			}
 
 			int messageCount = instance.MessageTarget;
-			var statistics = summary[benchmarkCase].ResultStatistics;
+			var statistics = report.ResultStatistics;
 			var meanSeconds = TimeUnit.Convert(statistics.Mean, TimeUnit.Nanosecond, TimeUnit.Second);
 			var msgPerSecond = messageCount / meanSeconds;
 
