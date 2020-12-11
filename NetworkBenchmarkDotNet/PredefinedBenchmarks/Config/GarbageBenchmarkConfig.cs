@@ -32,7 +32,7 @@ namespace NetworkBenchmark
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true);
-			
+
 			AddJob(baseConfig
 				.WithRuntime(CoreRuntime.Core50)
 				.WithPlatform(Platform.X64));
@@ -46,6 +46,7 @@ namespace NetworkBenchmark
 				false, true, 100);
 			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
 			AddDiagnoser(MemoryDiagnoser.Default);
+			AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
 		}
 	}
 }

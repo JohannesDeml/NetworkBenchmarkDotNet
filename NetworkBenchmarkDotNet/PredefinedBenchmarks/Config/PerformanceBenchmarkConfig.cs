@@ -43,7 +43,6 @@ namespace NetworkBenchmark
 			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
 				false, true, 100);
 			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
-			AddDiagnoser(MemoryDiagnoser.Default);
 		}
 	}
 }

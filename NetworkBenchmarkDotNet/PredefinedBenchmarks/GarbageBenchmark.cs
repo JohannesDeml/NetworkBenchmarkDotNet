@@ -9,12 +9,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnosers;
 
 namespace NetworkBenchmark
 {
 	[Config(typeof(GarbageBenchmarkConfig))]
-	[EventPipeProfiler(EventPipeProfile.GcVerbose)]
 	public class GarbageBenchmark : APredefinedBenchmark
 	{
 		[ParamsAllValues]

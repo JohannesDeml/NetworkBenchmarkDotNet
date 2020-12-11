@@ -35,8 +35,8 @@ namespace NetworkBenchmark
 		/// </summary>
 		Garbage = 1 << 2,
 		/// <summary>
-		/// Run all predefined benchmarks, that are relevant
+		/// Run all predefined benchmarks
 		/// </summary>
-		All = (1 << 2) - 1,
+		All = (1 << 3) - 1,
 	}
 }

@@ -48,6 +48,8 @@ namespace NetworkBenchmark
 				false, true, 100);
 			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
 			AddDiagnoser(MemoryDiagnoser.Default);
+			AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
+			AddDiagnoser(new EventPipeProfiler(EventPipeProfile.CpuSampling));
 		}
 	}
 }
