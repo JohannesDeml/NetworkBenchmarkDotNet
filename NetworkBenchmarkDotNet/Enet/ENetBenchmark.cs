@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class ENetBenchmark: INetworkBenchmark
+	internal class ENetBenchmark : INetworkBenchmark
 	{
 		private BenchmarkSetup config;
 		private BenchmarkData benchmarkData;

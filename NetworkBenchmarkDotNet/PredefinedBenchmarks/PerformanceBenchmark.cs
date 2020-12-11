@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PredefinedBenchmark.cs">
+// <copyright file="PerformanceBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>

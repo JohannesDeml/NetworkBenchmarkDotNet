@@ -22,7 +22,7 @@ namespace NetworkBenchmark
 		/// * units stay the same
 		/// * No units in cell data (Always numbers)
 		/// </summary>
-		public static readonly SummaryStyle CsvStyle =  new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
+		public static readonly SummaryStyle CsvStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
 			false, true, 100);
 	}
 }

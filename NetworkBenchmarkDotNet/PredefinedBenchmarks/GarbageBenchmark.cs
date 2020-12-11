@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GcBenchmark.cs">
+// <copyright file="GarbageBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>

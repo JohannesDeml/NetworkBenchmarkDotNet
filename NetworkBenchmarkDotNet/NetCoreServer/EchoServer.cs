@@ -16,11 +16,11 @@ using NetCoreServer;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	class EchoServer: UdpServer
+	class EchoServer : UdpServer
 	{
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData): base(IPAddress.Parse(config.Address), config.Port)
+		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData) : base(IPAddress.Parse(config.Address), config.Port)
 		{
 			this.benchmarkData = benchmarkData;
 		}

@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClientThreaded: EnetClient
+	internal class EchoClientThreaded : EnetClient
 	{
 		private readonly Thread connectAndListenThread;
 
-		public EchoClientThreaded(int id, BenchmarkSetup config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
+		public EchoClientThreaded(int id, BenchmarkSetup config, BenchmarkData benchmarkData) : base(id, config, benchmarkData)
 		{
 			connectAndListenThread = new Thread(ConnectAndListen);
 			connectAndListenThread.Name = $"ENet Client {id}";

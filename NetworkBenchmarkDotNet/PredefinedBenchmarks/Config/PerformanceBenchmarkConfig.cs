@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkConfig.cs">
+// <copyright file="PerformanceBenchmarkConfig.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -8,16 +8,11 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Globalization;
-using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Reports;
-using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {

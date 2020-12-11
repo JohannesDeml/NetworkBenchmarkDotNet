@@ -37,6 +37,7 @@ namespace NetworkBenchmark.LiteNetLib
 			{
 				netManager.IPv6Enabled = IPv6Mode.Disabled;
 			}
+
 			netManager.UnsyncedEvents = true;
 
 			message = new byte[config.MessageByteSize];

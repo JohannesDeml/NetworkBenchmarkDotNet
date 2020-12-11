@@ -33,6 +33,7 @@ namespace NetworkBenchmark
 		/// </summary>
 		public static readonly FixedColumn OperatingSystemColumn =
 			new FixedColumn("OS", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
+
 		public string Id { get; }
 		public string ColumnName { get; }
 
@@ -52,7 +53,7 @@ namespace NetworkBenchmark
 
 		public bool AlwaysShow { get; set; } = false;
 		public ColumnCategory Category => ColumnCategory.Custom;
-		public int PriorityInCategory { get; set; } =  0;
+		public int PriorityInCategory { get; set; } = 0;
 		public bool IsNumeric => false;
 		public UnitType UnitType => UnitType.Dimensionless;
 		public string Legend => $"Fixed column with value {cellValue}";
