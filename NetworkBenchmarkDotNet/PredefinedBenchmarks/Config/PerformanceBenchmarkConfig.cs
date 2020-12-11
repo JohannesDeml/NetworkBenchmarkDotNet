@@ -25,15 +25,15 @@ namespace NetworkBenchmark
 	{
 		public PerformanceBenchmarkConfig()
 		{
-			Job baseConfig = Job.Default
+			Add(DefaultConfig.Instance);
+
+			AddJob(Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
 				.WithIterationCount(20)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true);
-
-			AddJob(baseConfig
+				.WithGcForce(true)
 				.WithRuntime(CoreRuntime.Core50)
 				.WithPlatform(Platform.X64));
 
@@ -41,10 +41,9 @@ namespace NetworkBenchmark
 			AddColumn(new MessagesPerSecondColumn());
 			AddColumn(FixedColumn.VersionColumn);
 			AddColumn(FixedColumn.OperatingSystemColumn);
+
 			AddExporter(MarkdownExporter.GitHub);
-			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
-				false, true, 100);
-			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
+			AddExporter(new CsvExporter(CsvSeparator.Comma, ConfigConstants.CsvStyle));
 		}
 	}
 }
