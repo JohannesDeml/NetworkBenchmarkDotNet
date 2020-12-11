@@ -41,6 +41,8 @@ namespace NetworkBenchmark
 				.WithRuntime(CoreRuntime.Core31)
 				.WithPlatform(Platform.X64));
 
+			AddColumn(FixedColumn.VersionColumn);
+			AddColumn(FixedColumn.OperatingSystemColumn);
 			AddExporter(MarkdownExporter.GitHub);
 			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
 				false, true, 100);

@@ -39,6 +39,8 @@ namespace NetworkBenchmark
 
 			AddColumn(new NumClientsColumn());
 			AddColumn(new MessagesPerSecondColumn());
+			AddColumn(FixedColumn.VersionColumn);
+			AddColumn(FixedColumn.OperatingSystemColumn);
 			AddExporter(MarkdownExporter.GitHub);
 			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Millisecond,
 				false, true, 100);
