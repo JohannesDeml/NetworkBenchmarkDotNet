@@ -19,6 +19,7 @@ namespace NetworkBenchmark
 	{
 		/// <summary>
 		/// A summary style that makes processing of data more accessible.
+		/// * Long column width to avoid names being truncated
 		/// * units stay the same
 		/// * No units in cell data (Always numbers)
 		/// </summary>
