@@ -27,16 +27,21 @@ namespace NetworkBenchmark
 		Performance = 1 << 0,
 
 		/// <summary>
-		/// Run Benchmark In Depth
-		/// Benchmark For ENEt with different settings and environments
-		/// </summary>
-		InDepth = 1 << 1,
-
-		/// <summary>
 		/// Run Benchmark Garbage
 		/// Benchmark which collects GC information
 		/// </summary>
-		Garbage = 1 << 2,
+		Garbage = 1 << 1,
+
+		/// <summary>
+		/// Run all essential benchmarks (Performance, Garbage)
+		/// </summary>
+		Essential = (1 << 2) - 1,
+
+		/// <summary>
+		/// Run Benchmark In Depth
+		/// Benchmark For ENEt with different settings and environments
+		/// </summary>
+		InDepth = 1 << 2,
 
 		/// <summary>
 		/// Run all predefined benchmarks
