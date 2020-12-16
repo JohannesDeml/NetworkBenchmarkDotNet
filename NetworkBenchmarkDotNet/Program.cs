@@ -11,6 +11,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 using BenchmarkDotNet.Running;
 
 namespace NetworkBenchmark
@@ -94,19 +95,19 @@ namespace NetworkBenchmark
 				Console.Write(config.PrintEnvironment());
 				if ((mode & BenchmarkMode.Performance) != 0)
 				{
-					BenchmarkRunner.Run<PerformanceBenchmark>();
+					RunBenchmark<PerformanceBenchmark>();
 					Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 				}
 
 				if ((mode & BenchmarkMode.InDepth) != 0)
 				{
-					BenchmarkRunner.Run<InDepthBenchmark>();
+					RunBenchmark<InDepthBenchmark>();
 					Console.WriteLine($"Finished {BenchmarkMode.InDepth} Benchmark");
 				}
 
 				if ((mode & BenchmarkMode.Garbage) != 0)
 				{
-					BenchmarkRunner.Run<GarbageBenchmark>();
+					RunBenchmark<GarbageBenchmark>();
 					Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
 				}
 
@@ -143,6 +144,38 @@ namespace NetworkBenchmark
 				}
 
 				Console.Write(BenchmarkCoordinator.PrintStatistics());
+			}
+		}
+
+		/// <summary>
+		/// Run a benchmark and throw an error is something didn't succeed.
+		/// Useful for CI, where the benchmark should stop if something does not work as expected.
+		/// </summary>
+		/// <typeparam name="T">Type of the benchmark to run</typeparam>
+		private static void RunBenchmark<T>()
+		{
+			var summary = BenchmarkRunner.Run<T>();
+
+			Assert(!summary.HasCriticalValidationErrors, "The \"Summary\" should have NOT \"HasCriticalValidationErrors\"");
+
+			Assert(summary.Reports.Any(), "The \"Summary\" should contain at least one \"BenchmarkReport\" in the \"Reports\" collection");
+
+			Assert(summary.Reports.All(r => r.BuildResult.IsBuildSuccess),
+				"The following benchmarks are failed to build: " +
+				string.Join(", ", summary.Reports.Where(r => !r.BuildResult.IsBuildSuccess).Select(r => r.BenchmarkCase.DisplayInfo)));
+
+			Assert(summary.Reports.All(r => r.ExecuteResults.Any(er => er.FoundExecutable && er.Data.Any())),
+				"All reports should have at least one \"ExecuteResult\" with \"FoundExecutable\" = true and at least one \"Data\" item");
+
+			Assert(summary.Reports.All(report => report.AllMeasurements.Any()),
+				"All reports should have at least one \"Measurement\" in the \"AllMeasurements\" collection");
+		}
+
+		private static void Assert(bool assertTrue, string message)
+		{
+			if (!assertTrue)
+			{
+				throw new Exception("Assertion exception: " + message);
 			}
 		}
 	}
