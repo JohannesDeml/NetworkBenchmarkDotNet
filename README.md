@@ -28,7 +28,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ## Benchmarks
 
-To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`
+To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`. [Detailed Benchmark Hardware](https://pcpartpicker.com/user/JohannesDeml/saved/2YpHGX)
 
 
 ``` ini
