@@ -26,7 +26,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private readonly Thread tickThread;
 		private readonly byte[] messageArray;
-		private readonly KcpClient client;
+		private readonly KcpClientConnection client;
 		private KcpChannel communicationChannel;
 		private bool noDelay;
 
@@ -39,9 +39,13 @@ namespace NetworkBenchmark.Kcp2k
 			communicationChannel = KcpChannel.Unreliable;
 			noDelay = true;
 
-			client = new KcpClient(OnPeerConnected, OnNetworkReceive, OnPeerDisconnected);
+			client = new KcpClientConnection();
 
-			tickThread = new Thread(Tick);
+			client.OnAuthenticated = OnPeerConnected;
+			client.OnData = OnNetworkReceive;
+			client.OnDisconnected = OnPeerDisconnected;
+
+			tickThread = new Thread(TickLoop);
 			tickThread.Name = $"Kcp2k Client {id}";
 			tickThread.IsBackground = true;
 
@@ -52,18 +56,29 @@ namespace NetworkBenchmark.Kcp2k
 		public void Start()
 		{
 			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
+			Connect(config.Address, (ushort) config.Port, noDelay, interval);
 			tickThread.Start();
 			IsDisposed = false;
 		}
 
-		private void Tick()
+		private void Connect(string address, ushort port, bool useNoDelay, uint interval, int fastResend = 0, bool congestionWindow = true, uint sendWindowSize = Kcp.WND_SND, uint receiveWindowSize = Kcp.WND_RCV)
+		{
+			client.Connect(address, port, useNoDelay, interval, fastResend, congestionWindow, sendWindowSize, receiveWindowSize);
+		}
+
+		private void TickLoop()
 		{
 			while (benchmarkData.Preparing || benchmarkData.Running)
 			{
-				client.Tick();
+				Tick();
 				Thread.Sleep(1);
 			}
+		}
+
+		private void Tick()
+		{
+			client.RawReceive();
+			client.Tick();
 		}
 
 		public void StartSendingMessages()
@@ -75,7 +90,7 @@ namespace NetworkBenchmark.Kcp2k
 				Send(messageArray, communicationChannel);
 			}
 
-			client.Tick();
+			Tick();
 		}
 
 		public Task Disconnect()
@@ -108,12 +123,13 @@ namespace NetworkBenchmark.Kcp2k
 				return;
 			}
 
-			client.Send(message, channel);
+			client.SendData(message, channel);
 			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 
 		private void OnPeerConnected()
 		{
+			Console.WriteLine("Benchmark client connected");
 			IsConnected = true;
 		}
 

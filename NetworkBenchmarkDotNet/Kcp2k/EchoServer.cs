@@ -39,7 +39,7 @@ namespace NetworkBenchmark.Kcp2k
 
 			message = new byte[config.MessageByteSize];
 
-			serverThread = new Thread(Tick);
+			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
 		}
 
@@ -56,7 +56,7 @@ namespace NetworkBenchmark.Kcp2k
 			return serverStarted;
 		}
 
-		private void Tick()
+		private void TickLoop()
 		{
 			server.Start((ushort) config.Port);
 
@@ -81,6 +81,10 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnDisconnected(int connectionId)
 		{
+			if (benchmarkData.Running || benchmarkData.Preparing)
+			{
+				Console.WriteLine($"Client with id {connectionId} disconnected while running the benchmark!");
+			}
 		}
 
 		private void Send(int connectionId, ArraySegment<byte> message, KcpChannel channel)

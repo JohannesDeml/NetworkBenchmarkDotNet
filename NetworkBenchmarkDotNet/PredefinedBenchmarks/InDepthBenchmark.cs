@@ -15,13 +15,13 @@ namespace NetworkBenchmark
 	[Config(typeof(InDepthBenchmarkConfig))]
 	public class InDepthBenchmark : APredefinedBenchmark
 	{
-		[Params(NetworkLibrary.ENet)]
+		[Params(NetworkLibrary.Kcp2k)]
 		public NetworkLibrary Library { get; set; }
 
 		[Params("127.0.0.1", "::1")]
 		public string Address { get; set; }
 
-		[Params(30, 50, 60)]
+		[Params(50)]
 		public int TickRate { get; set; }
 
 		protected override BenchmarkMode Mode => BenchmarkMode.InDepth;
