@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using kcp2k;
@@ -23,6 +24,17 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly Thread serverThread;
 		private KcpChannel communicationChannel;
 		private bool noDelay;
+
+		#if WINDOWS
+		/// Get higher precision for Thread.Sleep on Windows
+		/// See https://web.archive.org/web/20051125042113/http://www.dotnet247.com/247reference/msgs/57/289291.aspx
+		/// See https://docs.microsoft.com/en-us/windows/win32/api/timeapi/nf-timeapi-timebeginperiod
+		[DllImport("winmm.dll")]
+		internal static extern uint timeBeginPeriod(uint period);
+
+		[DllImport("winmm.dll")]
+		internal static extern uint timeEndPeriod(uint period);
+		#endif
 
 		private readonly byte[] message;
 
@@ -64,7 +76,16 @@ namespace NetworkBenchmark.Kcp2k
 			while (benchmarkData.Listen)
 			{
 				server.Tick();
+
+				#if WINDOWS
+				timeBeginPeriod(1);
+				#endif
+				
 				Thread.Sleep(1);
+
+				#if WINDOWS
+				timeEndPeriod(1);
+				#endif
 			}
 
 			server.Stop();
