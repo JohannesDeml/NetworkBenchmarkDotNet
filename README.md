@@ -21,6 +21,10 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
+* [Kcp2k](https://github.com/vis2k/kcp2k) (v 1.8.0)
+  * Port of KCP with 100% C# Code, Future Technology for [Mirror-NG](https://github.com/MirrorNG/MirrorNG)
+  * Packetsize overhead: 24 byte
+  * [Unity Example](https://github.com/vis2k/kcp2k)
 * [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.21)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
@@ -75,7 +79,7 @@ This test collects information about generated garbage while running the benchma
 * Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the Garbage benchmark.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 * To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
-* Since Benchmark [0.5.1](../../releases/tag/0.5.1) the Service [NetData](https://github.com/netdata/netdata) is running in the background of the linux test machine. This decreases the performance by 7%-21%. Having NetData run in the background is a more realistic server setup and helps collect information about UDP errors and such to understand bottlenecks of the libraries.
+* KCP has been recently added and might have some room for improvements. Especially using `Thread.Sleep` on Windows creates [noticeable delays](https://social.msdn.microsoft.com/Forums/vstudio/en-US/facc2b57-9a27-4049-bb32-ef093fbf4c29/threadsleep1-sleeps-for-156-ms?forum=clr).
 
 
 
@@ -142,7 +146,7 @@ Ideas for benchmarks:
 - [x] Benchmark for roundtrip time (Benchmark 1)
 - [x] Benchmark for message merging (Benchmark 2)
 - [x] Benchmark for garbage generation
-- [ ] Benchmark .Net 5.0 once it's stable
+- [x] Benchmark .Net 5.0 once it's stable
 - [ ] Benchmark for maximum concurrent clients
 
 ## License
