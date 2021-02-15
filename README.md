@@ -25,38 +25,12 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Port of KCP with 100% C# Code, Future Technology for [Mirror-NG](https://github.com/MirrorNG/MirrorNG)
   * Packetsize overhead: 24 byte
   * [Unity Example](https://github.com/vis2k/kcp2k)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.21)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.22)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
 
 ## Benchmarks
-
-To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b All`. [Detailed Benchmark Hardware](https://pcpartpicker.com/user/JohannesDeml/saved/2YpHGX)
-
-
-``` ini
-Results v0.5.1 with Background Tasks: NetData
-BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
-Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
-.NET Core SDK=3.1.404
-  [Host]     : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
-  Job-CXRHAN : .NET Core 3.1.10 (CoreCLR 4.700.20.51601, CoreFX 4.700.20.51901), X64 RyuJIT
-
-Concurrent=False  Server=True  InvocationCount=1  
-IterationCount=10  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  
-```
-| Benchmark       | ENet                        | LiteNetLib                  | NetCoreServer               |
-| --------------- | --------------------------- | --------------------------- | --------------------------- |
-| **Performance** |                             |                             |                             |
-| Performance1    | **167,841 msg/s** (5.958 s) | **68,129 msg/s** (14.678 s) | **90,612 msg/s** (11.036 s) |
-| Performance2    | **993,048 msg/s** (1.007 s) | **267,379 msg/s** (3.740 s) | **91,215 msg/s** (10.963 s) |
-| **Garbage**     |                             |                             |                             |
-| Alloc           | **0.512 MB**                | **81.968 MB**               | **161.892 MB**              |
-| GC Pauses       | **107.5 ms** (max 19.6 ms)  | **106.6 ms** (max 2.7 ms)   | **86.8 ms** (max 10.6 ms)   |
-
-![Benchmark Results](./Docs/NetworkBenchmarkDotNet.PerformanceBenchmark-barplot.png)
 
 ### Benchmark [Performance1](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
 
@@ -72,6 +46,69 @@ This test is for multiplexing / message merging performance.
 
 Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
 This test collects information about generated garbage while running the benchmark.
+
+### Ubuntu 20.04
+To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.   
+[Detailed Benchmark Hardware](https://pcpartpicker.com/b/Wtykcf)
+
+
+``` ini
+BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
+Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
+.NET Core SDK=5.0.103
+  [Host]     : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
+  Job-ZWOJJS : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
+
+Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
+Force=True  Server=True  InvocationCount=1  
+IterationCount=20  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  Version=0.8.0  OS=Linux 5.8.0-41-generic #46~20.04.1-Ubuntu SMP Mon Jan 18 17:52:23 UTC 2021  
+DateTime=02/15/2021 18:08:30  
+```
+|       Method |       Library | Clients |      Throughput |        Mean |       Error |      StdDev |
+|------------- |-------------- |--------:|----------------:|------------:|------------:|------------:|
+| **Performance1** |          **ENet** |     **500** |   **185,261 msg/s** |  **2,698.9 ms** |    **14.11 ms** |    **16.25 ms** |
+| Performance2 |          ENet |     500 | 1,137,405 msg/s |    439.6 ms |     3.69 ms |     4.25 ms |
+| **Performance1** | **NetCoreServer** |     **500** |   **106,107 msg/s** |  **4,712.2 ms** |    **24.73 ms** |    **27.48 ms** |
+| Performance2 | NetCoreServer |     500 |   108,097 msg/s |  4,625.5 ms |    15.29 ms |    17.61 ms |
+| **Performance1** |    **LiteNetLib** |     **500** |    **81,420 msg/s** |  **6,141.0 ms** |    **51.56 ms** |    **59.38 ms** |
+| Performance2 |    LiteNetLib |     500 |   298,159 msg/s |  1,677.0 ms |    15.40 ms |    17.11 ms |
+| **Performance1** |         **Kcp2k** |     **500** |    **47,227 msg/s** | **10,587.1 ms** | **3,304.33 ms** | **3,672.76 ms** |
+| Performance2 |         Kcp2k |     500 |    50,075 msg/s |  9,985.0 ms | 2,525.07 ms | 2,806.61 ms |
+
+![Benchmark Results](./Docs/Performance Comparison .NET 5 Linux.png)
+
+### Windows 10
+To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.  
+[Detailed Benchmark Hardware](https://pcpartpicker.com/b/8MMcCJ) (Note that this machine has a lot more performance than the linux machine)
+
+
+``` ini
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
+AMD Ryzen 7 3700X, 1 CPU, 16 logical and 8 physical cores
+.NET Core SDK=5.0.100
+  [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+  Job-VQNPIH : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+
+Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
+Force=True  Server=True  InvocationCount=1  
+IterationCount=20  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  Version=0.8.0  OS=Microsoft Windows 10.0.19042  
+DateTime=02/15/2021 18:06:38  
+```
+|       Method |       Library | Clients |    Throughput |        Mean |     Error |    StdDev |      Median |
+|------------- |-------------- |--------:|--------------:|------------:|----------:|----------:|------------:|
+| **Performance1** |          **ENet** |     **500** | **101,278 msg/s** |  **4,936.9 ms** | **374.38 ms** | **431.14 ms** |  **5,014.2 ms** |
+| Performance2 |          ENet |     500 | 710,820 msg/s |    703.4 ms |  39.89 ms |  45.94 ms |    689.7 ms |
+| **Performance1** | **NetCoreServer** |     **500** |  **66,635 msg/s** |  **7,503.6 ms** | **730.83 ms** | **841.63 ms** |  **6,947.8 ms** |
+| Performance2 | NetCoreServer |     500 |  68,048 msg/s |  7,347.8 ms |  17.61 ms |  16.47 ms |  7,349.3 ms |
+| **Performance1** |    **LiteNetLib** |     **500** |  **89,309 msg/s** |  **5,598.5 ms** |  **37.54 ms** |  **43.24 ms** |  **5,594.9 ms** |
+| Performance2 |    LiteNetLib |     500 | 786,067 msg/s |    636.1 ms |   7.30 ms |   8.41 ms |    639.5 ms |
+| **Performance1** |         **Kcp2k** |     **500** |  **37,012 msg/s** | **13,509.2 ms** | **529.46 ms** | **609.73 ms** | **13,901.7 ms** |
+| Performance2 |         Kcp2k |     500 | 117,231 msg/s |  4,265.1 ms |  46.64 ms |  53.71 ms |  4,264.8 ms |
+
+
+![Benchmark Results](./Docs/Performance Comparison .NET 5 Windows.png)
 
 ### Notes
 
@@ -135,8 +172,9 @@ Your new proposed library ...
 3. Add your library name to the [NetworkLibrary](../../blob/master/NetworkBenchmarkDotNet/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
 5. Use the `-l ` argument (or `BenchmarkSetup.Library`) to test your library and if everything works as expected.
-6. Run the benchmarks `./NetworkBenchmarkDotNet -b All` and see if your library runs correct
-7. Create a PR including your benchmark md results 🎉
+6. Change `[Params(NetworkLibrary.Kcp2k)]` in `InDepthBenchmark.cs` to your library and run `./NetworkBenchmarkDotNet -b InDepth` to see, if your library works with high CCU and looping benchmarks with BenchmarkDotNet
+7. Run the benchmarks `./NetworkBenchmarkDotNet -b All` and see if your library runs correct
+8. Create a PR including your benchmark md results 🎉
 
 ### Rules for adding a benchmark
 
