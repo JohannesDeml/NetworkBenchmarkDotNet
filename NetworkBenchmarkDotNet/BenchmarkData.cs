@@ -24,6 +24,11 @@ namespace NetworkBenchmark
 		public bool Listen { get; private set; }
 
 		/// <summary>
+		/// Benchmark is preparing to be run
+		/// </summary>
+		public bool Preparing { get; private set; }
+
+		/// <summary>
 		/// Is a benchmark running (and therefore all messages should be counted)
 		/// </summary>
 		public bool Running { get; private set; }
@@ -46,12 +51,14 @@ namespace NetworkBenchmark
 		public void PrepareBenchmark()
 		{
 			Listen = true;
+			Preparing = true;
 		}
 
 		public void StartBenchmark()
 		{
 			StartTime = DateTime.Now;
 			Running = true;
+			Preparing = false;
 		}
 
 		public void StopBenchmark()

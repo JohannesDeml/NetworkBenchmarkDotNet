@@ -60,9 +60,9 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void Tick()
 		{
-			while (benchmarkData.Listen)
+			while (benchmarkData.Preparing || benchmarkData.Running)
 			{
-				client?.Tick();
+				client.Tick();
 				Thread.Sleep(0);
 			}
 		}
