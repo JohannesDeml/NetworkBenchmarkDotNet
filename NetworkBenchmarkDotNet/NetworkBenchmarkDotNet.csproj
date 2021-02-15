@@ -29,6 +29,10 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Kcp2k\Kcp2k.csproj" />
+    </ItemGroup>
+
 
     <PropertyGroup>
         <ServerGarbageCollection>true</ServerGarbageCollection>
