@@ -130,7 +130,7 @@ namespace NetworkBenchmark.Enet
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
+			packet.Create(data, data.Length, PacketFlags.Reliable); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
@@ -139,7 +139,7 @@ namespace NetworkBenchmark.Enet
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
+			packet.Create(data, data.Length, PacketFlags.None); // Unreliable Sequenced
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
