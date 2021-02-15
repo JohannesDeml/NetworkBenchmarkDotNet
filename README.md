@@ -4,7 +4,7 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)[![.NET Core 3.1](https://img.shields.io/badge/.NET_Core-3.1-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0) [![.NET Core 3.1](https://img.shields.io/badge/.NET_Core-3.1-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
 ## Description
 
@@ -76,7 +76,7 @@ DateTime=02/15/2021 18:08:30
 | **Performance1** |         **Kcp2k** |     **500** |    **47,227 msg/s** | **10,587.1 ms** | **3,304.33 ms** | **3,672.76 ms** |
 | Performance2 |         Kcp2k |     500 |    50,075 msg/s |  9,985.0 ms | 2,525.07 ms | 2,806.61 ms |
 
-![Benchmark Results](./Docs/Performance Comparison .NET 5 Linux.png)
+![Benchmark Results](./Docs/PerformanceLinux.png)
 
 ### Windows 10
 To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.  
@@ -108,7 +108,7 @@ DateTime=02/15/2021 18:06:38
 | Performance2 |         Kcp2k |     500 | 117,231 msg/s |  4,265.1 ms |  46.64 ms |  53.71 ms |  4,264.8 ms |
 
 
-![Benchmark Results](./Docs/Performance Comparison .NET 5 Windows.png)
+![Benchmark Results](./Docs/PerformanceWindows.png)
 
 ### Notes
 
@@ -154,7 +154,7 @@ Options:
 
 Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up via [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.
 
-### Rules for adding a Library
+### Adding a Library
 
 Your new proposed library ... 
 
@@ -176,7 +176,7 @@ Your new proposed library ...
 7. Run the benchmarks `./NetworkBenchmarkDotNet -b All` and see if your library runs correct
 8. Create a PR including your benchmark md results 🎉
 
-### Rules for adding a benchmark
+### Adding a benchmark
 
 Tell us why you think that benchmark is important and what it tests, that the other benchmarks don't do.  
 Ideas for benchmarks:
