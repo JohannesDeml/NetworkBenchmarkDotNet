@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
@@ -23,14 +24,13 @@ namespace kcp2k
         internal MemoryStream data = new MemoryStream();
 
         // pool ////////////////////////////////////////////////////////////////
-        internal static readonly Stack<Segment> Pool = new Stack<Segment>(32);
+        internal static readonly ConcurrentStack<Segment> Pool = new ConcurrentStack<Segment>();
 
         public static Segment Take()
         {
-            if (Pool.Count > 0)
+            if (Pool.TryPop(out var seg))
             {
-                Segment seg = Pool.Pop();
-                return seg;
+	            return seg;
             }
             return new Segment();
         }
