@@ -91,7 +91,7 @@ namespace NetworkBenchmark.Enet
 							break;
 
 						case EventType.Timeout:
-							if (benchmarkData.Running)
+							if (benchmarkData.Preparing || benchmarkData.Running)
 							{
 								Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
 							}

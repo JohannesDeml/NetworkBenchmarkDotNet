@@ -85,9 +85,9 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnDisconnected(int connectionId)
 		{
-			if (benchmarkData.Running || benchmarkData.Preparing)
+			if (benchmarkData.Preparing || benchmarkData.Running)
 			{
-				Console.WriteLine($"Client with id {connectionId} disconnected while running the benchmark!");
+				Utilities.WriteVerboseLine($"Client {connectionId} disconnected while benchmark is running.");
 			}
 		}
 
