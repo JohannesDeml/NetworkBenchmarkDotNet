@@ -25,6 +25,12 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// https://github.com/RevenantX/LiteNetLib
 		/// </summary>
-		LiteNetLib
+		LiteNetLib,
+
+		/// <summary>
+		/// https://github.com/vis2k/kcp2k
+		/// https://github.com/JohannesDeml/kcp2k/tree/networkbenchmarkdotnet/kcp2k/Assets/kcp2k
+		/// </summary>
+		Kcp2k
 	}
 }
