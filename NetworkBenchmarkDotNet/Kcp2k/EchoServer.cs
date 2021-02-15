@@ -75,8 +75,12 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment)
 		{
-			// TODO copy message
-			Send(connectionId, arraySegment, communicationChannel);
+			if (benchmarkData.Running)
+			{
+				Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+				// TODO copy message
+				Send(connectionId, arraySegment, communicationChannel);
+			}
 		}
 
 		private void OnDisconnected(int connectionId)
@@ -90,7 +94,7 @@ namespace NetworkBenchmark.Kcp2k
 		private void Send(int connectionId, ArraySegment<byte> message, KcpChannel channel)
 		{
 			server.Send(connectionId, message, channel);
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 
 		public Task StopServerThread()
