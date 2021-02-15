@@ -6,7 +6,7 @@ dotnet build --configuration Release --framework net5.0 --output ./bin/NetworkBe
 
 if [ -z "$1" ]
 then
-  mode="All"
+  mode="Essential"
 else 
   mode="$1"
 fi

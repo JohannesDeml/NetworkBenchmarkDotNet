@@ -80,7 +80,7 @@ namespace NetworkBenchmark.Kcp2k
 				#if WINDOWS
 				timeBeginPeriod(1);
 				#endif
-				
+
 				Thread.Sleep(1);
 
 				#if WINDOWS

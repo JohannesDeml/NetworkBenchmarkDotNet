@@ -39,7 +39,7 @@ namespace NetworkBenchmark
 
 		/// <summary>
 		/// Run Benchmark In Depth
-		/// Benchmark For ENEt with different settings and environments
+		/// Benchmark for testing one library in depth with different settings and environments
 		/// </summary>
 		InDepth = 1 << 2,
 
