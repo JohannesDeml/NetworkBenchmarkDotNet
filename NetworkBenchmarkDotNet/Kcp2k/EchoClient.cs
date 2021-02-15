@@ -68,7 +68,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void TickLoop()
 		{
-			while (benchmarkData.Preparing || benchmarkData.Running)
+			while (benchmarkData.Listen)
 			{
 				Tick();
 				Thread.Sleep(1);
