@@ -41,6 +41,7 @@ namespace NetworkBenchmark.Kcp2k
 
 			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
+			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
 		public Task StartServerThread()

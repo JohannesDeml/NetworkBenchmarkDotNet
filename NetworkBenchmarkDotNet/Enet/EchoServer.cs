@@ -38,6 +38,7 @@ namespace NetworkBenchmark.Enet
 			address.SetHost(config.Address);
 			serverThread = new Thread(this.Start);
 			serverThread.Name = "Enet Server";
+			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
 		public Task StartServerThread()
