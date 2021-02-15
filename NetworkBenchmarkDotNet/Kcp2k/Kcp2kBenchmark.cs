@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LiteNetLibBenchmark.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="Kcp2kBenchmark.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml

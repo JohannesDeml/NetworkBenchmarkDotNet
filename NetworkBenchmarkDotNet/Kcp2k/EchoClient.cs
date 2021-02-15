@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoClient.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -9,12 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using kcp2k;
-using LiteNetLib;
 
 namespace NetworkBenchmark.Kcp2k
 {
@@ -31,6 +28,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly byte[] messageArray;
 		private readonly KcpClient client;
 		private KcpChannel communicationChannel;
+		private bool noDelay;
 
 		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
@@ -39,6 +37,7 @@ namespace NetworkBenchmark.Kcp2k
 			this.benchmarkData = benchmarkData;
 			messageArray = config.Message;
 			communicationChannel = KcpChannel.Unreliable;
+			noDelay = true;
 
 			client = new KcpClient(OnPeerConnected, OnNetworkReceive, OnPeerDisconnected);
 
@@ -53,7 +52,7 @@ namespace NetworkBenchmark.Kcp2k
 		public void Start()
 		{
 			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			client.Connect(config.Address, (ushort)config.Port, true, interval);
+			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
 			tickThread.Start();
 			IsDisposed = false;
 		}
@@ -63,7 +62,7 @@ namespace NetworkBenchmark.Kcp2k
 			while (benchmarkData.Preparing || benchmarkData.Running)
 			{
 				client.Tick();
-				Thread.Sleep(0);
+				Thread.Sleep(1);
 			}
 		}
 

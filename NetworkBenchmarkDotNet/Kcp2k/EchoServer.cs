@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoServer.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -9,12 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using kcp2k;
-using LiteNetLib;
 
 namespace NetworkBenchmark.Kcp2k
 {
@@ -25,6 +22,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpServer server;
 		private readonly Thread serverThread;
 		private KcpChannel communicationChannel;
+		private bool noDelay;
 
 		private readonly byte[] message;
 
@@ -33,9 +31,10 @@ namespace NetworkBenchmark.Kcp2k
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			communicationChannel = KcpChannel.Unreliable;
+			noDelay = true;
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);
-			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, true, interval);
+			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, noDelay, interval);
 
 
 			message = new byte[config.MessageByteSize];
@@ -106,6 +105,5 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			// TODO server.Dispose();
 		}
-
 	}
 }
