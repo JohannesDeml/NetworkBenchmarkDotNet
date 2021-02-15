@@ -63,7 +63,7 @@ namespace NetworkBenchmark.Kcp2k
 			while (benchmarkData.Listen)
 			{
 				server.Tick();
-				Thread.Sleep(0);
+				Thread.Sleep(1);
 			}
 
 			server.Stop();
