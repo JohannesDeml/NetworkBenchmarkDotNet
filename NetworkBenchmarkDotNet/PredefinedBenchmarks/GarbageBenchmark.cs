@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GcBenchmark.cs">
+// <copyright file="GarbageBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -9,22 +9,26 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnosers;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id: "Performance Benchmark")]
-	[EventPipeProfiler(EventPipeProfile.GcVerbose)]
+	[Config(typeof(GarbageBenchmarkConfig))]
 	public class GarbageBenchmark : APredefinedBenchmark
 	{
+		[ParamsAllValues]
+		public NetworkLibrary Library { get; set; }
+
+		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
+		public override int MessageTarget => 10000;
+		public override int ClientCount => 10;
+		protected override NetworkLibrary LibraryTarget => Library;
+
 		[GlobalSetup(Target = nameof(Garbage))]
 		public void PrepareGarbageBenchmark()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 10;
-			config.Clients = 10;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 128;
 			PrepareBenchmark();
@@ -34,6 +38,11 @@ namespace NetworkBenchmark
 		public long Garbage()
 		{
 			return RunBenchmark();
+		}
+
+		public override string ToString()
+		{
+			return "GarbageBenchmark";
 		}
 	}
 }

@@ -33,7 +33,11 @@ namespace NetworkBenchmark.LiteNetLib
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
-			netManager.IPv6Enabled = IPv6Mode.Disabled;
+			if (!config.Address.Contains(':'))
+			{
+				netManager.IPv6Enabled = IPv6Mode.Disabled;
+			}
+
 			netManager.UnsyncedEvents = true;
 
 			message = new byte[config.MessageByteSize];
@@ -41,6 +45,7 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.ConnectionRequestEvent += OnConnectionRequest;
 			listener.NetworkReceiveEvent += OnNetworkReceive;
 			listener.NetworkErrorEvent += OnNetworkError;
+			listener.PeerDisconnectedEvent += OnPeerDisconnected;
 		}
 
 		public Task StartServer()
@@ -79,6 +84,7 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.ConnectionRequestEvent -= OnConnectionRequest;
 			listener.NetworkReceiveEvent -= OnNetworkReceive;
 			listener.NetworkErrorEvent -= OnNetworkError;
+			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 		}
 
 		private void OnConnectionRequest(ConnectionRequest request)
@@ -111,6 +117,14 @@ namespace NetworkBenchmark.LiteNetLib
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
 			Interlocked.Increment(ref benchmarkData.Errors);
+		}
+
+		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectinfo)
+		{
+			if (benchmarkData.Preparing || benchmarkData.Running)
+			{
+				Utilities.WriteVerboseLine($"Client {peer.Id} disconnected while benchmark is running.");
+			}
 		}
 	}
 }

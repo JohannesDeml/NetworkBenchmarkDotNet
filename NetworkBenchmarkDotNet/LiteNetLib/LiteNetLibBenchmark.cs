@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.LiteNetLib
 {
-	internal class LiteNetLibBenchmark: INetworkBenchmark
+	internal class LiteNetLibBenchmark : INetworkBenchmark
 	{
 		private BenchmarkSetup config;
 		private BenchmarkData benchmarkData;
@@ -134,7 +134,6 @@ namespace NetworkBenchmark.LiteNetLib
 
 		public void Deinitialize()
 		{
-			
 		}
 	}
 }

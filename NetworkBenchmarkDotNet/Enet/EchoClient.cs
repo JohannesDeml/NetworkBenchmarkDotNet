@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClient: EnetClient
+	internal class EchoClient : EnetClient
 	{
 		private Task listenTask;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData): base(id, config, benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData) : base(id, config, benchmarkData)
 		{
 		}
 

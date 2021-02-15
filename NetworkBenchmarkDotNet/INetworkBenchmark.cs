@@ -11,6 +11,7 @@
 using System;
 using System.Threading.Tasks;
 using NetworkBenchmark.Enet;
+using NetworkBenchmark.Kcp2k;
 using NetworkBenchmark.LiteNetLib;
 using NetworkBenchmark.NetCoreServer;
 
@@ -30,6 +31,9 @@ namespace NetworkBenchmark
 
 				case NetworkLibrary.LiteNetLib:
 					return new LiteNetLibBenchmark();
+
+				case NetworkLibrary.Kcp2k:
+					return new Kcp2kBenchmark();
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(library), library, null);

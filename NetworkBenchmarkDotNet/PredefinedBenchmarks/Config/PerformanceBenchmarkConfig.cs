@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkConfig.cs">
+// <copyright file="PerformanceBenchmarkConfig.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -8,42 +8,38 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Globalization;
-using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Reports;
-using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
-	public class BenchmarkConfig : ManualConfig
+	public class PerformanceBenchmarkConfig : ManualConfig
 	{
-		public BenchmarkConfig()
+		public PerformanceBenchmarkConfig()
 		{
-			Job baseConfig = Job.Default
+			Add(DefaultConfig.Instance);
+
+			AddJob(Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
-				.WithIterationCount(10)
+				.WithIterationCount(20)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(false);
-
-			AddJob(baseConfig
-				.WithRuntime(CoreRuntime.Core31)
-				.WithPlatform(Platform.X64));
-
-			AddJob(baseConfig
+				.WithGcForce(true)
 				.WithRuntime(CoreRuntime.Core50)
 				.WithPlatform(Platform.X64));
 
+			AddColumn(new NumClientsColumn());
+			AddColumn(new MessagesPerSecondColumn());
+			AddColumn(FixedColumn.VersionColumn);
+			AddColumn(FixedColumn.OperatingSystemColumn);
+			AddColumn(FixedColumn.DateTimeColumn);
+
 			AddExporter(MarkdownExporter.GitHub);
-			var processableStyle = new SummaryStyle(CultureInfo.InvariantCulture, false, SizeUnit.KB, TimeUnit.Microsecond,
-				false, true, 100);
-			AddExporter(new CsvExporter(CsvSeparator.Comma, processableStyle));
+			AddExporter(new CsvExporter(CsvSeparator.Comma, ConfigConstants.CsvStyle));
 		}
 	}
 }

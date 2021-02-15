@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	internal class NetCoreServerBenchmark: INetworkBenchmark
+	internal class NetCoreServerBenchmark : INetworkBenchmark
 	{
 		private BenchmarkSetup config;
 		private BenchmarkData benchmarkData;
@@ -150,7 +150,6 @@ namespace NetworkBenchmark.NetCoreServer
 
 		public void Deinitialize()
 		{
-			
 		}
 	}
 }

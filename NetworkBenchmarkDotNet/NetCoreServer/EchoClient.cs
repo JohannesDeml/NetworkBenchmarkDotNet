@@ -16,13 +16,13 @@ using UdpClient = NetCoreServer.UdpClient;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	class EchoClient: UdpClient
+	class EchoClient : UdpClient
 	{
 		private readonly byte[] message;
 		private readonly int initialMessages;
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoClient(BenchmarkSetup config, BenchmarkData benchmarkData): base(config.Address, config.Port)
+		public EchoClient(BenchmarkSetup config, BenchmarkData benchmarkData) : base(config.Address, config.Port)
 		{
 			message = config.Message;
 			initialMessages = config.ParallelMessages;

@@ -6,19 +6,33 @@
         <Authors>Johannes Deml</Authors>
         <Company>Johannes Deml</Company>
         <RootNamespace>NetworkingBenchmark</RootNamespace>
-        <PackageVersion>0.5.1</PackageVersion>
-        <AssemblyVersion>0.5.1</AssemblyVersion>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>0.8.0</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <LangVersion>9</LangVersion>
+        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+        <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+        <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(IsWindows)'=='true'">
+        <DefineConstants>WINDOWS</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsOSX)'=='true'">
+        <DefineConstants>OSX</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsLinux)'=='true'">
+        <DefineConstants>LINUX</DefineConstants>
+    </PropertyGroup>
+    
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
       <PackageReference Include="ENet-CSharp" Version="2.4.5" />
       <PackageReference Include="LiteNetLib" Version="0.9.4" />
-      <PackageReference Include="NetCoreServer" Version="3.0.21" />
+      <PackageReference Include="NetCoreServer" Version="3.0.22" />
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
     </ItemGroup>
 
@@ -26,6 +40,10 @@
       <None Include="..\LICENSE">
         <Pack>True</Pack>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Kcp2k\Kcp2k.csproj" />
     </ItemGroup>
 
 

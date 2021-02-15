@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="**\*.meta" />
+      <None Remove="kcp2k\KCP.asmdef" />
+    </ItemGroup>
+
+</Project>

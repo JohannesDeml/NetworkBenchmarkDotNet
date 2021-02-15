@@ -116,29 +116,43 @@ namespace NetworkBenchmark
 			}
 		}
 
-		public string PrintConfiguration()
+		public string PrintSetup()
 		{
 			var sb = new StringBuilder();
 
-			sb.AppendLine($"### NBN v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
-			sb.AppendLine(
-				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
-			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+			AppendEnvironmentSetup(sb);
 			sb.AppendLine($"* Test: {Test} with {Library} for {Duration} seconds");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
 			sb.AppendLine($"* Number of clients: {Clients}");
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize}bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
-			sb.AppendLine($"* Reproduce: `{CreateCommandlineInstruction()}`");
+			sb.AppendLine($"* Reproduce: `");
+			AppendCommandlineInstruction(sb);
+			sb.AppendLine($"`");
+
 			sb.AppendLine();
 
 			return sb.ToString();
 		}
 
-		public string CreateCommandlineInstruction()
+		public string PrintEnvironment()
 		{
-			var sb = new StringBuilder("./NetworkBenchmarkDotNet");
+			var sb = new StringBuilder();
+			AppendEnvironmentSetup(sb);
+			return sb.ToString();
+		}
 
+		public void AppendEnvironmentSetup(StringBuilder sb)
+		{
+			sb.AppendLine($"### NBN v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
+			sb.AppendLine(
+				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
+			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+		}
+
+		public void AppendCommandlineInstruction(StringBuilder sb)
+		{
+			sb.Append("./NetworkBenchmarkDotNet");
 			sb.Append($" --test {Test}");
 			sb.Append($" --library {Library}");
 			sb.Append($" --duration {Duration}");
@@ -150,15 +164,13 @@ namespace NetworkBenchmark
 			sb.Append($" --message-payload {MessagePayload}");
 			sb.Append($" --client-tick-rate {ClientTickRate}");
 			sb.Append($" --server-tick-rate {ServerTickRate}");
-
-			return sb.ToString();
 		}
 
 		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkSetup config)
 		{
 			config.Test = TestType.PingPong;
-			config.Address = "127.0.0.1";
-			config.Port = 3333;
+			config.Address = "::1";
+			config.Port = 3330;
 			config.Duration = 60;
 			config.Verbose = false;
 			config.MessagePayload = MessagePayload.Random;

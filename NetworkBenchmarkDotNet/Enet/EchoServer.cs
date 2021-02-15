@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ENet;
@@ -39,6 +38,7 @@ namespace NetworkBenchmark.Enet
 			address.SetHost(config.Address);
 			serverThread = new Thread(this.Start);
 			serverThread.Name = "Enet Server";
+			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
 		public Task StartServerThread()
@@ -92,7 +92,7 @@ namespace NetworkBenchmark.Enet
 							break;
 
 						case EventType.Timeout:
-							if (benchmarkData.Running)
+							if (benchmarkData.Preparing || benchmarkData.Running)
 							{
 								Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
 							}
@@ -131,7 +131,7 @@ namespace NetworkBenchmark.Enet
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
+			packet.Create(data, data.Length, PacketFlags.Reliable); // Reliable Sequenced
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
@@ -140,7 +140,7 @@ namespace NetworkBenchmark.Enet
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
+			packet.Create(data, data.Length, PacketFlags.None); // Unreliable Sequenced
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}

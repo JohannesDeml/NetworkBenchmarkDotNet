@@ -8,36 +8,39 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[GcServer(true)]
-	[GcConcurrent(false)]
 	public abstract class APredefinedBenchmark
 	{
-		[ParamsAllValues]
-		public NetworkLibrary Library;
+		protected abstract BenchmarkMode Mode { get; }
+		public abstract int MessageTarget { get; }
+		public abstract int ClientCount { get; }
+		protected abstract NetworkLibrary LibraryTarget { get; }
 
-		protected int MessageTarget;
-		protected INetworkBenchmark LibraryImpl;
+		private INetworkBenchmark libraryImpl;
 
 
 		[GlobalSetup]
 		public void PrepareBenchmark()
 		{
 			var config = BenchmarkCoordinator.Config;
-			config.Library = Library;
+			config.Benchmark = Mode;
+			config.Clients = ClientCount;
+			config.Library = LibraryTarget;
+			Console.Write(config.PrintSetup());
 
-			LibraryImpl = INetworkBenchmark.CreateNetworkBenchmark(Library);
-			BenchmarkCoordinator.PrepareBenchmark(LibraryImpl);
+			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(LibraryTarget);
+			BenchmarkCoordinator.PrepareBenchmark(libraryImpl);
 		}
 
 		protected long RunBenchmark()
 		{
 			var benchmarkdata = BenchmarkCoordinator.BenchmarkData;
-			BenchmarkCoordinator.StartBenchmark(LibraryImpl);
+			BenchmarkCoordinator.StartBenchmark(libraryImpl);
 			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 
 			while (receivedMessages < MessageTarget)
@@ -46,7 +49,7 @@ namespace NetworkBenchmark
 				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
 			}
 
-			BenchmarkCoordinator.StopBenchmark(LibraryImpl);
+			BenchmarkCoordinator.StopBenchmark(libraryImpl);
 			return receivedMessages;
 		}
 
@@ -61,7 +64,7 @@ namespace NetworkBenchmark
 		[GlobalCleanup]
 		public void CleanupBenchmark()
 		{
-			BenchmarkCoordinator.CleanupBenchmark(LibraryImpl);
+			BenchmarkCoordinator.CleanupBenchmark(libraryImpl);
 		}
 	}
 }

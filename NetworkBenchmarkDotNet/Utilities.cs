@@ -32,7 +32,7 @@ namespace NetworkBenchmark
 			return sb.ToString();
 		}
 
-		public static string EnumToString<T>() where T: Enum
+		public static string EnumToString<T>() where T : Enum
 		{
 			return EnumToString(typeof(T));
 		}

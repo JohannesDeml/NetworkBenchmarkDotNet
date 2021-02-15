@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PredefinedBenchmark.cs">
+// <copyright file="PerformanceBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -12,18 +12,24 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 10, id: "Performance Benchmark")]
-	[RPlotExporter]
+	[Config(typeof(PerformanceBenchmarkConfig))]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{
+		[ParamsAllValues]
+		public NetworkLibrary Library { get; set; }
+
+		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
+		public override int ClientCount => 500;
+		public override int MessageTarget => 1000 * 500;
+
+		protected override NetworkLibrary LibraryTarget => Library;
+
 		[GlobalSetup(Target = nameof(Performance1))]
 		public void PreparePerformanceBenchmark1()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 1000;
-			config.Clients = 1000;
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
@@ -35,8 +41,6 @@ namespace NetworkBenchmark
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			MessageTarget = 1000 * 1000;
-			config.Clients = 1000;
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
 			PrepareBenchmark();
@@ -52,6 +56,11 @@ namespace NetworkBenchmark
 		public long Performance2()
 		{
 			return RunBenchmark();
+		}
+
+		public override string ToString()
+		{
+			return "PerformanceBenchmark";
 		}
 	}
 }

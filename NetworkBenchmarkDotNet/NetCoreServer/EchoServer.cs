@@ -16,11 +16,11 @@ using NetCoreServer;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	class EchoServer: UdpServer
+	class EchoServer : UdpServer
 	{
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData): base(IPAddress.Any, config.Port)
+		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData) : base(IPAddress.Parse(config.Address), config.Port)
 		{
 			this.benchmarkData = benchmarkData;
 		}
@@ -63,8 +63,6 @@ namespace NetworkBenchmark.NetCoreServer
 
 		protected override void OnError(SocketError error)
 		{
-			Console.WriteLine($"Server caught an error with code {error}");
-
 			if (benchmarkData.Running)
 			{
 				benchmarkData.Errors++;
