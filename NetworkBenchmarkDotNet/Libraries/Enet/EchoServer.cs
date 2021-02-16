@@ -15,8 +15,10 @@ using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoServer
+	internal class EchoServer : IServer
 	{
+		public bool IsStarted => serverThread != null && serverThread.IsAlive;
+
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 		private readonly Thread serverThread;
@@ -55,17 +57,9 @@ namespace NetworkBenchmark.Enet
 			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
-		public Task StartServerThread()
+		public void StartServerThread()
 		{
 			serverThread.Start();
-			var serverStarted = Task.Run(() =>
-			{
-				while (!serverThread.IsAlive)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStarted;
 		}
 
 		private void Start()
@@ -125,18 +119,6 @@ namespace NetworkBenchmark.Enet
 		{
 			netEvent.Packet.CopyTo(message);
 			Send(message, 0, netEvent.Peer);
-		}
-
-		public Task StopServerThread()
-		{
-			var serverStopped = Task.Run(() =>
-			{
-				while (serverThread.IsAlive)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStopped;
 		}
 
 		public void Dispose()

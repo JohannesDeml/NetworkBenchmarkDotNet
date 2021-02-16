@@ -33,7 +33,8 @@ namespace NetworkBenchmark.Enet
 
 		public Task StartServer()
 		{
-			return echoServer.StartServerThread();
+			echoServer.StartServerThread();
+			return Utilities.WaitForServerToStart(echoServer);
 		}
 
 		public Task StartClients()
@@ -76,7 +77,7 @@ namespace NetworkBenchmark.Enet
 
 		public Task StopServer()
 		{
-			return echoServer.StopServerThread();
+			return Utilities.WaitForServerToStop(echoServer);
 		}
 
 		public Task StopClients()

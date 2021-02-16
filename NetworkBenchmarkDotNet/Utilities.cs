@@ -107,7 +107,7 @@ namespace NetworkBenchmark
 
 		public static Task WaitForClients<T>(List<T> clients, Func<T, bool> condition) where T: IClient
 		{
-			var allClientsDisposed = Task.Run(() =>
+			var waitForAllClients = Task.Run(() =>
 			{
 				for (int i = 0; i < clients.Count; i++)
 				{
@@ -117,7 +117,29 @@ namespace NetworkBenchmark
 					}
 				}
 			});
-			return allClientsDisposed;
+			return waitForAllClients;
+		}
+
+		public static Task WaitForServerToStart<T>(T server) where T: IServer
+		{
+			return WaitForServer(server, (T s) => { return s.IsStarted; });
+		}
+
+		public static Task WaitForServerToStop<T>(T server) where T: IServer
+		{
+			return WaitForServer(server, (T s) => { return !s.IsStarted; });
+		}
+
+		private static Task WaitForServer<T>(T server, Func<T, bool> condition) where T : IServer
+		{
+			var waitForServer = Task.Run(() =>
+			{
+				while (!condition(server))
+				{
+					Thread.Sleep(10);
+				}
+			});
+			return waitForServer;
 		}
 	}
 }

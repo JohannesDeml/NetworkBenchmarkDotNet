@@ -16,8 +16,10 @@ using kcp2k;
 
 namespace NetworkBenchmark.Kcp2k
 {
-	internal class EchoServer
+	internal class EchoServer : IServer
 	{
+		public bool IsStarted => serverThread != null && serverThread.IsAlive && server.IsActive();
+
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 		private readonly KcpServer server;
@@ -68,17 +70,9 @@ namespace NetworkBenchmark.Kcp2k
 			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
-		public Task StartServerThread()
+		public void StartServerThread()
 		{
 			serverThread.Start();
-			var serverStarted = Task.Run(() =>
-			{
-				while (!serverThread.IsAlive || !server.IsActive())
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStarted;
 		}
 
 		private void TickLoop()
@@ -133,18 +127,6 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			server.Send(connectionId, message, channel);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
-		}
-
-		public Task StopServerThread()
-		{
-			var serverStopped = Task.Run(() =>
-			{
-				while (serverThread.IsAlive)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStopped;
 		}
 
 		public void Dispose()

@@ -16,7 +16,7 @@ using NetCoreServer;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	internal class EchoServer : UdpServer
+	internal class EchoServer : UdpServer, IServer
 	{
 		private readonly BenchmarkData benchmarkData;
 

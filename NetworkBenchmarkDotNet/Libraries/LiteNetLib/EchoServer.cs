@@ -17,8 +17,10 @@ using LiteNetLib;
 
 namespace NetworkBenchmark.LiteNetLib
 {
-	internal class EchoServer
+	internal class EchoServer : IServer
 	{
+		public bool IsStarted => netManager != null && netManager.IsRunning;
+
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 		private readonly EventBasedNetListener listener;
@@ -61,17 +63,9 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.PeerDisconnectedEvent += OnPeerDisconnected;
 		}
 
-		public Task StartServer()
+		public void StartServer()
 		{
 			Start();
-			var serverStarted = Task.Run(() =>
-			{
-				while (!netManager.IsRunning)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStarted;
 		}
 
 		private void Start()
@@ -79,17 +73,9 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.Start(config.Port);
 		}
 
-		public Task StopServer()
+		public void StopServer()
 		{
 			netManager.Stop();
-			var serverStopped = Task.Run(() =>
-			{
-				while (netManager.IsRunning)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStopped;
 		}
 
 		public void Dispose()

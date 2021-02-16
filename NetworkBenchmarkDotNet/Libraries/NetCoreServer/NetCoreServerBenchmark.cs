@@ -32,14 +32,7 @@ namespace NetworkBenchmark.NetCoreServer
 		public Task StartServer()
 		{
 			echoServer.Start();
-			var serverStarted = Task.Run(() =>
-			{
-				while (!echoServer.IsStarted)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStarted;
+			return Utilities.WaitForServerToStart(echoServer);
 		}
 
 		public Task StartClients()
@@ -83,14 +76,7 @@ namespace NetworkBenchmark.NetCoreServer
 		public Task StopServer()
 		{
 			echoServer.Stop();
-			var serverStopped = Task.Run(() =>
-			{
-				while (echoServer.IsStarted)
-				{
-					Thread.Sleep(10);
-				}
-			});
-			return serverStopped;
+			return Utilities.WaitForServerToStop(echoServer);
 		}
 
 		public Task StopClients()

@@ -32,7 +32,8 @@ namespace NetworkBenchmark.LiteNetLib
 
 		public Task StartServer()
 		{
-			return echoServer.StartServer();
+			echoServer.StartServer();
+			return Utilities.WaitForServerToStart(echoServer);
 		}
 
 		public Task StartClients()
@@ -77,7 +78,8 @@ namespace NetworkBenchmark.LiteNetLib
 
 		public Task StopServer()
 		{
-			return echoServer.StopServer();
+			echoServer.StopServer();
+			return Utilities.WaitForServerToStop(echoServer);
 		}
 
 		public Task StopClients()
