@@ -170,8 +170,8 @@ Your new proposed library ...
 #### How to add a library
 
 1. Add a new folder inside the NetworkBenchmarkDotNet solution with the name of your library
-2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetworkBenchmarkDotNet/INetworkBenchmark.cs)
-3. Add your library name to the [NetworkLibrary](../../blob/master/NetworkBenchmarkDotNet/NetworkLibrary.cs) enum
+2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetworkBenchmarkDotNet/Libraries/INetworkBenchmark.cs)
+3. Add your library name to the [NetworkLibrary](../../blob/master/NetworkBenchmarkDotNet/Libraries/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
 5. Use the `-l ` argument (or `BenchmarkSetup.Library`) to test your library and if everything works as expected.
 6. Change `[Params(NetworkLibrary.Kcp2k)]` in `InDepthBenchmark.cs` to your library and run `./NetworkBenchmarkDotNet -b InDepth` to see, if your library works with high CCU and looping benchmarks with BenchmarkDotNet
