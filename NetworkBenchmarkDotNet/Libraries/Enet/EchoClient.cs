@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EchoClient.cs">
+// <copyright file="EnetClient.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -8,31 +8,155 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClient : EnetClient
+	internal class EchoClient
 	{
-		private Task listenTask;
+		public bool IsConnected => peer.State == PeerState.Connected;
+		public bool IsDisposed { get; private set; }
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData) : base(id, config, benchmarkData)
+		private int id;
+		private readonly BenchmarkSetup config;
+		private readonly BenchmarkData benchmarkData;
+
+		private readonly byte[] message;
+		private readonly int timeout;
+		private readonly PacketFlags packetFlags;
+		private readonly Host host;
+		private readonly Address address;
+		private readonly Thread connectAndListenThread;
+		private Peer peer;
+
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
+			this.id = id;
+			this.config = config;
+			this.benchmarkData = benchmarkData;
+			message = config.Message;
+			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
+			switch (config.TransmissionType)
+			{
+				case TransmissionType.Reliable:
+					packetFlags = PacketFlags.Reliable;
+					break;
+				case TransmissionType.Unreliable:
+					packetFlags = PacketFlags.None;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+			}
+
+			host = new Host();
+			address = new Address();
+			address.SetHost(config.Address);
+			address.Port = (ushort) config.Port;
+			IsDisposed = false;
+
+			connectAndListenThread = new Thread(ConnectAndListen);
+			connectAndListenThread.Name = $"ENet Client {id}";
+			connectAndListenThread.IsBackground = true;
 		}
 
-		public override void Start()
+		public void Start()
 		{
-			listenTask = Task.Factory.StartNew(ConnectAndListen, TaskCreationOptions.LongRunning);
+			connectAndListenThread.Start();
 		}
 
-		public override async void Dispose()
+		public void StartSendingMessages()
 		{
-			while (!listenTask.IsCompleted)
+			var parallelMessagesPerClient = config.ParallelMessages;
+
+			for (int i = 0; i < parallelMessagesPerClient; i++)
+			{
+				Send(message, 0, peer);
+			}
+		}
+
+		public void Disconnect()
+		{
+			peer.DisconnectNow(0);
+		}
+
+		public virtual async void Dispose()
+		{
+			while (connectAndListenThread.IsAlive)
 			{
 				await Task.Delay(10);
 			}
 
-			base.Dispose();
+			host.Flush();
+			host.Dispose();
+			IsDisposed = true;
+		}
+
+		protected void ConnectAndListen()
+		{
+			host.Create();
+			peer = host.Connect(address, 4);
+
+			Event netEvent;
+
+			while (benchmarkData.Listen)
+			{
+				bool polled = false;
+
+				while (!polled)
+				{
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						// blocks up to the timeout if no events are received
+						// if a packet is received earlier, it stops blocking
+						if (host.Service(timeout, out netEvent) <= 0)
+							break;
+
+						polled = true;
+					}
+
+					switch (netEvent.Type)
+					{
+						case EventType.None:
+							break;
+
+						case EventType.Disconnect:
+							if (benchmarkData.Running)
+							{
+								Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+							}
+
+							break;
+
+						case EventType.Receive:
+							if (benchmarkData.Running)
+							{
+								Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+								OnReceiveMessage(netEvent);
+							}
+
+							netEvent.Packet.Dispose();
+							break;
+					}
+				}
+			}
+		}
+
+		protected virtual void OnReceiveMessage(Event netEvent)
+		{
+			netEvent.Packet.CopyTo(message);
+			Send(message, 0, peer);
+		}
+
+		protected void Send(byte[] data, byte channelID, Peer peer)
+		{
+			Packet packet = default(Packet);
+
+			packet.Create(data, data.Length, packetFlags);
+			peer.Send(channelID, ref packet);
+			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 	}
 }

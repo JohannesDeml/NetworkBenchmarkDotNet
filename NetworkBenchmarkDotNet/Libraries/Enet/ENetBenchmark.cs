@@ -19,7 +19,7 @@ namespace NetworkBenchmark.Enet
 		private BenchmarkSetup config;
 		private BenchmarkData benchmarkData;
 		private EchoServer echoServer;
-		private List<EnetClient> echoClients;
+		private List<EchoClient> echoClients;
 
 
 		public void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
@@ -28,7 +28,7 @@ namespace NetworkBenchmark.Enet
 			this.benchmarkData = benchmarkData;
 			ENet.Library.Initialize();
 			echoServer = new EchoServer(config, benchmarkData);
-			echoClients = new List<EnetClient>();
+			echoClients = new List<EchoClient>();
 		}
 
 		public Task StartServer()
@@ -40,7 +40,7 @@ namespace NetworkBenchmark.Enet
 		{
 			for (int i = 0; i < config.Clients; i++)
 			{
-				echoClients.Add(new EchoClientThreaded(i, config, benchmarkData));
+				echoClients.Add(new EchoClient(i, config, benchmarkData));
 			}
 
 			return Task.CompletedTask;
