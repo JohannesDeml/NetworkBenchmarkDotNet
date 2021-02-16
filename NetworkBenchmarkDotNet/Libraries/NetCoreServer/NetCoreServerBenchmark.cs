@@ -80,10 +80,6 @@ namespace NetworkBenchmark.NetCoreServer
 			}
 		}
 
-		public void StopBenchmark()
-		{
-		}
-
 		public Task DisconnectClients()
 		{
 			for (int i = 0; i < echoClients.Count; i++)

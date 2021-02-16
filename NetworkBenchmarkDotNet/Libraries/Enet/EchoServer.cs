@@ -89,31 +89,35 @@ namespace NetworkBenchmark.Enet
 						polled = true;
 					}
 
-					switch (netEvent.Type)
-					{
-						case EventType.None:
-							break;
-
-						case EventType.Receive:
-							if (benchmarkData.Running)
-							{
-								Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
-								OnReceiveMessage(netEvent);
-							}
-
-							netEvent.Packet.Dispose();
-
-							break;
-
-						case EventType.Timeout:
-							if (benchmarkData.Preparing || benchmarkData.Running)
-							{
-								Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
-							}
-
-							break;
-					}
+					HandleNetEvent(netEvent);
 				}
+			}
+		}
+
+		private void HandleNetEvent(Event netEvent)
+		{
+			switch (netEvent.Type)
+			{
+				case EventType.None:
+					break;
+
+				case EventType.Receive:
+					if (benchmarkData.Running)
+					{
+						Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+						OnReceiveMessage(netEvent);
+					}
+
+					netEvent.Packet.Dispose();
+					break;
+
+				case EventType.Timeout:
+					if (benchmarkData.Preparing || benchmarkData.Running)
+					{
+						Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
+					}
+
+					break;
 			}
 		}
 

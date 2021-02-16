@@ -74,10 +74,6 @@ namespace NetworkBenchmark.LiteNetLib
 			}
 		}
 
-		public void StopBenchmark()
-		{
-		}
-
 		public Task DisconnectClients()
 		{
 			var disconnectTasks = new List<Task>();

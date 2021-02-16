@@ -15,7 +15,7 @@ namespace NetworkBenchmark
 {
 	public static class BenchmarkCoordinator
 	{
-		public static BenchmarkSetup Config;
+		public static BenchmarkSetup Config { get; set; }
 		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
 
 		public static void ApplyPredefinedConfiguration()
@@ -25,7 +25,7 @@ namespace NetworkBenchmark
 				Config = new BenchmarkSetup();
 			}
 
-			BenchmarkSetup.ApplyPredefinedBenchmarkConfiguration(ref Config);
+			BenchmarkSetup.ApplyPredefinedBenchmarkConfiguration(Config);
 		}
 
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
@@ -66,7 +66,6 @@ namespace NetworkBenchmark
 
 		public static void StopBenchmark(INetworkBenchmark networkBenchmark)
 		{
-			networkBenchmark.StopBenchmark();
 			BenchmarkData.StopBenchmark();
 		}
 
@@ -110,7 +109,7 @@ namespace NetworkBenchmark
 
 			var totalBytes = BenchmarkData.MessagesClientReceived * Config.MessageByteSize;
 			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = (double) BenchmarkData.Duration.TotalMilliseconds / ((double) BenchmarkData.MessagesClientReceived / 1000.0d);
+			var latency = BenchmarkData.Duration.TotalMilliseconds / (BenchmarkData.MessagesClientReceived / 1000.0d);
 
 			sb.AppendLine($"Total data: {totalMb:0.00} MB");
 			sb.AppendLine($"Data throughput: {totalMb / BenchmarkData.Duration.TotalSeconds:0.00} MB/s");

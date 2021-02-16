@@ -20,7 +20,7 @@ namespace NetworkBenchmark.Enet
 		public bool IsConnected => peer.State == PeerState.Connected;
 		public bool IsDisposed { get; private set; }
 
-		private int id;
+		private readonly int id;
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
 
@@ -82,7 +82,7 @@ namespace NetworkBenchmark.Enet
 			peer.DisconnectNow(0);
 		}
 
-		public virtual async void Dispose()
+		public async void Dispose()
 		{
 			while (connectAndListenThread.IsAlive)
 			{
@@ -94,7 +94,7 @@ namespace NetworkBenchmark.Enet
 			IsDisposed = true;
 		}
 
-		protected void ConnectAndListen()
+		private void ConnectAndListen()
 		{
 			host.Create();
 			peer = host.Connect(address, 4);
@@ -117,40 +117,45 @@ namespace NetworkBenchmark.Enet
 						polled = true;
 					}
 
-					switch (netEvent.Type)
-					{
-						case EventType.None:
-							break;
-
-						case EventType.Disconnect:
-							if (benchmarkData.Running)
-							{
-								Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
-							}
-
-							break;
-
-						case EventType.Receive:
-							if (benchmarkData.Running)
-							{
-								Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-								OnReceiveMessage(netEvent);
-							}
-
-							netEvent.Packet.Dispose();
-							break;
-					}
+					HandleNetEvent(netEvent);
 				}
 			}
 		}
 
-		protected virtual void OnReceiveMessage(Event netEvent)
+		private void HandleNetEvent(Event netEvent)
+		{
+			switch (netEvent.Type)
+			{
+				case EventType.None:
+					break;
+
+				case EventType.Disconnect:
+					if (benchmarkData.Running)
+					{
+						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+					}
+
+					break;
+
+				case EventType.Receive:
+					if (benchmarkData.Running)
+					{
+						Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+						OnReceiveMessage(netEvent);
+					}
+
+					netEvent.Packet.Dispose();
+					break;
+			}
+		}
+
+		private void OnReceiveMessage(Event netEvent)
 		{
 			netEvent.Packet.CopyTo(message);
 			Send(message, 0, peer);
 		}
 
-		protected void Send(byte[] data, byte channelID, Peer peer)
+		private void Send(byte[] data, byte channelID, Peer peer)
 		{
 			Packet packet = default(Packet);
 

@@ -71,11 +71,7 @@ namespace NetworkBenchmark.Kcp2k
 				echoClients[i].StartSendingMessages();
 			}
 		}
-
-		public void StopBenchmark()
-		{
-		}
-
+		
 		public Task DisconnectClients()
 		{
 			for (int i = 0; i < echoClients.Count; i++)

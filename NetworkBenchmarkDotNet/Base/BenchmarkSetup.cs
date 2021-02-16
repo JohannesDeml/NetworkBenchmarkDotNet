@@ -101,7 +101,12 @@ namespace NetworkBenchmark
 		{
 			Message = new byte[MessageByteSize];
 
-			switch (MessagePayload)
+			FillWithPayload(MessagePayload);
+		}
+
+		private void FillWithPayload(MessagePayload payload)
+		{
+			switch (payload)
 			{
 				case MessagePayload.Random:
 					var rnd = new Random(0);
@@ -114,10 +119,9 @@ namespace NetworkBenchmark
 					{
 						Message[i] = 0xff;
 					}
-
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(payload));
 			}
 		}
 
@@ -173,7 +177,7 @@ namespace NetworkBenchmark
 			sb.Append($" --server-tick-rate {ServerTickRate}");
 		}
 
-		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkSetup config)
+		public static void ApplyPredefinedBenchmarkConfiguration(BenchmarkSetup config)
 		{
 			config.Test = TestType.PingPong;
 			config.TransmissionType = TransmissionType.Unreliable;

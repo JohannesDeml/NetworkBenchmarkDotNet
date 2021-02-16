@@ -155,6 +155,11 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnPeerDisconnected()
 		{
+			if (benchmarkData.Running)
+			{
+				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+			}
+			
 			IsConnected = false;
 		}
 	}
