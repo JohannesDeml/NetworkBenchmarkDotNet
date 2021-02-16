@@ -130,7 +130,7 @@ namespace NetworkBenchmark
 			sb.AppendLine($"* Test: {Test} with {TransmissionType} messages");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
 			sb.AppendLine($"* Number of clients: {Clients}");
-			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize}bytes, Payload: {MessagePayload}");
+			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize} bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Reproduce: `");
 			AppendCommandlineInstruction(sb);

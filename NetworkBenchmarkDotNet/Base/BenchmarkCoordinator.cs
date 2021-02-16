@@ -94,7 +94,7 @@ namespace NetworkBenchmark
 			var sb = new StringBuilder();
 
 			sb.AppendLine("```");
-			sb.AppendLine($"Results {Config.Test} with {Config.Library}");
+			sb.AppendLine($"Results {Config.Library} with {Config.TransmissionType} {Config.Test}");
 			if (BenchmarkData.Errors > 0)
 			{
 				sb.AppendLine($"Errors: {BenchmarkData.Errors}");
