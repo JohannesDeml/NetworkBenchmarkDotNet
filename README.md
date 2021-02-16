@@ -12,7 +12,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ### Supported Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.5)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.6)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
@@ -133,21 +133,23 @@ Usage:
   NetworkBenchmarkDotNet [options]
 
 Options:
-  -b, --benchmark <All|Custom|Garbage|Performance>    Run predefined benchmarks [default: Custom]
-  -t, --test <PingPong>                               Test type [default: PingPong]
-  -l, --library <ENet|LiteNetLib|NetCoreServer>       Library target [default: ENet]
-  -d, --duration <duration>                           Test duration in seconds [default: 10]
-  --address <address>                                 IP Address, can be ipv4 or ipv6 [default: 127.0.0.1]
-  --port <port>                                       Socket Port [default: 3330]
-  --clients <clients>                                 # Simultaneous clients [default: 1000]
-  --parallel-messages <parallel-messages>             # Parallel messages per client [default: 1]
-  --message-byte-size <message-byte-size>             Message byte size sent by clients [default: 32]
-  --message-payload <Ones|Random|Zeros>               Message load sent by clients [default: Random]
-  --verbose                                           Verbose output of test steps and errors [default: True]
-  --client-tick-rate <client-tick-rate>               Client ticks per second if supported [default: 60]
-  --server-tick-rate <server-tick-rate>               Server ticks per second if supported [default: 60]
-  --version                                           Show version information
-  -?, -h, --help                                      Show help and usage information
+  -b, --benchmark <All|Custom|Essential|Garbage|InDepth|Performance>    Run predefined benchmarks [default: Custom]
+  -t, --test <PingPong>                                                 Test type [default: PingPong]
+  --transmission <Reliable|Unreliable>                                  Transmission type [default: Unreliable]
+  -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                   Library target [default: ENet]
+  -d, --duration <duration>                                             Test duration in seconds [default: 10]
+  --address <address>                                                   IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
+  --port <port>                                                         Socket Port [default: 3330]
+  --clients <clients>                                                   # Simultaneous clients [default: 500]
+  --parallel-messages <parallel-messages>                               # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>                               Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>                                 Message load sent by clients [default: Random]
+  --verbose                                                             Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>                                 Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>                                 Server ticks per second if supported [default: 60]
+  --version                                                             Show version information
+  -?, -h, --help                                                        Show help and usage information
+
 ```
 
 ## Contributions are welcome!

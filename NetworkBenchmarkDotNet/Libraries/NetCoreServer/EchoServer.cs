@@ -32,7 +32,7 @@ namespace NetworkBenchmark.NetCoreServer
 				default:
 					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
 			}
-			
+
 			this.benchmarkData = benchmarkData;
 		}
 
