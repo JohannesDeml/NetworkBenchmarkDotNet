@@ -16,20 +16,20 @@ namespace NetworkBenchmark
 	public abstract class ANetworkBenchmark : INetworkBenchmark
 	{
 		private BenchmarkSetup config;
-		private BenchmarkData benchmarkData;
+		private BenchmarkStatistics benchmarkStatistics;
 		private IServer echoServer;
 		private List<IClient> echoClients;
 
 
-		public virtual void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
+		public virtual void Initialize(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
-			this.benchmarkData = benchmarkData;
-			echoServer = CreateNewServer(config, benchmarkData);
+			this.benchmarkStatistics = benchmarkStatistics;
+			echoServer = CreateNewServer(config, benchmarkStatistics);
 			echoClients = new List<IClient>();
 		}
 
-		protected abstract IServer CreateNewServer(BenchmarkSetup setup, BenchmarkData data);
+		protected abstract IServer CreateNewServer(BenchmarkSetup setup, BenchmarkStatistics statistics);
 
 		public Task StartServer()
 		{
@@ -41,13 +41,13 @@ namespace NetworkBenchmark
 		{
 			for (int i = 0; i < config.Clients; i++)
 			{
-				echoClients.Add(CreateNewClient(i, config, benchmarkData));
+				echoClients.Add(CreateNewClient(i, config, benchmarkStatistics));
 			}
 
 			return Task.CompletedTask;
 		}
 
-		protected abstract IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkData data);
+		protected abstract IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics);
 
 		public Task ConnectClients()
 		{

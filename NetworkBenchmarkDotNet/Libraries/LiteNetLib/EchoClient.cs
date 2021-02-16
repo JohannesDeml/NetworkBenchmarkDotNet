@@ -26,7 +26,7 @@ namespace NetworkBenchmark.LiteNetLib
 		private bool isDisposed;
 		private readonly int id;
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly byte[] message;
 		private readonly EventBasedNetListener listener;
@@ -34,11 +34,11 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.id = id;
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 			message = config.Message;
 
 			switch (config.Transmission)
@@ -131,7 +131,7 @@ namespace NetworkBenchmark.LiteNetLib
 			}
 
 			peer.Send(bytes, deliveryMethod);
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
 		private void OnPeerConnected(NetPeer peer)
@@ -141,10 +141,10 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
 		{
-			if (disconnectInfo.Reason == DisconnectReason.Timeout && benchmarkRunning)
+			if (disconnectInfo.Reason == DisconnectReason.Timeout && BenchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
-				Interlocked.Increment(ref benchmarkData.Errors);
+				Interlocked.Increment(ref benchmarkStatistics.Errors);
 			}
 
 			this.peer = null;
@@ -153,9 +153,9 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)
 		{
-			if (benchmarkRunning)
+			if (BenchmarkRunning)
 			{
-				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
 				Send(message);
 				netManager.TriggerUpdate();
 			}
@@ -165,10 +165,10 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
-			if (benchmarkRunning)
+			if (BenchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Error Client {id}: {socketerror}");
-				Interlocked.Increment(ref benchmarkData.Errors);
+				Interlocked.Increment(ref benchmarkStatistics.Errors);
 			}
 		}
 	}

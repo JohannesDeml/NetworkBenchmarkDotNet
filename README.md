@@ -149,7 +149,6 @@ Options:
   --server-tick-rate <server-tick-rate>                                 Server ticks per second if supported [default: 60]
   --version                                                             Show version information
   -?, -h, --help                                                        Show help and usage information
-
 ```
 
 ## Contributions are welcome!

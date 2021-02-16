@@ -16,7 +16,7 @@ namespace NetworkBenchmark
 	public static class BenchmarkCoordinator
 	{
 		public static BenchmarkSetup Config { get; set; }
-		public static readonly BenchmarkData BenchmarkData = new BenchmarkData();
+		public static readonly BenchmarkStatistics BenchmarkStatistics = new BenchmarkStatistics();
 
 		public static void ApplyPredefinedConfiguration()
 		{
@@ -32,8 +32,7 @@ namespace NetworkBenchmark
 		{
 			Utilities.WriteVerbose("-> Prepare Benchmark.");
 			Config.PrepareForNewBenchmark();
-			BenchmarkData.PrepareBenchmark();
-			networkBenchmark.Initialize(Config, BenchmarkData);
+			networkBenchmark.Initialize(Config, BenchmarkStatistics);
 			Utilities.WriteVerbose(".");
 
 			var serverTask = networkBenchmark.StartServer();
@@ -59,22 +58,21 @@ namespace NetworkBenchmark
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)
 		{
-			BenchmarkData.Reset();
-			BenchmarkData.StartBenchmark();
+			BenchmarkStatistics.Reset();
+			BenchmarkStatistics.StartBenchmark();
 			networkBenchmark.StartBenchmark();
 		}
 
 		public static void StopBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			networkBenchmark.StopBenchmark();
-			BenchmarkData.StopBenchmark();
+			BenchmarkStatistics.StopBenchmark();
 		}
 
 		public static void CleanupBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose("-> Clean up.");
 			networkBenchmark.DisconnectClients().Wait();
-			BenchmarkData.CleanupBenchmark();
 
 			networkBenchmark.StopClients().Wait();
 			networkBenchmark.DisposeClients().Wait();
@@ -95,26 +93,26 @@ namespace NetworkBenchmark
 
 			sb.AppendLine("```");
 			sb.AppendLine($"Results {Config.Library} with {Config.Transmission} {Config.Test}");
-			if (BenchmarkData.Errors > 0)
+			if (BenchmarkStatistics.Errors > 0)
 			{
-				sb.AppendLine($"Errors: {BenchmarkData.Errors}");
+				sb.AppendLine($"Errors: {BenchmarkStatistics.Errors}");
 				sb.AppendLine();
 			}
 
-			sb.AppendLine($"Duration: {BenchmarkData.Duration.TotalSeconds:0.000} s");
-			sb.AppendLine($"Messages sent by clients: {BenchmarkData.MessagesClientSent:n0}");
-			sb.AppendLine($"Messages server received: {BenchmarkData.MessagesServerReceived:n0}");
-			sb.AppendLine($"Messages sent by server: {BenchmarkData.MessagesServerSent:n0}");
-			sb.AppendLine($"Messages clients received: {BenchmarkData.MessagesClientReceived:n0}");
+			sb.AppendLine($"Duration: {BenchmarkStatistics.Duration.TotalSeconds:0.000} s");
+			sb.AppendLine($"Messages sent by clients: {BenchmarkStatistics.MessagesClientSent:n0}");
+			sb.AppendLine($"Messages server received: {BenchmarkStatistics.MessagesServerReceived:n0}");
+			sb.AppendLine($"Messages sent by server: {BenchmarkStatistics.MessagesServerSent:n0}");
+			sb.AppendLine($"Messages clients received: {BenchmarkStatistics.MessagesClientReceived:n0}");
 			sb.AppendLine();
 
-			var totalBytes = BenchmarkData.MessagesClientReceived * Config.MessageByteSize;
+			var totalBytes = BenchmarkStatistics.MessagesClientReceived * Config.MessageByteSize;
 			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = BenchmarkData.Duration.TotalMilliseconds / (BenchmarkData.MessagesClientReceived / 1000.0d);
+			var latency = BenchmarkStatistics.Duration.TotalMilliseconds / (BenchmarkStatistics.MessagesClientReceived / 1000.0d);
 
 			sb.AppendLine($"Total data: {totalMb:0.00} MB");
-			sb.AppendLine($"Data throughput: {totalMb / BenchmarkData.Duration.TotalSeconds:0.00} MB/s");
-			sb.AppendLine($"Message throughput: {BenchmarkData.MessagesClientReceived / BenchmarkData.Duration.TotalSeconds:n0} msg/s");
+			sb.AppendLine($"Data throughput: {totalMb / BenchmarkStatistics.Duration.TotalSeconds:0.00} MB/s");
+			sb.AppendLine($"Message throughput: {BenchmarkStatistics.MessagesClientReceived / BenchmarkStatistics.Duration.TotalSeconds:n0} msg/s");
 			sb.AppendLine($"Message latency: {latency:0.000} μs");
 			sb.AppendLine("```");
 			sb.AppendLine();

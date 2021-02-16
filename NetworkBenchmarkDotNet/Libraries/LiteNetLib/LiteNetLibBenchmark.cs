@@ -12,14 +12,14 @@ namespace NetworkBenchmark.LiteNetLib
 {
 	internal class LiteNetLibBenchmark : ANetworkBenchmark
 	{
-		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkData data)
+		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkStatistics statistics)
 		{
-			return new EchoServer(setup, data);
+			return new EchoServer(setup, statistics);
 		}
 
-		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkData data)
+		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
 		{
-			return new EchoClient(id, setup, data);
+			return new EchoClient(id, setup, statistics);
 		}
 	}
 }

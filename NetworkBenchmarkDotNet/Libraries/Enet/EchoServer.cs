@@ -19,7 +19,7 @@ namespace NetworkBenchmark.Enet
 		public override bool IsStarted => serverThread != null && serverThread.IsAlive;
 
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly Thread serverThread;
 		private readonly Host host;
 		private readonly Address address;
@@ -27,10 +27,10 @@ namespace NetworkBenchmark.Enet
 		private readonly int timeout;
 		private readonly PacketFlags packetFlags;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 			timeout = Utilities.CalculateTimeout(this.config.ServerTickRate);
 
 			switch (config.Transmission)
@@ -98,7 +98,7 @@ namespace NetworkBenchmark.Enet
 				case EventType.Receive:
 					if (benchmarkRunning)
 					{
-						Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+						Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
 						OnReceiveMessage(netEvent);
 					}
 
@@ -133,7 +133,7 @@ namespace NetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, packetFlags);
 			peer.Send(channelId, ref packet);
-			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 		}
 	}
 }

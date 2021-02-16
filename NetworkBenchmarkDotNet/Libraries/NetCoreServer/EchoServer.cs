@@ -21,9 +21,9 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool benchmarkPreparing;
 		private volatile bool listen;
 		private volatile bool benchmarkRunning;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData) : base(IPAddress.Parse(config.Address), config.Port)
+		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(IPAddress.Parse(config.Address), config.Port)
 		{
 			switch (config.Transmission)
 			{
@@ -36,7 +36,7 @@ namespace NetworkBenchmark.NetCoreServer
 					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 		}
 
 		public void StartServer()
@@ -73,7 +73,7 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			if (benchmarkRunning)
 			{
-				benchmarkData.MessagesServerReceived++;
+				benchmarkStatistics.MessagesServerReceived++;
 				// Echo the message back to the sender
 				SendAsync(endpoint, buffer, offset, size);
 				return;
@@ -90,7 +90,7 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			if (benchmarkRunning)
 			{
-				benchmarkData.MessagesServerSent++;
+				benchmarkStatistics.MessagesServerSent++;
 			}
 
 			if (listen)
@@ -103,7 +103,7 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			if (benchmarkRunning)
 			{
-				benchmarkData.Errors++;
+				benchmarkStatistics.Errors++;
 			}
 		}
 	}

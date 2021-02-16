@@ -21,30 +21,39 @@ namespace NetworkBenchmark
 
 		public abstract bool IsDisposed { get; }
 
-		protected volatile bool benchmarkPreparing;
-		protected volatile bool listen;
-		protected volatile bool benchmarkRunning;
+		/// <summary>
+		/// Benchmark is preparing to be run
+		/// </summary>
+		protected volatile bool BenchmarkPreparing;
+		/// <summary>
+		/// Client should listen for incoming messages
+		/// </summary>
+		protected volatile bool Listen;
+		/// <summary>
+		/// Is a benchmark running (and therefore messages should be counted in the statistics)
+		/// </summary>
+		protected volatile bool BenchmarkRunning;
 
 		public virtual void StartClient()
 		{
-			listen = true;
-			benchmarkPreparing = true;
+			Listen = true;
+			BenchmarkPreparing = true;
 		}
 
 		public virtual void StartBenchmark()
 		{
-			benchmarkPreparing = false;
-			benchmarkRunning = true;
+			BenchmarkPreparing = false;
+			BenchmarkRunning = true;
 		}
 
 		public virtual void StopBenchmark()
 		{
-			benchmarkRunning = false;
+			BenchmarkRunning = false;
 		}
 
 		public virtual void StopClient()
 		{
-			listen = false;
+			Listen = false;
 		}
 
 		public abstract void DisconnectClient();

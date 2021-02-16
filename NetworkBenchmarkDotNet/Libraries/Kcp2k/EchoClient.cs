@@ -24,7 +24,7 @@ namespace NetworkBenchmark.Kcp2k
 		private bool isDisposed;
 		private readonly int id;
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly Thread tickThread;
 		private readonly byte[] messageArray;
@@ -32,11 +32,11 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.id = id;
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 			messageArray = config.Message;
 			noDelay = true;
 
@@ -69,15 +69,16 @@ namespace NetworkBenchmark.Kcp2k
 		public override void StartClient()
 		{
 			base.StartClient();
-			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
 			tickThread.Start();
 			isDisposed = false;
 		}
 
 		private void TickLoop()
 		{
-			while (listen)
+			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
+			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
+
+			while (Listen)
 			{
 				Tick();
 				Thread.Sleep(1);
@@ -127,7 +128,7 @@ namespace NetworkBenchmark.Kcp2k
 			}
 
 			client.SendData(message, channel);
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
 		private void OnPeerConnected()
@@ -138,16 +139,16 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnNetworkReceive(ArraySegment<byte> arraySegment)
 		{
-			if (benchmarkRunning)
+			if (BenchmarkRunning)
 			{
-				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
 				Send(messageArray, communicationChannel);
 			}
 		}
 
 		private void OnPeerDisconnected()
 		{
-			if (benchmarkRunning)
+			if (BenchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 			}

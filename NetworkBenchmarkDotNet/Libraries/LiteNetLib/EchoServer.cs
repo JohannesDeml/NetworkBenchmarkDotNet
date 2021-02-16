@@ -21,16 +21,16 @@ namespace NetworkBenchmark.LiteNetLib
 		public override bool IsStarted => netManager != null && netManager.IsRunning;
 
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
 		private readonly DeliveryMethod deliveryMethod;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 
 			switch (config.Transmission)
 			{
@@ -96,13 +96,13 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod clientDeliveryMethod)
 		{
-			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
 
 			if (benchmarkRunning)
 			{
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
 				peer.Send(message, deliveryMethod);
-				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+				Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 				netManager.TriggerUpdate();
 			}
 
@@ -111,7 +111,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
 		{
-			Interlocked.Increment(ref benchmarkData.Errors);
+			Interlocked.Increment(ref benchmarkStatistics.Errors);
 		}
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectinfo)

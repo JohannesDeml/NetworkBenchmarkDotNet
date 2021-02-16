@@ -19,7 +19,7 @@ namespace NetworkBenchmark.Kcp2k
 		public override bool IsStarted => serverThread != null && serverThread.IsAlive && server.IsActive();
 
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly KcpServer server;
 		private readonly Thread serverThread;
 		private readonly KcpChannel communicationChannel;
@@ -27,10 +27,10 @@ namespace NetworkBenchmark.Kcp2k
 
 		private readonly byte[] message;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 			noDelay = true;
 
 			switch (config.Transmission)
@@ -88,7 +88,7 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			if (benchmarkRunning)
 			{
-				Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
+				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
 				Array.Copy(arraySegment.Array, arraySegment.Offset, message, 0, arraySegment.Count);
 				Send(connectionId, message, communicationChannel);
 			}
@@ -105,7 +105,7 @@ namespace NetworkBenchmark.Kcp2k
 		private void Send(int connectionId, ArraySegment<byte> message, KcpChannel channel)
 		{
 			server.Send(connectionId, message, channel);
-			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 		}
 
 		public override void Dispose()

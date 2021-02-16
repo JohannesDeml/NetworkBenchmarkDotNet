@@ -39,14 +39,14 @@ namespace NetworkBenchmark
 
 		protected long RunBenchmark()
 		{
-			var benchmarkdata = BenchmarkCoordinator.BenchmarkData;
+			var statistics = BenchmarkCoordinator.BenchmarkStatistics;
 			BenchmarkCoordinator.StartBenchmark(libraryImpl);
-			var receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
+			var receivedMessages = Interlocked.Read(ref statistics.MessagesClientReceived);
 
 			while (receivedMessages < MessageTarget)
 			{
 				Thread.Sleep(1);
-				receivedMessages = Interlocked.Read(ref benchmarkdata.MessagesClientReceived);
+				receivedMessages = Interlocked.Read(ref statistics.MessagesClientReceived);
 			}
 
 			BenchmarkCoordinator.StopBenchmark(libraryImpl);

@@ -27,9 +27,9 @@ namespace NetworkBenchmark.NetCoreServer
 		private readonly int id;
 		private readonly byte[] message;
 		private readonly int initialMessages;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData) : base(config.Address, config.Port)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
 			switch (config.Transmission)
@@ -45,7 +45,7 @@ namespace NetworkBenchmark.NetCoreServer
 
 			message = config.Message;
 			initialMessages = config.ParallelMessages;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 		}
 
 		public void StartClient()
@@ -69,7 +69,7 @@ namespace NetworkBenchmark.NetCoreServer
 		private void SendMessage()
 		{
 			Send(message);
-			benchmarkData.MessagesClientSent++;
+			benchmarkStatistics.MessagesClientSent++;
 		}
 
 		public void StopBenchmark()
@@ -104,7 +104,7 @@ namespace NetworkBenchmark.NetCoreServer
 				return;
 			}
 
-			benchmarkData.MessagesClientReceived++;
+			benchmarkStatistics.MessagesClientReceived++;
 			SendMessage();
 		}
 
@@ -117,7 +117,7 @@ namespace NetworkBenchmark.NetCoreServer
 				return;
 			}
 
-			benchmarkData.Errors++;
+			benchmarkStatistics.Errors++;
 		}
 	}
 }

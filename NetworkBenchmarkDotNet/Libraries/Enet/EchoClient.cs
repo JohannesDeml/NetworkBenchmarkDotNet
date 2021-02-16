@@ -23,7 +23,7 @@ namespace NetworkBenchmark.Enet
 		private bool isDisposed;
 		private readonly int id;
 		private readonly BenchmarkSetup config;
-		private readonly BenchmarkData benchmarkData;
+		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly byte[] message;
 		private readonly int timeout;
@@ -33,11 +33,11 @@ namespace NetworkBenchmark.Enet
 		private readonly Thread listenThread;
 		private Peer peer;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.id = id;
 			this.config = config;
-			this.benchmarkData = benchmarkData;
+			this.benchmarkStatistics = benchmarkStatistics;
 			message = config.Message;
 			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
 			switch (config.Transmission)
@@ -99,13 +99,13 @@ namespace NetworkBenchmark.Enet
 
 		private void ListenLoop()
 		{
-			listen = true;
+			Listen = true;
 			host.Create();
 			peer = host.Connect(address, 4);
 
 			Event netEvent;
 
-			while (listen)
+			while (Listen)
 			{
 				bool polled = false;
 
@@ -134,7 +134,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Disconnect:
-					if (benchmarkRunning)
+					if (BenchmarkRunning)
 					{
 						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 					}
@@ -142,9 +142,9 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Receive:
-					if (benchmarkRunning)
+					if (BenchmarkRunning)
 					{
-						Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
+						Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
 						OnReceiveMessage(netEvent);
 					}
 
@@ -165,7 +165,7 @@ namespace NetworkBenchmark.Enet
 
 			packet.Create(data, data.Length, packetFlags);
 			peer.Send(channelID, ref packet);
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 	}
 }
