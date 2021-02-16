@@ -34,12 +34,12 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ### Benchmark [Performance1](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
 
-Runs the benchmark with **1,000** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+Runs the benchmark with **500** clients, which pingpong **1 message** each with the server. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
 ### Benchmark [Performance2](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
 
-Runs the benchmark with **1,000** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **1 million** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
+Runs the benchmark with **500** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance.
 
 ### Benchmark [Garbage](./NetworkBenchmarkDotNet/PredefinedBenchmarks/GarbageBenchmark.cs)
