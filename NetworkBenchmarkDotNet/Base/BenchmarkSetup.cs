@@ -119,6 +119,7 @@ namespace NetworkBenchmark
 					{
 						Message[i] = 0xff;
 					}
+
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(payload));

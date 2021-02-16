@@ -10,7 +10,6 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using ENet;
 
 namespace NetworkBenchmark.Enet

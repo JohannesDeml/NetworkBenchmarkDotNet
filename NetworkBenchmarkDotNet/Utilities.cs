@@ -75,7 +75,7 @@ namespace NetworkBenchmark
 			return Math.Max(1000 / tickRate, 1);
 		}
 
-		public static Task WaitForClientThreadsToFinish<T>(List<T> clients) where T: IThreadedClient
+		public static Task WaitForClientThreadsToFinish<T>(List<T> clients) where T : IThreadedClient
 		{
 			var allThreadsStopped = Task.Run(() =>
 			{
@@ -90,22 +90,22 @@ namespace NetworkBenchmark
 			return allThreadsStopped;
 		}
 
-		public static Task WaitForClientsToConnect<T>(List<T> clients) where T: IClient
+		public static Task WaitForClientsToConnect<T>(List<T> clients) where T : IClient
 		{
 			return WaitForClients(clients, (T client) => { return client.IsConnected; });
 		}
 
-		public static Task WaitForClientsToDisconnect<T>(List<T> clients) where T: IClient
+		public static Task WaitForClientsToDisconnect<T>(List<T> clients) where T : IClient
 		{
 			return WaitForClients(clients, (T client) => { return !client.IsConnected; });
 		}
 
-		public static Task WaitForClientsToDispose<T>(List<T> clients) where T: IClient
+		public static Task WaitForClientsToDispose<T>(List<T> clients) where T : IClient
 		{
 			return WaitForClients(clients, (T client) => { return client.IsDisposed; });
 		}
 
-		public static Task WaitForClients<T>(List<T> clients, Func<T, bool> condition) where T: IClient
+		public static Task WaitForClients<T>(List<T> clients, Func<T, bool> condition) where T : IClient
 		{
 			var waitForAllClients = Task.Run(() =>
 			{
@@ -120,12 +120,12 @@ namespace NetworkBenchmark
 			return waitForAllClients;
 		}
 
-		public static Task WaitForServerToStart<T>(T server) where T: IServer
+		public static Task WaitForServerToStart<T>(T server) where T : IServer
 		{
 			return WaitForServer(server, (T s) => { return s.IsStarted; });
 		}
 
-		public static Task WaitForServerToStop<T>(T server) where T: IServer
+		public static Task WaitForServerToStop<T>(T server) where T : IServer
 		{
 			return WaitForServer(server, (T s) => { return !s.IsStarted; });
 		}

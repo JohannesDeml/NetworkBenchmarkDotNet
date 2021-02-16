@@ -11,7 +11,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using kcp2k;
 
 namespace NetworkBenchmark.Kcp2k

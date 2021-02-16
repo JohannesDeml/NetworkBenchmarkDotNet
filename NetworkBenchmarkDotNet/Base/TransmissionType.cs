@@ -17,7 +17,7 @@ namespace NetworkBenchmark
 		/// Not supported by NetCoreServer
 		/// </summary>
 		Reliable,
-		
+
 		/// <summary>
 		/// Normal UDP behavior, packet is sent once and might get to the receiver.
 		/// Note, that for localhost, the number of lost packages is normally near zero.

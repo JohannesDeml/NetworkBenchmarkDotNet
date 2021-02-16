@@ -14,7 +14,7 @@ using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClient: IThreadedClient
+	internal class EchoClient : IThreadedClient
 	{
 		public bool IsConnected => peer.State == PeerState.Connected;
 		public bool IsDisposed { get; private set; }
