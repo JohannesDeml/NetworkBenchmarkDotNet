@@ -17,7 +17,7 @@ using LiteNetLib;
 
 namespace NetworkBenchmark.LiteNetLib
 {
-	internal class EchoClient
+	internal class EchoClient : IClient
 	{
 		public bool IsConnected { get; private set; }
 		public bool IsDisposed { get; private set; }

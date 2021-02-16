@@ -22,8 +22,8 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly BenchmarkData benchmarkData;
 		private readonly KcpServer server;
 		private readonly Thread serverThread;
-		private KcpChannel communicationChannel;
-		private bool noDelay;
+		private readonly KcpChannel communicationChannel;
+		private readonly bool noDelay;
 
 		#if WINDOWS
 		/// Get higher precision for Thread.Sleep on Windows
@@ -105,6 +105,10 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnConnected(int connectionId)
 		{
+			if (benchmarkData.Running)
+			{
+				Utilities.WriteVerboseLine($"Client {connectionId} connected while benchmark is running.");
+			}
 		}
 
 		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment)

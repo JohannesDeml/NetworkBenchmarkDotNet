@@ -53,17 +53,7 @@ namespace NetworkBenchmark.Enet
 				echoClients[i].Start();
 			}
 
-			var clientsConnected = Task.Run(() =>
-			{
-				for (int i = 0; i < config.Clients; i++)
-				{
-					while (!echoClients[i].IsConnected)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return clientsConnected;
+			return Utilities.WaitForClientsToConnect(echoClients);
 		}
 
 		public void StartBenchmark()
@@ -81,7 +71,7 @@ namespace NetworkBenchmark.Enet
 				echoClients[i].Disconnect();
 			}
 
-			return Task.CompletedTask;
+			return Utilities.WaitForClientsToDisconnect(echoClients);
 		}
 
 		public Task StopServer()
@@ -91,7 +81,7 @@ namespace NetworkBenchmark.Enet
 
 		public Task StopClients()
 		{
-			return Task.CompletedTask;
+			return Utilities.WaitForClientThreadsToFinish(echoClients);
 		}
 
 		public Task DisposeClients()
@@ -101,17 +91,7 @@ namespace NetworkBenchmark.Enet
 				echoClients[i].Dispose();
 			}
 
-			var allDisposed = Task.Run(() =>
-			{
-				for (int i = 0; i < echoClients.Count; i++)
-				{
-					while (!echoClients[i].IsDisposed)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return allDisposed;
+			return Utilities.WaitForClientsToDispose(echoClients);
 		}
 
 		public Task DisposeServer()

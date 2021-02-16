@@ -51,17 +51,7 @@ namespace NetworkBenchmark.Kcp2k
 				echoClients[i].Start();
 			}
 
-			var clientsConnected = Task.Run(() =>
-			{
-				for (int i = 0; i < config.Clients; i++)
-				{
-					while (!echoClients[i].IsConnected)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return clientsConnected;
+			return Utilities.WaitForClientsToConnect(echoClients);
 		}
 
 		public void StartBenchmark()
@@ -71,7 +61,7 @@ namespace NetworkBenchmark.Kcp2k
 				echoClients[i].StartSendingMessages();
 			}
 		}
-		
+
 		public Task DisconnectClients()
 		{
 			for (int i = 0; i < echoClients.Count; i++)
@@ -79,7 +69,7 @@ namespace NetworkBenchmark.Kcp2k
 				echoClients[i].Disconnect();
 			}
 
-			return Task.CompletedTask;
+			return Utilities.WaitForClientsToDisconnect(echoClients);
 		}
 
 		public Task StopServer()
@@ -89,7 +79,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		public Task StopClients()
 		{
-			return Task.CompletedTask;
+			return Utilities.WaitForClientThreadsToFinish(echoClients);
 		}
 
 		public Task DisposeClients()
@@ -99,17 +89,7 @@ namespace NetworkBenchmark.Kcp2k
 				echoClients[i].Dispose();
 			}
 
-			var allDisposed = Task.Run(() =>
-			{
-				for (int i = 0; i < echoClients.Count; i++)
-				{
-					while (!echoClients[i].IsDisposed)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return allDisposed;
+			return Utilities.WaitForClientsToDispose(echoClients);
 		}
 
 		public Task DisposeServer()
@@ -121,6 +101,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		public void Deinitialize()
 		{
+			// Library does not need to be deinitialized
 		}
 	}
 }

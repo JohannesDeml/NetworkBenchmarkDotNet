@@ -15,10 +15,11 @@ using kcp2k;
 
 namespace NetworkBenchmark.Kcp2k
 {
-	internal class EchoClient
+	internal class EchoClient : IThreadedClient
 	{
 		public bool IsConnected { get; private set; }
 		public bool IsDisposed { get; private set; }
+		public Thread ClientThread => tickThread;
 
 		private readonly int id;
 		private readonly BenchmarkSetup config;
@@ -27,8 +28,8 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly Thread tickThread;
 		private readonly byte[] messageArray;
 		private readonly KcpClientConnection client;
-		private KcpChannel communicationChannel;
-		private bool noDelay;
+		private readonly KcpChannel communicationChannel;
+		private readonly bool noDelay;
 
 		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
@@ -67,14 +68,9 @@ namespace NetworkBenchmark.Kcp2k
 		public void Start()
 		{
 			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			Connect(config.Address, (ushort) config.Port, noDelay, interval);
+			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
 			tickThread.Start();
 			IsDisposed = false;
-		}
-
-		private void Connect(string address, ushort port, bool useNoDelay, uint interval, int fastResend = 0, bool congestionWindow = true, uint sendWindowSize = Kcp.WND_SND, uint receiveWindowSize = Kcp.WND_RCV)
-		{
-			client.Connect(address, port, useNoDelay, interval, fastResend, congestionWindow, sendWindowSize, receiveWindowSize);
 		}
 
 		private void TickLoop()
@@ -104,26 +100,19 @@ namespace NetworkBenchmark.Kcp2k
 			Tick();
 		}
 
-		public Task Disconnect()
+		public void Disconnect()
 		{
 			if (!IsConnected)
 			{
-				return Task.CompletedTask;
+				return;
 			}
 
-			var clientDisconnected = Task.Factory.StartNew(() => { client.Disconnect(); }, TaskCreationOptions.LongRunning);
-
-			return clientDisconnected;
+			client.Disconnect();
 		}
 
-		public async void Dispose()
+		public void Dispose()
 		{
-			while (tickThread.IsAlive)
-			{
-				await Task.Delay(10);
-			}
-
-			//TODO client.Dispose();
+			//TODO dispose client once supported
 			IsDisposed = true;
 		}
 
@@ -159,7 +148,7 @@ namespace NetworkBenchmark.Kcp2k
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 			}
-			
+
 			IsConnected = false;
 		}
 	}

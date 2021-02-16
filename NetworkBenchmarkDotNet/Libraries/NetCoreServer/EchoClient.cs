@@ -16,7 +16,7 @@ using UdpClient = NetCoreServer.UdpClient;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	internal class EchoClient : UdpClient
+	internal class EchoClient : UdpClient, IClient
 	{
 		private readonly byte[] message;
 		private readonly int initialMessages;

@@ -59,17 +59,7 @@ namespace NetworkBenchmark.NetCoreServer
 				echoClients[i].Connect();
 			}
 
-			var clientsConnected = Task.Run(() =>
-			{
-				for (int i = 0; i < config.Clients; i++)
-				{
-					while (!echoClients[i].IsConnected)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return clientsConnected;
+			return Utilities.WaitForClientsToConnect(echoClients);
 		}
 
 		public void StartBenchmark()
@@ -87,7 +77,7 @@ namespace NetworkBenchmark.NetCoreServer
 				echoClients[i].Disconnect();
 			}
 
-			return Task.CompletedTask;
+			return Utilities.WaitForClientsToDisconnect(echoClients);
 		}
 
 		public Task StopServer()
@@ -115,18 +105,7 @@ namespace NetworkBenchmark.NetCoreServer
 				echoClients[i].Dispose();
 			}
 
-			var disposeAll = Task.Run(() =>
-			{
-				for (int i = 0; i < config.Clients; i++)
-				{
-					while (!echoClients[i].IsDisposed)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-
-			return disposeAll;
+			return Utilities.WaitForClientsToDispose(echoClients);
 		}
 
 		public Task DisposeServer()
@@ -146,6 +125,7 @@ namespace NetworkBenchmark.NetCoreServer
 
 		public void Deinitialize()
 		{
+			// Library does not need to be deinitialized
 		}
 	}
 }

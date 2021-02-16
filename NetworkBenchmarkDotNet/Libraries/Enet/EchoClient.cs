@@ -10,15 +10,15 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClient
+	internal class EchoClient: IThreadedClient
 	{
 		public bool IsConnected => peer.State == PeerState.Connected;
 		public bool IsDisposed { get; private set; }
+		public Thread ClientThread => connectAndListenThread;
 
 		private readonly int id;
 		private readonly BenchmarkSetup config;
@@ -79,16 +79,16 @@ namespace NetworkBenchmark.Enet
 
 		public void Disconnect()
 		{
+			if (!IsConnected)
+			{
+				return;
+			}
+
 			peer.DisconnectNow(0);
 		}
 
-		public async void Dispose()
+		public void Dispose()
 		{
-			while (connectAndListenThread.IsAlive)
-			{
-				await Task.Delay(10);
-			}
-
 			host.Flush();
 			host.Dispose();
 			IsDisposed = true;

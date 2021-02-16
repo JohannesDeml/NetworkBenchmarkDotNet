@@ -9,7 +9,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NetworkBenchmark
 {
@@ -70,6 +73,51 @@ namespace NetworkBenchmark
 			}
 
 			return Math.Max(1000 / tickRate, 1);
+		}
+
+		public static Task WaitForClientThreadsToFinish<T>(List<T> clients) where T: IThreadedClient
+		{
+			var allThreadsStopped = Task.Run(() =>
+			{
+				for (int i = 0; i < clients.Count; i++)
+				{
+					while (clients[i].ClientThread.IsAlive)
+					{
+						Thread.Sleep(10);
+					}
+				}
+			});
+			return allThreadsStopped;
+		}
+
+		public static Task WaitForClientsToConnect<T>(List<T> clients) where T: IClient
+		{
+			return WaitForClients(clients, (T client) => { return client.IsConnected; });
+		}
+
+		public static Task WaitForClientsToDisconnect<T>(List<T> clients) where T: IClient
+		{
+			return WaitForClients(clients, (T client) => { return !client.IsConnected; });
+		}
+
+		public static Task WaitForClientsToDispose<T>(List<T> clients) where T: IClient
+		{
+			return WaitForClients(clients, (T client) => { return client.IsDisposed; });
+		}
+
+		public static Task WaitForClients<T>(List<T> clients, Func<T, bool> condition) where T: IClient
+		{
+			var allClientsDisposed = Task.Run(() =>
+			{
+				for (int i = 0; i < clients.Count; i++)
+				{
+					while (!condition(clients[i]))
+					{
+						Thread.Sleep(10);
+					}
+				}
+			});
+			return allClientsDisposed;
 		}
 	}
 }
