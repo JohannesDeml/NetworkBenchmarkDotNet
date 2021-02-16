@@ -24,11 +24,24 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
+		private readonly DeliveryMethod deliveryMethod;
 
 		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
+
+			switch (config.TransmissionType)
+			{
+				case TransmissionType.Reliable:
+					deliveryMethod = DeliveryMethod.ReliableUnordered;
+					break;
+				case TransmissionType.Unreliable:
+					deliveryMethod = DeliveryMethod.ReliableUnordered;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+			}
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
@@ -99,14 +112,14 @@ namespace NetworkBenchmark.LiteNetLib
 			request.Accept();
 		}
 
-		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)
+		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod clientDeliveryMethod)
 		{
 			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
 			if (benchmarkData.Running)
 			{
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
-				peer.Send(message, deliverymethod);
+				peer.Send(message, deliveryMethod);
 				Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 				netManager.TriggerUpdate();
 			}
@@ -123,7 +136,7 @@ namespace NetworkBenchmark.LiteNetLib
 		{
 			if (benchmarkData.Preparing || benchmarkData.Running)
 			{
-				Utilities.WriteVerboseLine($"Client {peer.Id} disconnected while benchmark is running.");
+				Utilities.WriteVerboseLine($"Client {peer.Id} disconnected while benchmark is running - {disconnectinfo.Reason}.");
 			}
 		}
 	}

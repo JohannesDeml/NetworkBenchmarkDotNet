@@ -33,6 +33,11 @@ namespace NetworkBenchmark
 		public NetworkLibrary Library { get; set; }
 
 		/// <summary>
+		/// Type of message transmission between server and client and vice versa
+		/// </summary>
+		public TransmissionType TransmissionType { get; set; }
+
+		/// <summary>
 		/// Time the test will run
 		/// This time excludes preparations such as clients connecting to the server.
 		/// This time excludes cleanup such as clients disconnecting from the server.
@@ -121,7 +126,8 @@ namespace NetworkBenchmark
 			var sb = new StringBuilder();
 
 			AppendEnvironmentSetup(sb);
-			sb.AppendLine($"* Test: {Test} with {Library} for {Duration} seconds");
+			sb.AppendLine($"* Running {Library} for {Duration} seconds");
+			sb.AppendLine($"* Test: {Test} with {TransmissionType} messages");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}");
 			sb.AppendLine($"* Number of clients: {Clients}");
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize}bytes, Payload: {MessagePayload}");
@@ -154,6 +160,7 @@ namespace NetworkBenchmark
 		{
 			sb.Append("./NetworkBenchmarkDotNet");
 			sb.Append($" --test {Test}");
+			sb.Append($" --transmission {TransmissionType}");
 			sb.Append($" --library {Library}");
 			sb.Append($" --duration {Duration}");
 			sb.Append($" --address {Address}");
@@ -169,6 +176,7 @@ namespace NetworkBenchmark
 		public static void ApplyPredefinedBenchmarkConfiguration(ref BenchmarkSetup config)
 		{
 			config.Test = TestType.PingPong;
+			config.TransmissionType = TransmissionType.Unreliable;
 			config.Address = "::1";
 			config.Port = 3330;
 			config.Duration = 60;

@@ -20,64 +20,7 @@ namespace NetworkBenchmark
 	{
 		public static int Main(string[] args)
 		{
-			var rootCommand = new RootCommand
-			{
-				new Option<BenchmarkMode>(
-					new[] {"--benchmark", "-b"},
-					getDefaultValue: () => BenchmarkMode.Custom,
-					"Run predefined benchmarks"),
-				new Option<TestType>(
-					new[] {"--test", "-t"},
-					getDefaultValue: () => TestType.PingPong,
-					"Test type"),
-				new Option<NetworkLibrary>(
-					new[] {"--library", "-l"},
-					getDefaultValue: () => NetworkLibrary.ENet,
-					"Library target"),
-				new Option<int>(
-					new[] {"--duration", "-d"},
-					getDefaultValue: () => 10,
-					"Test duration in seconds"),
-				new Option<string>(
-					"--address",
-					getDefaultValue: () => "::1",
-					"IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1)"),
-				new Option<int>(
-					"--port",
-					getDefaultValue: () => 3330,
-					"Socket Port"),
-				new Option<int>(
-					"--clients",
-					getDefaultValue: () => 500,
-					"# Simultaneous clients"),
-				new Option<int>(
-					"--parallel-messages",
-					getDefaultValue: () => 1,
-					"# Parallel messages per client"),
-				new Option<int>(
-					"--message-byte-size",
-					getDefaultValue: () => 32,
-					"Message byte size sent by clients"),
-				new Option<MessagePayload>(
-					"--message-payload",
-					getDefaultValue: () => MessagePayload.Random,
-					"Message load sent by clients"),
-				new Option<bool>(
-					"--verbose",
-					getDefaultValue: () => true,
-					"Verbose output of test steps and errors"),
-				new Option<int>(
-					"--client-tick-rate",
-					getDefaultValue: () => 60,
-					"Client ticks per second if supported"),
-				new Option<int>(
-					"--server-tick-rate",
-					getDefaultValue: () => 60,
-					"Server ticks per second if supported")
-			};
-
-			rootCommand.Name = "NetworkBenchmarkDotNet";
-			rootCommand.Description = "Benchmark Low Level .Net Core Networking libraries for UDP socket performance";
+			RootCommand rootCommand = CommandLineUtilities.GenerateRootCommand();
 
 			rootCommand.Handler = CommandHandler.Create<BenchmarkSetup>((config) =>
 			{
@@ -88,36 +31,40 @@ namespace NetworkBenchmark
 				if (mode == BenchmarkMode.Custom)
 				{
 					Console.Write(config.PrintSetup());
-					Run();
+					RunCustomBenchmark();
 					return 0;
 				}
 
 				Console.Write(config.PrintEnvironment());
-				if ((mode & BenchmarkMode.Performance) != 0)
-				{
-					RunBenchmark<PerformanceBenchmark>();
-					Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
-				}
-
-				if ((mode & BenchmarkMode.InDepth) != 0)
-				{
-					RunBenchmark<InDepthBenchmark>();
-					Console.WriteLine($"Finished {BenchmarkMode.InDepth} Benchmark");
-				}
-
-				if ((mode & BenchmarkMode.Garbage) != 0)
-				{
-					RunBenchmark<GarbageBenchmark>();
-					Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
-				}
-
+				RunPredefinedBenchmarks(mode);
 				return 0;
 			});
 
 			return rootCommand.Invoke(args);
 		}
 
-		private static void Run()
+		private static void RunPredefinedBenchmarks(BenchmarkMode mode)
+		{
+			if ((mode & BenchmarkMode.Performance) != 0)
+			{
+				RunBenchmark<PerformanceBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
+			}
+
+			if ((mode & BenchmarkMode.InDepth) != 0)
+			{
+				RunBenchmark<InDepthBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.InDepth} Benchmark");
+			}
+
+			if ((mode & BenchmarkMode.Garbage) != 0)
+			{
+				RunBenchmark<GarbageBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
+			}
+		}
+
+		private static void RunCustomBenchmark()
 		{
 			var networkBenchmark = INetworkBenchmark.CreateNetworkBenchmark(BenchmarkCoordinator.Config.Library);
 

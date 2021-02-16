@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using ENet;
 
@@ -24,6 +25,7 @@ namespace NetworkBenchmark.Enet
 
 		private readonly byte[] message;
 		private readonly int timeout;
+		private readonly PacketFlags packetFlags;
 		private readonly Host host;
 		private readonly Address address;
 		private Peer peer;
@@ -35,6 +37,17 @@ namespace NetworkBenchmark.Enet
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
 			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
+			switch (config.TransmissionType)
+			{
+				case TransmissionType.Reliable:
+					packetFlags = PacketFlags.Reliable;
+					break;
+				case TransmissionType.Unreliable:
+					packetFlags = PacketFlags.None;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+			}
 
 			host = new Host();
 			address = new Address();
@@ -51,7 +64,7 @@ namespace NetworkBenchmark.Enet
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				SendUnreliable(message, 0, peer);
+				Send(message, 0, peer);
 			}
 		}
 
@@ -120,23 +133,14 @@ namespace NetworkBenchmark.Enet
 		protected virtual void OnReceiveMessage(Event netEvent)
 		{
 			netEvent.Packet.CopyTo(message);
-			SendUnreliable(message, 0, peer);
+			Send(message, 0, peer);
 		}
 
-		protected void SendReliable(byte[] data, byte channelID, Peer peer)
+		protected void Send(byte[] data, byte channelID, Peer peer)
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.Reliable | PacketFlags.NoAllocate); // Reliable Sequenced
-			peer.Send(channelID, ref packet);
-			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
-		}
-
-		protected void SendUnreliable(byte[] data, byte channelID, Peer peer)
-		{
-			Packet packet = default(Packet);
-
-			packet.Create(data, data.Length, PacketFlags.None | PacketFlags.NoAllocate); // Unreliable Sequenced
+			packet.Create(data, data.Length, packetFlags);
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}

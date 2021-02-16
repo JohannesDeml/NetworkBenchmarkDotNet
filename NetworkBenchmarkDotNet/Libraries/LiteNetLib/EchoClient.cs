@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -28,6 +29,7 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly byte[] message;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
+		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
 		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
@@ -36,6 +38,18 @@ namespace NetworkBenchmark.LiteNetLib
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
+
+			switch (config.TransmissionType)
+			{
+				case TransmissionType.Reliable:
+					deliveryMethod = DeliveryMethod.ReliableUnordered;
+					break;
+				case TransmissionType.Unreliable:
+					deliveryMethod = DeliveryMethod.ReliableUnordered;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+			}
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
@@ -70,7 +84,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(message, DeliveryMethod.ReliableUnordered);
+				Send(message);
 			}
 
 			netManager.TriggerUpdate();
@@ -105,14 +119,14 @@ namespace NetworkBenchmark.LiteNetLib
 			IsDisposed = true;
 		}
 
-		private void Send(byte[] bytes, DeliveryMethod deliverymethod)
+		private void Send(byte[] bytes)
 		{
 			if (!IsConnected)
 			{
 				return;
 			}
 
-			peer.Send(bytes, deliverymethod);
+			peer.Send(bytes, deliveryMethod);
 			Interlocked.Increment(ref benchmarkData.MessagesClientSent);
 		}
 
@@ -138,7 +152,7 @@ namespace NetworkBenchmark.LiteNetLib
 			if (benchmarkData.Running)
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
-				Send(message, deliverymethod);
+				Send(message);
 				netManager.TriggerUpdate();
 			}
 

@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ENet;
@@ -23,12 +24,25 @@ namespace NetworkBenchmark.Enet
 		private readonly Address address;
 		private readonly byte[] message;
 		private readonly int timeout;
+		private readonly PacketFlags packetFlags;
 
 		public EchoServer(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 			timeout = Utilities.CalculateTimeout(this.config.ServerTickRate);
+
+			switch (config.TransmissionType)
+			{
+				case TransmissionType.Reliable:
+					packetFlags = PacketFlags.Reliable;
+					break;
+				case TransmissionType.Unreliable:
+					packetFlags = PacketFlags.None;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+			}
 
 			host = new Host();
 			address = new Address();
@@ -106,7 +120,7 @@ namespace NetworkBenchmark.Enet
 		private void OnReceiveMessage(Event netEvent)
 		{
 			netEvent.Packet.CopyTo(message);
-			SendUnreliable(message, 0, netEvent.Peer);
+			Send(message, 0, netEvent.Peer);
 		}
 
 		public Task StopServerThread()
@@ -127,21 +141,12 @@ namespace NetworkBenchmark.Enet
 			host.Dispose();
 		}
 
-		private void SendReliable(byte[] data, byte channelID, Peer peer)
+		private void Send(byte[] data, byte channelId, Peer peer)
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, PacketFlags.Reliable); // Reliable Sequenced
-			peer.Send(channelID, ref packet);
-			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
-		}
-
-		private void SendUnreliable(byte[] data, byte channelID, Peer peer)
-		{
-			Packet packet = default(Packet);
-
-			packet.Create(data, data.Length, PacketFlags.None); // Unreliable Sequenced
-			peer.Send(channelID, ref packet);
+			packet.Create(data, data.Length, packetFlags);
+			peer.Send(channelId, ref packet);
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 	}
