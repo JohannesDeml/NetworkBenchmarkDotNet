@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Runtime.InteropServices;
 using System.Threading;
 using kcp2k;
 
@@ -89,8 +88,8 @@ namespace NetworkBenchmark.Kcp2k
 			if (benchmarkData.Running)
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
-				// TODO copy message
-				Send(connectionId, arraySegment, communicationChannel);
+				Array.Copy(arraySegment.Array, arraySegment.Offset, message, 0, arraySegment.Count);
+				Send(connectionId, message, communicationChannel);
 			}
 		}
 
