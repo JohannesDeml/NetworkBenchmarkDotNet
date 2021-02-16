@@ -16,9 +16,9 @@ using LiteNetLib;
 
 namespace NetworkBenchmark.LiteNetLib
 {
-	internal class EchoServer : IServer
+	internal class EchoServer : AServer
 	{
-		public bool IsStarted => netManager != null && netManager.IsRunning;
+		public override bool IsStarted => netManager != null && netManager.IsRunning;
 
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
@@ -32,7 +32,7 @@ namespace NetworkBenchmark.LiteNetLib
 			this.config = config;
 			this.benchmarkData = benchmarkData;
 
-			switch (config.TransmissionType)
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					deliveryMethod = DeliveryMethod.ReliableUnordered;
@@ -41,7 +41,7 @@ namespace NetworkBenchmark.LiteNetLib
 					deliveryMethod = DeliveryMethod.ReliableUnordered;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 			listener = new EventBasedNetListener();
@@ -62,22 +62,19 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.PeerDisconnectedEvent += OnPeerDisconnected;
 		}
 
-		public void StartServer()
+		public override void StartServer()
 		{
-			Start();
-		}
-
-		private void Start()
-		{
+			base.StartServer();
 			netManager.Start(config.Port);
 		}
 
-		public void StopServer()
+		public override void StopServer()
 		{
+			base.StopServer();
 			netManager.Stop();
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			listener.ConnectionRequestEvent -= OnConnectionRequest;
 			listener.NetworkReceiveEvent -= OnNetworkReceive;
@@ -101,7 +98,7 @@ namespace NetworkBenchmark.LiteNetLib
 		{
 			Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 
-			if (benchmarkData.Running)
+			if (benchmarkRunning)
 			{
 				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
 				peer.Send(message, deliveryMethod);
@@ -119,7 +116,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectinfo)
 		{
-			if (benchmarkData.Preparing || benchmarkData.Running)
+			if (benchmarkPreparing || benchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {peer.Id} disconnected while benchmark is running - {disconnectinfo.Reason}.");
 			}

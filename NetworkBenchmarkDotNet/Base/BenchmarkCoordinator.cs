@@ -66,6 +66,7 @@ namespace NetworkBenchmark
 
 		public static void StopBenchmark(INetworkBenchmark networkBenchmark)
 		{
+			networkBenchmark.StopBenchmark();
 			BenchmarkData.StopBenchmark();
 		}
 
@@ -93,7 +94,7 @@ namespace NetworkBenchmark
 			var sb = new StringBuilder();
 
 			sb.AppendLine("```");
-			sb.AppendLine($"Results {Config.Library} with {Config.TransmissionType} {Config.Test}");
+			sb.AppendLine($"Results {Config.Library} with {Config.Transmission} {Config.Test}");
 			if (BenchmarkData.Errors > 0)
 			{
 				sb.AppendLine($"Errors: {BenchmarkData.Errors}");

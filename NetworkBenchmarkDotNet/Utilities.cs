@@ -75,21 +75,6 @@ namespace NetworkBenchmark
 			return Math.Max(1000 / tickRate, 1);
 		}
 
-		public static Task WaitForClientThreadsToFinish<T>(List<T> clients) where T : IThreadedClient
-		{
-			var allThreadsStopped = Task.Run(() =>
-			{
-				for (int i = 0; i < clients.Count; i++)
-				{
-					while (clients[i].ClientThread.IsAlive)
-					{
-						Thread.Sleep(10);
-					}
-				}
-			});
-			return allThreadsStopped;
-		}
-
 		public static Task WaitForClientsToConnect<T>(List<T> clients) where T : IClient
 		{
 			return WaitForClients(clients, (T client) => { return client.IsConnected; });
@@ -98,6 +83,11 @@ namespace NetworkBenchmark
 		public static Task WaitForClientsToDisconnect<T>(List<T> clients) where T : IClient
 		{
 			return WaitForClients(clients, (T client) => { return !client.IsConnected; });
+		}
+
+		public static Task WaitForClientsToStop<T>(List<T> clients) where T : IClient
+		{
+			return WaitForClients(clients, (T client) => { return client.IsStopped; });
 		}
 
 		public static Task WaitForClientsToDispose<T>(List<T> clients) where T : IClient

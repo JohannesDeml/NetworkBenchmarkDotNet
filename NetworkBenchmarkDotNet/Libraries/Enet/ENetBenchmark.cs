@@ -8,101 +8,30 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class ENetBenchmark : INetworkBenchmark
+	internal class ENetBenchmark : ANetworkBenchmark
 	{
-		private BenchmarkSetup config;
-		private BenchmarkData benchmarkData;
-		private EchoServer echoServer;
-		private List<EchoClient> echoClients;
-
-
-		public void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
+		public override void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
 		{
-			this.config = config;
-			this.benchmarkData = benchmarkData;
 			ENet.Library.Initialize();
-			echoServer = new EchoServer(config, benchmarkData);
-			echoClients = new List<EchoClient>();
+			base.Initialize(config, benchmarkData);
 		}
 
-		public Task StartServer()
+		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkData data)
 		{
-			echoServer.StartServerThread();
-			return Utilities.WaitForServerToStart(echoServer);
+			return new EchoServer(setup, data);
 		}
 
-		public Task StartClients()
+		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkData data)
 		{
-			for (int i = 0; i < config.Clients; i++)
-			{
-				echoClients.Add(new EchoClient(i, config, benchmarkData));
-			}
-
-			return Task.CompletedTask;
+			return new EchoClient(id, setup, data);
 		}
 
-		public Task ConnectClients()
+		public override void Deinitialize()
 		{
-			for (int i = 0; i < config.Clients; i++)
-			{
-				echoClients[i].Start();
-			}
-
-			return Utilities.WaitForClientsToConnect(echoClients);
-		}
-
-		public void StartBenchmark()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].StartSendingMessages();
-			}
-		}
-
-		public Task DisconnectClients()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].Disconnect();
-			}
-
-			return Utilities.WaitForClientsToDisconnect(echoClients);
-		}
-
-		public Task StopServer()
-		{
-			return Utilities.WaitForServerToStop(echoServer);
-		}
-
-		public Task StopClients()
-		{
-			return Utilities.WaitForClientThreadsToFinish(echoClients);
-		}
-
-		public Task DisposeClients()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].Dispose();
-			}
-
-			return Utilities.WaitForClientsToDispose(echoClients);
-		}
-
-		public Task DisposeServer()
-		{
-			echoServer.Dispose();
-
-			return Task.CompletedTask;
-		}
-
-		public void Deinitialize()
-		{
+			base.Deinitialize();
 			ENet.Library.Deinitialize();
 		}
 	}

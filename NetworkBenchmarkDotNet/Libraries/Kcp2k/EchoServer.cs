@@ -14,9 +14,9 @@ using kcp2k;
 
 namespace NetworkBenchmark.Kcp2k
 {
-	internal class EchoServer : IServer
+	internal class EchoServer : AServer
 	{
-		public bool IsStarted => serverThread != null && serverThread.IsAlive && server.IsActive();
+		public override bool IsStarted => serverThread != null && serverThread.IsAlive && server.IsActive();
 
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
@@ -33,7 +33,7 @@ namespace NetworkBenchmark.Kcp2k
 			this.benchmarkData = benchmarkData;
 			noDelay = true;
 
-			switch (config.TransmissionType)
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					communicationChannel = KcpChannel.Reliable;
@@ -42,7 +42,7 @@ namespace NetworkBenchmark.Kcp2k
 					communicationChannel = KcpChannel.Unreliable;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 
@@ -57,8 +57,9 @@ namespace NetworkBenchmark.Kcp2k
 			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
-		public void StartServerThread()
+		public override void StartServer()
 		{
+			base.StartServer();
 			serverThread.Start();
 		}
 
@@ -66,7 +67,7 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			server.Start((ushort) config.Port);
 
-			while (benchmarkData.Listen)
+			while (listen)
 			{
 				server.Tick();
 				TimeUtilities.HighPrecisionThreadSleep(1);
@@ -77,7 +78,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnConnected(int connectionId)
 		{
-			if (benchmarkData.Running)
+			if (benchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {connectionId} connected while benchmark is running.");
 			}
@@ -85,7 +86,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment)
 		{
-			if (benchmarkData.Running)
+			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 				Array.Copy(arraySegment.Array, arraySegment.Offset, message, 0, arraySegment.Count);
@@ -95,7 +96,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnDisconnected(int connectionId)
 		{
-			if (benchmarkData.Preparing || benchmarkData.Running)
+			if (benchmarkPreparing || benchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {connectionId} disconnected while benchmark is running.");
 			}
@@ -107,7 +108,7 @@ namespace NetworkBenchmark.Kcp2k
 			Interlocked.Increment(ref benchmarkData.MessagesServerSent);
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			// TODO server.Dispose();
 		}

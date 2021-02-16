@@ -14,9 +14,9 @@ using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoServer : IServer
+	internal class EchoServer : AServer
 	{
-		public bool IsStarted => serverThread != null && serverThread.IsAlive;
+		public override bool IsStarted => serverThread != null && serverThread.IsAlive;
 
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
@@ -33,7 +33,7 @@ namespace NetworkBenchmark.Enet
 			this.benchmarkData = benchmarkData;
 			timeout = Utilities.CalculateTimeout(this.config.ServerTickRate);
 
-			switch (config.TransmissionType)
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					packetFlags = PacketFlags.Reliable;
@@ -42,7 +42,7 @@ namespace NetworkBenchmark.Enet
 					packetFlags = PacketFlags.None;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 			host = new Host();
@@ -51,22 +51,23 @@ namespace NetworkBenchmark.Enet
 
 			address.Port = (ushort) config.Port;
 			address.SetHost(config.Address);
-			serverThread = new Thread(this.Start);
+			serverThread = new Thread(ListenLoop);
 			serverThread.Name = "Enet Server";
 			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
-		public void StartServerThread()
+		public override void StartServer()
 		{
+			base.StartServer();
 			serverThread.Start();
 		}
 
-		private void Start()
+		private void ListenLoop()
 		{
 			host.Create(address, config.Clients);
 			Event netEvent;
 
-			while (benchmarkData.Listen)
+			while (listen)
 			{
 				bool polled = false;
 
@@ -95,7 +96,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Receive:
-					if (benchmarkData.Running)
+					if (benchmarkRunning)
 					{
 						Interlocked.Increment(ref benchmarkData.MessagesServerReceived);
 						OnReceiveMessage(netEvent);
@@ -105,7 +106,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Timeout:
-					if (benchmarkData.Preparing || benchmarkData.Running)
+					if (benchmarkPreparing || benchmarkRunning)
 					{
 						Utilities.WriteVerboseLine($"Client {netEvent.Peer.ID} disconnected while benchmark is running.");
 					}
@@ -120,7 +121,7 @@ namespace NetworkBenchmark.Enet
 			Send(message, 0, netEvent.Peer);
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			host.Flush();
 			host.Dispose();

@@ -14,12 +14,14 @@ using kcp2k;
 
 namespace NetworkBenchmark.Kcp2k
 {
-	internal class EchoClient : IThreadedClient
+	internal class EchoClient : AClient
 	{
-		public bool IsConnected { get; private set; }
-		public bool IsDisposed { get; private set; }
-		public Thread ClientThread => tickThread;
+		public override bool IsConnected => isConnected;
+		public override bool IsStopped => tickThread == null || !tickThread.IsAlive;
+		public override bool IsDisposed => isDisposed;
 
+		private bool isConnected;
+		private bool isDisposed;
 		private readonly int id;
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
@@ -38,7 +40,7 @@ namespace NetworkBenchmark.Kcp2k
 			messageArray = config.Message;
 			noDelay = true;
 
-			switch (config.TransmissionType)
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					communicationChannel = KcpChannel.Reliable;
@@ -47,7 +49,7 @@ namespace NetworkBenchmark.Kcp2k
 					communicationChannel = KcpChannel.Unreliable;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 			client = new KcpClientConnection();
@@ -60,21 +62,22 @@ namespace NetworkBenchmark.Kcp2k
 			tickThread.Name = $"Kcp2k Client {id}";
 			tickThread.IsBackground = true;
 
-			IsConnected = false;
-			IsDisposed = false;
+			isConnected = false;
+			isDisposed = false;
 		}
 
-		public void Start()
+		public override void StartClient()
 		{
+			base.StartClient();
 			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
 			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
 			tickThread.Start();
-			IsDisposed = false;
+			isDisposed = false;
 		}
 
 		private void TickLoop()
 		{
-			while (benchmarkData.Listen)
+			while (listen)
 			{
 				Tick();
 				Thread.Sleep(1);
@@ -87,8 +90,9 @@ namespace NetworkBenchmark.Kcp2k
 			client.Tick();
 		}
 
-		public void StartSendingMessages()
+		public override void StartBenchmark()
 		{
+			base.StartBenchmark();
 			var parallelMessagesPerClient = config.ParallelMessages;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
@@ -99,7 +103,7 @@ namespace NetworkBenchmark.Kcp2k
 			Tick();
 		}
 
-		public void Disconnect()
+		public override void DisconnectClient()
 		{
 			if (!IsConnected)
 			{
@@ -109,10 +113,10 @@ namespace NetworkBenchmark.Kcp2k
 			client.Disconnect();
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			//TODO dispose client once supported
-			IsDisposed = true;
+			isDisposed = true;
 		}
 
 		private void Send(ArraySegment<byte> message, KcpChannel channel)
@@ -129,12 +133,12 @@ namespace NetworkBenchmark.Kcp2k
 		private void OnPeerConnected()
 		{
 			Console.WriteLine("Benchmark client connected");
-			IsConnected = true;
+			isConnected = true;
 		}
 
 		private void OnNetworkReceive(ArraySegment<byte> arraySegment)
 		{
-			if (benchmarkData.Running)
+			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 				Send(messageArray, communicationChannel);
@@ -143,12 +147,12 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void OnPeerDisconnected()
 		{
-			if (benchmarkData.Running)
+			if (benchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 			}
 
-			IsConnected = false;
+			isConnected = false;
 		}
 	}
 }

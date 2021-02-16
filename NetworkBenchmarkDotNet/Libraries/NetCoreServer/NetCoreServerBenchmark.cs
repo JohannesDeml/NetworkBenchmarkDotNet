@@ -14,104 +14,16 @@ using System.Threading.Tasks;
 
 namespace NetworkBenchmark.NetCoreServer
 {
-	internal class NetCoreServerBenchmark : INetworkBenchmark
+	internal class NetCoreServerBenchmark : ANetworkBenchmark
 	{
-		private BenchmarkSetup config;
-		private BenchmarkData benchmarkData;
-		private EchoServer echoServer;
-		private List<EchoClient> echoClients;
-
-		public void Initialize(BenchmarkSetup config, BenchmarkData benchmarkData)
+		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkData data)
 		{
-			this.config = config;
-			this.benchmarkData = benchmarkData;
-			this.echoServer = new EchoServer(config, benchmarkData);
-			this.echoClients = new List<EchoClient>(config.Clients);
+			return new EchoServer(setup, data);
 		}
 
-		public Task StartServer()
+		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkData data)
 		{
-			echoServer.Start();
-			return Utilities.WaitForServerToStart(echoServer);
-		}
-
-		public Task StartClients()
-		{
-			for (int i = 0; i < config.Clients; i++)
-			{
-				echoClients.Add(new EchoClient(config, benchmarkData));
-			}
-
-			return Task.CompletedTask;
-		}
-
-		public Task ConnectClients()
-		{
-			for (int i = 0; i < config.Clients; i++)
-			{
-				echoClients[i].Connect();
-			}
-
-			return Utilities.WaitForClientsToConnect(echoClients);
-		}
-
-		public void StartBenchmark()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].StartSendingMessages();
-			}
-		}
-
-		public Task DisconnectClients()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].Disconnect();
-			}
-
-			return Utilities.WaitForClientsToDisconnect(echoClients);
-		}
-
-		public Task StopServer()
-		{
-			echoServer.Stop();
-			return Utilities.WaitForServerToStop(echoServer);
-		}
-
-		public Task StopClients()
-		{
-			return Task.CompletedTask;
-		}
-
-		public Task DisposeClients()
-		{
-			for (int i = 0; i < echoClients.Count; i++)
-			{
-				echoClients[i].Dispose();
-			}
-
-			return Utilities.WaitForClientsToDispose(echoClients);
-		}
-
-		public Task DisposeServer()
-		{
-			echoServer.Dispose();
-
-			var disposeAll = Task.Run(() =>
-			{
-				while (!echoServer.IsDisposed)
-				{
-					Thread.Sleep(10);
-				}
-			});
-
-			return disposeAll;
-		}
-
-		public void Deinitialize()
-		{
-			// Library does not need to be deinitialized
+			return new EchoClient(id, setup, data);
 		}
 	}
 }

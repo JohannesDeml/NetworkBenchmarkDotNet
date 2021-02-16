@@ -9,29 +9,30 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 
 namespace NetworkBenchmark
 {
 	public class BenchmarkData
 	{
-		public DateTime StartTime { get; private set; }
-		public DateTime StopTime { get; private set; }
 		public TimeSpan Duration { get; private set; }
 
-		/// <summary>
-		/// Should server and clients listen for incoming messages
-		/// </summary>
-		public bool Listen { get; private set; }
+		private Stopwatch stopwatch;
 
 		/// <summary>
 		/// Benchmark is preparing to be run
 		/// </summary>
-		public bool Preparing { get; private set; }
+		private bool preparing;
 
 		/// <summary>
-		/// Is a benchmark running (and therefore all messages should be counted)
+		/// Should server and clients listen for incoming messages
 		/// </summary>
-		public bool Running { get; private set; }
+		private bool listen;
+
+		/// <summary>
+		/// Is a benchmark running (and therefore messages should be counted)
+		/// </summary>
+		private bool running;
 
 		public long MessagesClientSent;
 		public long MessagesClientReceived;
@@ -39,8 +40,14 @@ namespace NetworkBenchmark
 		public long MessagesServerReceived;
 		public long Errors;
 
+		public BenchmarkData()
+		{
+			stopwatch = new Stopwatch();
+		}
+
 		public void Reset()
 		{
+			stopwatch.Reset();
 			MessagesClientSent = 0L;
 			MessagesClientReceived = 0L;
 			MessagesServerSent = 0L;
@@ -50,27 +57,27 @@ namespace NetworkBenchmark
 
 		public void PrepareBenchmark()
 		{
-			Listen = true;
-			Preparing = true;
+			listen = true;
+			preparing = true;
 		}
 
 		public void StartBenchmark()
 		{
-			StartTime = DateTime.Now;
-			Running = true;
-			Preparing = false;
+			stopwatch.Start();
+			running = true;
+			preparing = false;
 		}
 
 		public void StopBenchmark()
 		{
-			Running = false;
-			StopTime = DateTime.Now;
-			Duration = StopTime.Subtract(StartTime);
+			running = false;
+			stopwatch.Stop();
+			Duration = stopwatch.Elapsed;
 		}
 
 		public void CleanupBenchmark()
 		{
-			Listen = false;
+			listen = false;
 		}
 	}
 }

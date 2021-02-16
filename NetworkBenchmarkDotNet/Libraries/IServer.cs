@@ -8,10 +8,17 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark
 {
-	public interface IServer
+	public interface IServer : IDisposable
 	{
 		public bool IsStarted { get; }
+
+		public void StartServer();
+		public void StartBenchmark();
+		public void StopBenchmark();
+		public void StopServer();
 	}
 }

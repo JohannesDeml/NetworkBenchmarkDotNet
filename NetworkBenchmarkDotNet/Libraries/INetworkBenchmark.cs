@@ -72,6 +72,11 @@ namespace NetworkBenchmark
 		void StartBenchmark();
 
 		/// <summary>
+		/// Stop client and server communication. Message Statistics are not allowed to change after stopping the benchmark
+		/// </summary>
+		void StopBenchmark();
+
+		/// <summary>
 		/// Disconnect the running clients from the server.
 		/// </summary>
 		/// <returns>Awaitable Task for when all clients are disconnected from the server.</returns>

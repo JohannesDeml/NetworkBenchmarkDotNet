@@ -14,12 +14,13 @@ using ENet;
 
 namespace NetworkBenchmark.Enet
 {
-	internal class EchoClient : IThreadedClient
+	internal class EchoClient : AClient
 	{
-		public bool IsConnected => peer.State == PeerState.Connected;
-		public bool IsDisposed { get; private set; }
-		public Thread ClientThread => connectAndListenThread;
+		public override bool IsConnected => peer.State == PeerState.Connected;
+		public override bool IsStopped => listenThread == null || !listenThread.IsAlive;
+		public override bool IsDisposed => isDisposed;
 
+		private bool isDisposed;
 		private readonly int id;
 		private readonly BenchmarkSetup config;
 		private readonly BenchmarkData benchmarkData;
@@ -29,7 +30,7 @@ namespace NetworkBenchmark.Enet
 		private readonly PacketFlags packetFlags;
 		private readonly Host host;
 		private readonly Address address;
-		private readonly Thread connectAndListenThread;
+		private readonly Thread listenThread;
 		private Peer peer;
 
 		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData)
@@ -39,7 +40,7 @@ namespace NetworkBenchmark.Enet
 			this.benchmarkData = benchmarkData;
 			message = config.Message;
 			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
-			switch (config.TransmissionType)
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					packetFlags = PacketFlags.Reliable;
@@ -48,27 +49,29 @@ namespace NetworkBenchmark.Enet
 					packetFlags = PacketFlags.None;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 			host = new Host();
 			address = new Address();
 			address.SetHost(config.Address);
 			address.Port = (ushort) config.Port;
-			IsDisposed = false;
+			isDisposed = false;
 
-			connectAndListenThread = new Thread(ConnectAndListen);
-			connectAndListenThread.Name = $"ENet Client {id}";
-			connectAndListenThread.IsBackground = true;
+			listenThread = new Thread(ListenLoop);
+			listenThread.Name = $"ENet Client {id}";
+			listenThread.IsBackground = true;
 		}
 
-		public void Start()
+		public override void StartClient()
 		{
-			connectAndListenThread.Start();
+			base.StartClient();
+			listenThread.Start();
 		}
 
-		public void StartSendingMessages()
+		public override void StartBenchmark()
 		{
+			base.StartBenchmark();
 			var parallelMessagesPerClient = config.ParallelMessages;
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
@@ -77,7 +80,7 @@ namespace NetworkBenchmark.Enet
 			}
 		}
 
-		public void Disconnect()
+		public override void DisconnectClient()
 		{
 			if (!IsConnected)
 			{
@@ -87,21 +90,22 @@ namespace NetworkBenchmark.Enet
 			peer.DisconnectNow(0);
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			host.Flush();
 			host.Dispose();
-			IsDisposed = true;
+			isDisposed = true;
 		}
 
-		private void ConnectAndListen()
+		private void ListenLoop()
 		{
+			listen = true;
 			host.Create();
 			peer = host.Connect(address, 4);
 
 			Event netEvent;
 
-			while (benchmarkData.Listen)
+			while (listen)
 			{
 				bool polled = false;
 
@@ -130,7 +134,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Disconnect:
-					if (benchmarkData.Running)
+					if (benchmarkRunning)
 					{
 						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 					}
@@ -138,7 +142,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Receive:
-					if (benchmarkData.Running)
+					if (benchmarkRunning)
 					{
 						Interlocked.Increment(ref benchmarkData.MessagesClientReceived);
 						OnReceiveMessage(netEvent);

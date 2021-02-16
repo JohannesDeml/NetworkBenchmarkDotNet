@@ -18,13 +18,21 @@ namespace NetworkBenchmark.NetCoreServer
 {
 	internal class EchoClient : UdpClient, IClient
 	{
+		public bool IsStopped => !IsConnected;
+
+		private volatile bool benchmarkPreparing;
+		private volatile bool listen;
+		private volatile bool benchmarkRunning;
+
+		private readonly int id;
 		private readonly byte[] message;
 		private readonly int initialMessages;
 		private readonly BenchmarkData benchmarkData;
 
-		public EchoClient(BenchmarkSetup config, BenchmarkData benchmarkData) : base(config.Address, config.Port)
+		public EchoClient(int id, BenchmarkSetup config, BenchmarkData benchmarkData) : base(config.Address, config.Port)
 		{
-			switch (config.TransmissionType)
+			this.id = id;
+			switch (config.Transmission)
 			{
 				case TransmissionType.Reliable:
 					Console.WriteLine("NetCoreServer with UDP does not support reliable message delivery");
@@ -32,12 +40,51 @@ namespace NetworkBenchmark.NetCoreServer
 				case TransmissionType.Unreliable:
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.TransmissionType} not supported");
+					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
 			}
 
 			message = config.Message;
 			initialMessages = config.ParallelMessages;
 			this.benchmarkData = benchmarkData;
+		}
+
+		public void StartClient()
+		{
+			listen = true;
+			benchmarkPreparing = true;
+			Connect();
+		}
+
+		public void StartBenchmark()
+		{
+			benchmarkPreparing = false;
+			benchmarkRunning = true;
+
+			for (int i = 0; i < initialMessages; i++)
+			{
+				SendMessage();
+			}
+		}
+
+		private void SendMessage()
+		{
+			Send(message);
+			benchmarkData.MessagesClientSent++;
+		}
+
+		public void StopBenchmark()
+		{
+			benchmarkRunning = false;
+		}
+
+		public void StopClient()
+		{
+			listen = false;
+		}
+
+		public void DisconnectClient()
+		{
+			Disconnect();
 		}
 
 		protected override void OnConnected()
@@ -52,7 +99,7 @@ namespace NetworkBenchmark.NetCoreServer
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
 			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 
-			if (!benchmarkData.Running)
+			if (!benchmarkRunning)
 			{
 				return;
 			}
@@ -63,28 +110,14 @@ namespace NetworkBenchmark.NetCoreServer
 
 		protected override void OnError(SocketError error)
 		{
-			Console.WriteLine($"Client caught an error with code {error}");
+			Console.WriteLine($"Client {id} caught an error with code {error}");
 
-			if (!benchmarkData.Running)
+			if (!benchmarkRunning)
 			{
 				return;
 			}
 
 			benchmarkData.Errors++;
-		}
-
-		public void StartSendingMessages()
-		{
-			for (int i = 0; i < initialMessages; i++)
-			{
-				SendMessage();
-			}
-		}
-
-		private void SendMessage()
-		{
-			Send(message);
-			benchmarkData.MessagesClientSent++;
 		}
 	}
 }
