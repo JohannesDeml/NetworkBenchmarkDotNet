@@ -8,10 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace NetworkBenchmark.NetCoreServer
 {
 	internal class NetCoreServerBenchmark : ANetworkBenchmark

@@ -13,10 +13,12 @@ namespace NetworkBenchmark
 	public abstract class AClient : IClient
 	{
 		public abstract bool IsConnected { get; }
+
 		public virtual bool IsStopped
 		{
 			get { return !IsConnected; }
 		}
+
 		public abstract bool IsDisposed { get; }
 
 		protected volatile bool benchmarkPreparing;

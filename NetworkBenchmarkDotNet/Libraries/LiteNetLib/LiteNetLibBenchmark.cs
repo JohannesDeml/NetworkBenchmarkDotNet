@@ -7,6 +7,7 @@
 //   public@deml.io
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace NetworkBenchmark.LiteNetLib
 {
 	internal class LiteNetLibBenchmark : ANetworkBenchmark

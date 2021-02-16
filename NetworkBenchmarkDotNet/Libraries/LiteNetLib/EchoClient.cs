@@ -101,15 +101,16 @@ namespace NetworkBenchmark.LiteNetLib
 				return;
 			}
 
+			// Run in own task to not block the main thread
 			var clientDisconnected = Task.Factory.StartNew(() => { peer.Disconnect(); }, TaskCreationOptions.LongRunning);
 		}
 
-		public Task StopClient()
+		public override void StopClient()
 		{
 			base.StopClient();
-			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 
-			return stopClient;
+			// Run in own task to not block the main thread
+			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 		}
 
 		public override void Dispose()

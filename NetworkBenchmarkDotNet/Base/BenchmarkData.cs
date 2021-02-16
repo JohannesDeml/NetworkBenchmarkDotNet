@@ -17,7 +17,7 @@ namespace NetworkBenchmark
 	{
 		public TimeSpan Duration { get; private set; }
 
-		private Stopwatch stopwatch;
+		private readonly Stopwatch stopwatch;
 
 		/// <summary>
 		/// Benchmark is preparing to be run

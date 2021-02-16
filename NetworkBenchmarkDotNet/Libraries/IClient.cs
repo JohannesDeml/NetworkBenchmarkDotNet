@@ -23,6 +23,5 @@ namespace NetworkBenchmark
 		public void StopBenchmark();
 		public void StopClient();
 		public void DisconnectClient();
-
 	}
 }
