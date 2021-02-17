@@ -155,7 +155,7 @@ Usage:
   NetworkBenchmarkDotNet [options]
 
 Options:
--b, --benchmark <All|Custom|Essential|Garbage|Performance|Quick>    Run predefined benchmarks [default: Custom]
+  -b, --benchmark <All|Custom|Essential|Garbage|Performance|Quick>    Run predefined benchmarks [default: Custom]
   -t, --test <PingPong>                                               Test type [default: PingPong]
   --transmission <Reliable|Unreliable>                                Transmission type [default: Unreliable]
   -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                 Library target [default: ENet]
@@ -184,7 +184,7 @@ Predefined benchmarks take some time to run, but generate reproducible numbers. 
 * **Garbage** (<1min): Test with all included libraries using cpu sampling and memory allocation statistics
 * **Essential** (>15min): Running Performance + Garbage Benchmark
 
-
+![Run Predefined Benchmark windows command-line screenshot](./Docs/run-predefined-benchmark.png)
 
 ## Contributions
 
@@ -195,10 +195,11 @@ Your favorite library is missing, or you feel like the benchmarks are not testin
 Your new proposed library ... 
 
 * works with Unity as a Client
-* works with .Net Core for the server 
-* uses UDP
+* works with .Net Core (or .NET 5) for the server 
+* uses UDP (additional RUDP would be nice)
 * is Open Source (can still be commercial)
 * is stable enough not to break in the benchmarks
+* is in active development
 * is interesting/relevant for others
 
 #### How to add a library
