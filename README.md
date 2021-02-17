@@ -73,24 +73,25 @@ BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=5.0.103
   [Host]     : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
-  Job-IJBNLS : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
+  Job-CAYZXA : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
 
 Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
 Force=True  Server=True  InvocationCount=1  
 IterationCount=20  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  Version=0.8.1  OS=Linux 5.8.0-41-generic #46~20.04.1-Ubuntu SMP Mon Jan 18 17:52:23 UTC 2021  
-DateTime=02/16/2021 11:49:25  
+WarmupCount=1  Version=0.8.2  OS=Linux 5.8.0-43-generic #49~20.04.1-Ubuntu SMP Fri Feb 5 09:57:56 UTC 2021  
+DateTime=02/17/2021 16:22:28  
 ```
-|       Method |       Library | Clients |      Throughput |       Mean |       Error |      StdDev |
-|------------- |-------------- |--------:|----------------:|-----------:|------------:|------------:|
-| **Performance1** |          **ENet** |     **500** |   **185,238 msg/s** | **2,699.2 ms** |    **15.25 ms** |    **15.66 ms** |
-| Performance2 |          ENet |     500 | 1,123,648 msg/s |   445.0 ms |     2.71 ms |     2.90 ms |
-| **Performance1** | **NetCoreServer** |     **500** |   **102,402 msg/s** | **4,882.7 ms** |    **18.56 ms** |    **21.38 ms** |
-| Performance2 | NetCoreServer |     500 |   107,236 msg/s | 4,662.6 ms |    22.80 ms |    26.26 ms |
-| **Performance1** |    **LiteNetLib** |     **500** |    **81,932 msg/s** | **6,102.6 ms** |    **43.66 ms** |    **50.27 ms** |
-| Performance2 |    LiteNetLib |     500 |   307,560 msg/s | 1,625.7 ms |     9.74 ms |    10.83 ms |
-| **Performance1** |         **Kcp2k** |     **500** |    **65,381 msg/s** | **7,647.5 ms** |   **873.18 ms** |   **970.53 ms** |
-| Performance2 |         Kcp2k |     500 |    51,884 msg/s | 9,636.8 ms | 1,815.34 ms | 2,090.55 ms |
+|       Method |       Library | Clients |      Throughput |        Mean |     Error |    StdDev |
+|------------- |-------------- |--------:|----------------:|------------:|----------:|----------:|
+| **Performance1** |          **ENet** |     **500** |   **184,330 msg/s** |  **2,712.5 ms** |  **13.29 ms** |  **14.77 ms** |
+| Performance2 |          ENet |     500 | 1,127,749 msg/s |    443.4 ms |   1.91 ms |   1.96 ms |
+| **Performance1** | **NetCoreServer** |     **500** |   **110,626 msg/s** |  **4,519.7 ms** |  **20.66 ms** |  **21.21 ms** |
+| Performance2 | NetCoreServer |     500 |    95,698 msg/s |  5,224.8 ms |  15.82 ms |  16.93 ms |
+| **Performance1** |    **LiteNetLib** |     **500** |    **93,768 msg/s** |  **5,332.3 ms** |  **22.10 ms** |  **24.57 ms** |
+| Performance2 |    LiteNetLib |     500 |   259,604 msg/s |  1,926.0 ms |  35.52 ms |  40.90 ms |
+| **Performance1** |         **Kcp2k** |     **500** |    **24,551 msg/s** | **20,365.5 ms** | **290.54 ms** | **334.59 ms** |
+| Performance2 |         Kcp2k |     500 |   124,884 msg/s |  4,003.7 ms | 133.17 ms | 153.36 ms |
+
 
 ![Benchmark Results](./Docs/PerformanceLinux.png)
 
@@ -104,24 +105,24 @@ BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 AMD Ryzen 7 3700X, 1 CPU, 16 logical and 8 physical cores
 .NET Core SDK=5.0.100
   [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
-  Job-DLLJEE : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+  Job-KWKBOV : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
 
 Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
 Force=True  Server=True  InvocationCount=1  
 IterationCount=20  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  Version=0.8.1  OS=Microsoft Windows 10.0.19042  
-DateTime=02/16/2021 11:49:06  
+WarmupCount=1  Version=0.8.2  OS=Microsoft Windows 10.0.19042  
+DateTime=02/17/2021 16:23:23  
 ```
 |       Method |       Library | Clients |    Throughput |        Mean |     Error |    StdDev |
 |------------- |-------------- |--------:|--------------:|------------:|----------:|----------:|
-| **Performance1** |          **ENet** |     **500** |  **96,028 msg/s** |  **5,206.8 ms** | **272.20 ms** | **313.46 ms** |
-| Performance2 |          ENet |     500 | 696,194 msg/s |    718.2 ms |  42.12 ms |  48.51 ms |
-| **Performance1** | **NetCoreServer** |     **500** |  **71,063 msg/s** |  **7,036.0 ms** |  **37.55 ms** |  **43.24 ms** |
-| Performance2 | NetCoreServer |     500 |  69,418 msg/s |  7,202.7 ms |  18.91 ms |  21.02 ms |
-| **Performance1** |    **LiteNetLib** |     **500** |  **93,363 msg/s** |  **5,355.5 ms** |  **30.85 ms** |  **34.29 ms** |
-| Performance2 |    LiteNetLib |     500 | 848,954 msg/s |    589.0 ms |   7.45 ms |   8.28 ms |
-| **Performance1** |         **Kcp2k** |     **500** |  **37,782 msg/s** | **13,233.7 ms** | **420.19 ms** | **483.89 ms** |
-| Performance2 |         Kcp2k |     500 | 120,659 msg/s |  4,143.9 ms |  34.13 ms |  39.30 ms |
+| **Performance1** |          **ENet** |     **500** | **103,408 msg/s** |  **4,835.2 ms** | **273.39 ms** | **314.84 ms** |
+| Performance2 |          ENet |     500 | 713,546 msg/s |    700.7 ms |  40.59 ms |  46.75 ms |
+| **Performance1** | **NetCoreServer** |     **500** |  **72,938 msg/s** |  **6,855.1 ms** |  **36.20 ms** |  **40.24 ms** |
+| Performance2 | NetCoreServer |     500 |  70,188 msg/s |  7,123.8 ms |  11.23 ms |  12.02 ms |
+| **Performance1** |    **LiteNetLib** |     **500** | **101,078 msg/s** |  **4,946.7 ms** |  **27.74 ms** |  **28.48 ms** |
+| Performance2 |    LiteNetLib |     500 | 874,633 msg/s |    571.7 ms |   8.18 ms |   9.42 ms |
+| **Performance1** |         **Kcp2k** |     **500** |  **15,536 msg/s** | **32,183.3 ms** | **484.33 ms** | **538.33 ms** |
+| Performance2 |         Kcp2k |     500 |  67,639 msg/s |  7,392.2 ms | 231.14 ms | 266.18 ms |
 
 
 ![Benchmark Results](./Docs/PerformanceWindows.png)
