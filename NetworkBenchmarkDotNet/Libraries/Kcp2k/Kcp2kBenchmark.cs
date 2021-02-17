@@ -8,6 +8,9 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using kcp2k;
+
 namespace NetworkBenchmark.Kcp2k
 {
 	internal class Kcp2kBenchmark : ANetworkBenchmark
@@ -20,6 +23,19 @@ namespace NetworkBenchmark.Kcp2k
 		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
 		{
 			return new EchoClient(id, setup, statistics);
+		}
+
+		public static KcpChannel GetChannel(TransmissionType transmissionType)
+		{
+			switch (transmissionType)
+			{
+				case TransmissionType.Reliable:
+					return KcpChannel.Reliable;
+				case TransmissionType.Unreliable:
+					return KcpChannel.Reliable;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(transmissionType), $"Transmission Type {transmissionType} not supported");
+			}
 		}
 	}
 }

@@ -8,6 +8,8 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark.NetCoreServer
 {
 	internal class NetCoreServerBenchmark : ANetworkBenchmark
@@ -20,6 +22,20 @@ namespace NetworkBenchmark.NetCoreServer
 		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
 		{
 			return new EchoClient(id, setup, statistics);
+		}
+
+		public static void ProcessTransmissionType(TransmissionType transmissionType)
+		{
+			switch (transmissionType)
+			{
+				case TransmissionType.Reliable:
+					Console.WriteLine("NetCoreServer with UDP does not support reliable message delivery");
+					return;
+				case TransmissionType.Unreliable:
+					return;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(transmissionType), $"Transmission Type {transmissionType} not supported");
+			}
 		}
 	}
 }

@@ -32,18 +32,7 @@ namespace NetworkBenchmark.Kcp2k
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			noDelay = true;
-
-			switch (config.Transmission)
-			{
-				case TransmissionType.Reliable:
-					communicationChannel = KcpChannel.Reliable;
-					break;
-				case TransmissionType.Unreliable:
-					communicationChannel = KcpChannel.Unreliable;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
-			}
+			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
 
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);

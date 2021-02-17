@@ -8,6 +8,9 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using LiteNetLib;
+
 namespace NetworkBenchmark.LiteNetLib
 {
 	internal class LiteNetLibBenchmark : ANetworkBenchmark
@@ -20,6 +23,19 @@ namespace NetworkBenchmark.LiteNetLib
 		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
 		{
 			return new EchoClient(id, setup, statistics);
+		}
+
+		public static DeliveryMethod GetDeliveryMethod(TransmissionType transmissionType)
+		{
+			switch (transmissionType)
+			{
+				case TransmissionType.Reliable:
+					return DeliveryMethod.ReliableUnordered;
+				case TransmissionType.Unreliable:
+					return DeliveryMethod.Unreliable;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(transmissionType), $"Transmission Type {transmissionType} not supported");
+			}
 		}
 	}
 }

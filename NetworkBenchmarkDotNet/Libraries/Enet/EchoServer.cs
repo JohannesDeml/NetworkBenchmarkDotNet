@@ -32,18 +32,7 @@ namespace NetworkBenchmark.Enet
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			timeout = Utilities.CalculateTimeout(this.config.ServerTickRate);
-
-			switch (config.Transmission)
-			{
-				case TransmissionType.Reliable:
-					packetFlags = PacketFlags.Reliable;
-					break;
-				case TransmissionType.Unreliable:
-					packetFlags = PacketFlags.None;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
-			}
+			packetFlags = ENetBenchmark.GetPacketFlags(config.Transmission);
 
 			host = new Host();
 			address = new Address();

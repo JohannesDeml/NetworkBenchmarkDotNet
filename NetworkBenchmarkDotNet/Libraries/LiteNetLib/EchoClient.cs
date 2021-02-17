@@ -40,18 +40,7 @@ namespace NetworkBenchmark.LiteNetLib
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			message = config.Message;
-
-			switch (config.Transmission)
-			{
-				case TransmissionType.Reliable:
-					deliveryMethod = DeliveryMethod.ReliableUnordered;
-					break;
-				case TransmissionType.Unreliable:
-					deliveryMethod = DeliveryMethod.Unreliable;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
-			}
+			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);

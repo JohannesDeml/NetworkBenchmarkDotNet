@@ -9,6 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
+using System;
+using ENet;
+
 namespace NetworkBenchmark.Enet
 {
 	internal class ENetBenchmark : ANetworkBenchmark
@@ -33,6 +36,19 @@ namespace NetworkBenchmark.Enet
 		{
 			base.Deinitialize();
 			ENet.Library.Deinitialize();
+		}
+
+		public static PacketFlags GetPacketFlags(TransmissionType transmissionType)
+		{
+			switch (transmissionType)
+			{
+				case TransmissionType.Reliable:
+					return PacketFlags.Reliable | PacketFlags.Unsequenced;
+				case TransmissionType.Unreliable:
+					return PacketFlags.None | PacketFlags.Unsequenced | PacketFlags.Unthrottled;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(transmissionType), $"Transmission Type {transmissionType} not supported");
+			}
 		}
 	}
 }

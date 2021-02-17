@@ -32,16 +32,7 @@ namespace NetworkBenchmark.NetCoreServer
 		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
-			switch (config.Transmission)
-			{
-				case TransmissionType.Reliable:
-					Console.WriteLine("NetCoreServer with UDP does not support reliable message delivery");
-					break;
-				case TransmissionType.Unreliable:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
-			}
+			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
 			message = config.Message;
 			initialMessages = config.ParallelMessages;

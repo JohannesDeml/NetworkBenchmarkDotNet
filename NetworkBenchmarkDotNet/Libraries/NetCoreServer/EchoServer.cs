@@ -25,17 +25,7 @@ namespace NetworkBenchmark.NetCoreServer
 
 		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(IPAddress.Parse(config.Address), config.Port)
 		{
-			switch (config.Transmission)
-			{
-				case TransmissionType.Reliable:
-					Console.WriteLine("NetCoreServer with UDP does not support reliable message delivery");
-					break;
-				case TransmissionType.Unreliable:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
-			}
-
+			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 			this.benchmarkStatistics = benchmarkStatistics;
 		}
 
