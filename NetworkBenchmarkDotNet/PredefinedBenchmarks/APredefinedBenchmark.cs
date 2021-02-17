@@ -16,9 +16,9 @@ namespace NetworkBenchmark
 {
 	public abstract class APredefinedBenchmark
 	{
+		public abstract int ClientCount { get; set; }
+		public abstract int MessageTarget { get; set; }
 		protected abstract BenchmarkMode Mode { get; }
-		public abstract int MessageTarget { get; }
-		public abstract int ClientCount { get; }
 		protected abstract NetworkLibrary LibraryTarget { get; }
 
 		private INetworkBenchmark libraryImpl;

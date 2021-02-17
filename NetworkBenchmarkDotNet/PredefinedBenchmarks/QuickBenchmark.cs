@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InDepthBenchmark.cs">
+// <copyright file="QuickBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -12,25 +12,39 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(InDepthBenchmarkConfig))]
-	public class InDepthBenchmark : APredefinedBenchmark
+	[Config(typeof(QuickBenchmarkConfig))]
+	public class QuickBenchmark : APredefinedBenchmark
 	{
-		[Params(NetworkLibrary.Kcp2k)]
+		/// <summary>
+		/// Library target for the benchmark
+		/// </summary>
+		[Params(NetworkLibrary.ENet)]
 		public NetworkLibrary Library { get; set; }
 
-		[Params("127.0.0.1", "::1")]
+		/// <summary>
+		/// Address to use, supports ipv4 and ipv6
+		///
+		/// </summary>
+		[Params("::1")]
 		public string Address { get; set; }
 
-		[Params(50)]
+		[Params(60)]
 		public int TickRate { get; set; }
 
-		protected override BenchmarkMode Mode => BenchmarkMode.InDepth;
-		public override int ClientCount => 500;
-		public override int MessageTarget => 1000 * 500;
+		[Params(100, 1000)]
+		public override int ClientCount { get; set; }
+
+		[Params(TransmissionType.Reliable, TransmissionType.Unreliable)]
+		public TransmissionType Transmission { get; set; }
+
+		[Params(100 * 1000)]
+		public override int MessageTarget { get; set; }
+
+		protected override BenchmarkMode Mode => BenchmarkMode.Quick;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 
-		[GlobalSetup(Target = nameof(InDepth))]
+		[GlobalSetup(Target = nameof(Quick))]
 		public void PrepareInDepthBenchmark()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
@@ -41,18 +55,19 @@ namespace NetworkBenchmark
 			config.Address = Address;
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
+			config.Transmission = Transmission;
 			PrepareBenchmark();
 		}
 
 		[Benchmark]
-		public long InDepth()
+		public long Quick()
 		{
 			return RunBenchmark();
 		}
 
 		public override string ToString()
 		{
-			return "InDepthBenchmark";
+			return "QuickBenchmark";
 		}
 	}
 }

@@ -9,7 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Parameters;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Perfolizer.Horology;
@@ -60,6 +62,9 @@ namespace NetworkBenchmark
 				return "NA";
 			}
 
+			var paramInstances = benchmarkCase.Parameters;
+			instance.MessageTarget = UpdateInstanceValueSave(instance.MessageTarget, paramInstances, nameof(instance.MessageTarget));
+
 			int messageCount = instance.MessageTarget;
 			var statistics = report.ResultStatistics;
 			var meanSeconds = TimeUnit.Convert(statistics.Mean, TimeUnit.Nanosecond, TimeUnit.Second);
@@ -71,6 +76,18 @@ namespace NetworkBenchmark
 				return msgPerSecond.ToString("N0", cultureInfo) + " msg/s";
 
 			return msgPerSecond.ToString("N0", cultureInfo);
+		}
+
+		private T UpdateInstanceValueSave<T>(T current, ParameterInstances instances, string name)
+		{
+			var instance = instances.Items.FirstOrDefault(item => item.Name == name);
+			if (instance == null)
+			{
+				// Parameter not present, keep the current value
+				return current;
+			}
+
+			return (T) instance.Value;
 		}
 
 		public bool IsAvailable(Summary summary)

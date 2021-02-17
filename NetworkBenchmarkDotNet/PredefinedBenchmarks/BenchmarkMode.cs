@@ -23,12 +23,14 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Run Benchmark Performance1, Performance 2
 		/// Benchmark wih high CCU and high message count to get accurate performance numbers
+		/// Runtime: ~15 minutes
 		/// </summary>
 		Performance = 1 << 0,
 
 		/// <summary>
 		/// Run Benchmark Garbage
 		/// Benchmark which collects GC information
+		/// Runtime: ~1 minute
 		/// </summary>
 		Garbage = 1 << 1,
 
@@ -38,10 +40,12 @@ namespace NetworkBenchmark
 		Essential = (1 << 2) - 1,
 
 		/// <summary>
-		/// Run Benchmark In Depth
-		/// Benchmark for testing one library in depth with different settings and environments
+		/// Run a Quick Benchmark
+		/// This benchmark might change over time and is kind of sandbox playground to test different settings with a fast run strategy.
+		/// The results of this benchmark are not pre-jitted and are not as precise as the Essential benchmarks
+		/// Runtime: ~30 seconds
 		/// </summary>
-		InDepth = 1 << 2,
+		Quick = 1 << 2,
 
 		/// <summary>
 		/// Run all predefined benchmarks

@@ -19,8 +19,8 @@ namespace NetworkBenchmark
 		public NetworkLibrary Library { get; set; }
 
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
-		public override int ClientCount => 500;
-		public override int MessageTarget => 1000 * 500;
+		public override int ClientCount { get; set; } = 500;
+		public override int MessageTarget { get; set; } = 500 * 1000;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 

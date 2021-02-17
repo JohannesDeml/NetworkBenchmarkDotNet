@@ -18,9 +18,9 @@ namespace NetworkBenchmark
 		[ParamsAllValues]
 		public NetworkLibrary Library { get; set; }
 
+		public override int ClientCount { get; set; } = 10;
+		public override int MessageTarget { get; set; } = 10 * 1000;
 		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
-		public override int MessageTarget => 10000;
-		public override int ClientCount => 10;
 		protected override NetworkLibrary LibraryTarget => Library;
 
 		[GlobalSetup(Target = nameof(Garbage))]

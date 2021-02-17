@@ -51,10 +51,10 @@ namespace NetworkBenchmark
 				Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 			}
 
-			if ((mode & BenchmarkMode.InDepth) != 0)
+			if ((mode & BenchmarkMode.Quick) != 0)
 			{
-				RunBenchmark<InDepthBenchmark>();
-				Console.WriteLine($"Finished {BenchmarkMode.InDepth} Benchmark");
+				RunBenchmark<QuickBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Quick} Benchmark");
 			}
 
 			if ((mode & BenchmarkMode.Garbage) != 0)

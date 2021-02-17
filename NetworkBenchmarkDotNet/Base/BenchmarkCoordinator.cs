@@ -18,6 +18,9 @@ namespace NetworkBenchmark
 		public static BenchmarkSetup Config { get; set; }
 		public static readonly BenchmarkStatistics BenchmarkStatistics = new BenchmarkStatistics();
 
+		/// <summary>
+		/// Apply the default settings for a predefined benchmark
+		/// </summary>
 		public static void ApplyPredefinedConfiguration()
 		{
 			if (Config == null)
@@ -28,6 +31,11 @@ namespace NetworkBenchmark
 			BenchmarkSetup.ApplyPredefinedBenchmarkConfiguration(Config);
 		}
 
+		/// <summary>
+		/// Prepare the server and clients for the benchmark.
+		/// Starts all instances and connects the clients to the server.
+		/// </summary>
+		/// <param name="networkBenchmark">Library to use for the benchmark</param>
 		public static void PrepareBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose("-> Prepare Benchmark.");
@@ -45,14 +53,19 @@ namespace NetworkBenchmark
 			Utilities.WriteVerboseLine(" Done");
 		}
 
+		/// <summary>
+		/// Run the benchmark for a specific duration
+		/// The benchmark needs to be prepared once before running it.
+		/// </summary>
+		/// <param name="networkBenchmark">Library to run</param>
 		public static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
-			BenchmarkCoordinator.StartBenchmark(networkBenchmark);
+			StartBenchmark(networkBenchmark);
 
 			Thread.Sleep(Config.Duration * 1000);
 
-			BenchmarkCoordinator.StopBenchmark(networkBenchmark);
+			StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
 		}
 
