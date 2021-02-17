@@ -155,7 +155,7 @@ namespace NetworkBenchmark
 
 		public void AppendEnvironmentSetup(StringBuilder sb)
 		{
-			sb.AppendLine($"### NBN v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
+			sb.AppendLine($"### NBN v{GetType().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} Benchmark {Benchmark}");
 			sb.AppendLine(
 				$"* OS: {System.Runtime.InteropServices.RuntimeInformation.OSDescription} {System.Runtime.InteropServices.RuntimeInformation.OSArchitecture}");
 			sb.AppendLine($"* Framework: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
