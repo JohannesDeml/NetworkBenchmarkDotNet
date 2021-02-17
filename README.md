@@ -6,6 +6,17 @@
 
 [![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0) [![.NET Core 3.1](https://img.shields.io/badge/.NET_Core-3.1-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 
+## Table of Contents
+
+1. [Description](#description)
+2. [Benchmarks](#benchmarks)
+3. [Benchmark Results](#benchmark-results)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Contributions](#contributions)
+
+
+
 ## Description
 
 NBN is a benchmark for low level networking libraries using UDP and can be used with [Unity](https://unity3d.com) and for [.Net Core](https://en.wikipedia.org/wiki/.NET_Core) standalone server applications. The benchmark focuses on latency, performance and scalability.
@@ -30,6 +41,8 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
 
+
+
 ## Benchmarks
 
 ### Benchmark [Performance1](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
@@ -47,7 +60,10 @@ This test is for multiplexing / message merging performance.
 Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
 This test collects information about generated garbage while running the benchmark.
 
+## Benchmark Results
+
 ### Ubuntu 20.04
+
 To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.   
 [Detailed Benchmark Hardware](https://pcpartpicker.com/b/Wtykcf)
 
@@ -127,31 +143,50 @@ Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) 3.1 & 5
 Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
 ## Usage
+In general there are two different types of benchmarks: Custom and predefined benchmarks. Custom benchmarks and be defined through the [command-line options](#command-line-options). Predefined Benchmarks are set in code and are executed through [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet). They are used for the statistics presented here and are more accurate and better reproducible then Custom benchmarks. However, they also take a longer time to finish.
 
+### Custom Benchmarks
+
+You can run custom benchmarks through the command-line. Use can test multiple settings and its combinations in an easy and quick way. The tests will just run once and are not as accurate as running a predefined benchmark. An example for running a benchmark might be `./NetworkBenchmarkDotNet --library ENet --transmission Unreliable --clients 100 --duration 10 `
+
+#### Command-line Options (`./NetworkBenchmarkDotNet --help`)
 ```
 Usage:
   NetworkBenchmarkDotNet [options]
 
 Options:
-  -b, --benchmark <All|Custom|Essential|Garbage|InDepth|Performance>    Run predefined benchmarks [default: Custom]
-  -t, --test <PingPong>                                                 Test type [default: PingPong]
-  --transmission <Reliable|Unreliable>                                  Transmission type [default: Unreliable]
-  -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                   Library target [default: ENet]
-  -d, --duration <duration>                                             Test duration in seconds [default: 10]
-  --address <address>                                                   IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
-  --port <port>                                                         Socket Port [default: 3330]
-  --clients <clients>                                                   # Simultaneous clients [default: 500]
-  --parallel-messages <parallel-messages>                               # Parallel messages per client [default: 1]
-  --message-byte-size <message-byte-size>                               Message byte size sent by clients [default: 32]
-  --message-payload <Ones|Random|Zeros>                                 Message load sent by clients [default: Random]
-  --verbose                                                             Verbose output of test steps and errors [default: True]
-  --client-tick-rate <client-tick-rate>                                 Client ticks per second if supported [default: 60]
-  --server-tick-rate <server-tick-rate>                                 Server ticks per second if supported [default: 60]
-  --version                                                             Show version information
-  -?, -h, --help                                                        Show help and usage information
+-b, --benchmark <All|Custom|Essential|Garbage|Performance|Quick>    Run predefined benchmarks [default: Custom]
+  -t, --test <PingPong>                                               Test type [default: PingPong]
+  --transmission <Reliable|Unreliable>                                Transmission type [default: Unreliable]
+  -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                 Library target [default: ENet]
+  -d, --duration <duration>                                           Test duration in seconds [default: 10]
+  --address <address>                                                 IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
+  --port <port>                                                       Socket Port [default: 3330]
+  --clients <clients>                                                 # Simultaneous clients [default: 500]
+  --parallel-messages <parallel-messages>                             # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>                             Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>                               Message load sent by clients [default: Random]
+  --verbose                                                           Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>                               Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>                               Server ticks per second if supported [default: 60]
+  --version                                                           Show version information
+  -?, -h, --help                                                      Show help and usage information
 ```
 
-## Contributions are welcome!
+### Predefined Benchmarks
+
+Predefined benchmarks take some time to run, but generate reproducible numbers. The easiest way to run a predefined benchmark is to run `win-benchmark.bat` on windows or `sh linux-benchmark.sh` on windows.
+
+#### Types
+
+* **Quick** (<1min): Runs a quick benchmark with whatever is set in [QuickBenchmark.cs](../../blob/master/NetworkBenchmarkDotNet/PredefinedBenchmarks/QuickBenchmark.cs)
+* **Performance** (>15min): High Performance statistical test with all included libraries
+* **Garbage** (<1min): Test with all included libraries using cpu sampling and memory allocation statistics
+* **Essential** (>15min): Running Performance + Garbage Benchmark
+
+
+
+## Contributions
 
 Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up via [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.
 
@@ -169,24 +204,14 @@ Your new proposed library ...
 #### How to add a library
 
 1. Add a new folder inside the NetworkBenchmarkDotNet solution with the name of your library
-2. Add a script called `YourLibraryBenchmark.cs` which implements [INetworkBenchmark](../../blob/master/NetworkBenchmarkDotNet/Libraries/INetworkBenchmark.cs)
+2. Add a script called `YourLibraryBenchmark.cs` which implements [ANetworkBenchmark](../../blob/master/NetworkBenchmarkDotNet/Libraries/ANetworkBenchmark.cs)
 3. Add your library name to the [NetworkLibrary](../../blob/master/NetworkBenchmarkDotNet/Libraries/NetworkLibrary.cs) enum
 4. Add your Implementation Constructor to `INetworkBenchmark.CreateNetworkBenchmark()`
 5. Use the `-l ` argument (or `BenchmarkSetup.Library`) to test your library and if everything works as expected.
-6. Change `[Params(NetworkLibrary.Kcp2k)]` in `InDepthBenchmark.cs` to your library and run `./NetworkBenchmarkDotNet -b InDepth` to see, if your library works with high CCU and looping benchmarks with BenchmarkDotNet
-7. Run the benchmarks `./NetworkBenchmarkDotNet -b All` and see if your library runs correct
-8. Create a PR including your benchmark md results 🎉
+6. Change `[Params(NetworkLibrary.Kcp2k)]` in `QuickBenchmark.cs` to your library and run `./NetworkBenchmarkDotNet -b Quick` to see, if your library works with high CCU and looping benchmarks with BenchmarkDotNet
+8. Create a PR including your benchmark results 🎉
 
-### Adding a benchmark
 
-Tell us why you think that benchmark is important and what it tests, that the other benchmarks don't do.  
-Ideas for benchmarks:
-
-- [x] Benchmark for roundtrip time (Benchmark 1)
-- [x] Benchmark for message merging (Benchmark 2)
-- [x] Benchmark for garbage generation
-- [x] Benchmark .Net 5.0 once it's stable
-- [ ] Benchmark for maximum concurrent clients
 
 ## License
 
