@@ -47,7 +47,7 @@ namespace NetworkBenchmark.LiteNetLib
 					deliveryMethod = DeliveryMethod.ReliableUnordered;
 					break;
 				case TransmissionType.Unreliable:
-					deliveryMethod = DeliveryMethod.ReliableUnordered;
+					deliveryMethod = DeliveryMethod.Unreliable;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(config), $"Transmission Type {config.Transmission} not supported");
