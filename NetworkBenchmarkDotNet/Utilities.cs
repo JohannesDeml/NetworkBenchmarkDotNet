@@ -21,7 +21,7 @@ namespace NetworkBenchmark
 		public static string EnumToString(Type enumType)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append("[");
+			sb.Append('[');
 			foreach (var value in Enum.GetValues(enumType))
 			{
 				sb.Append(value.ToString());
@@ -30,7 +30,7 @@ namespace NetworkBenchmark
 
 			// Remove last ", "
 			sb.Remove(sb.Length - 2, 2);
-			sb.Append("]");
+			sb.Append(']');
 
 			return sb.ToString();
 		}

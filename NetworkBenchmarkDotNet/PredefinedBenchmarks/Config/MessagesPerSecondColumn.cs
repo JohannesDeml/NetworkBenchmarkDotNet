@@ -78,7 +78,7 @@ namespace NetworkBenchmark
 			return msgPerSecond.ToString("N0", cultureInfo);
 		}
 
-		private T UpdateInstanceValueSave<T>(T current, ParameterInstances instances, string name)
+		private static T UpdateInstanceValueSave<T>(T current, ParameterInstances instances, string name)
 		{
 			var instance = instances.Items.FirstOrDefault(item => item.Name == name);
 			if (instance == null)

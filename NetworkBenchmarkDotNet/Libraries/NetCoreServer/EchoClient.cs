@@ -96,22 +96,18 @@ namespace NetworkBenchmark.NetCoreServer
 
 		protected override void OnReceived(EndPoint endpoint, byte[] buffer, long offset, long size)
 		{
-			if (!listen)
+			if (benchmarkRunning)
 			{
-				return;
+				benchmarkStatistics.MessagesClientReceived++;
+				SendMessage();
 			}
 
-			// Continue receive datagrams
-			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
-			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
-
-			if (!benchmarkRunning)
+			if (listen)
 			{
-				return;
+				// Continue receive datagrams
+				// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
+				ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
 			}
-
-			benchmarkStatistics.MessagesClientReceived++;
-			SendMessage();
 		}
 
 		protected override void OnError(SocketError error)

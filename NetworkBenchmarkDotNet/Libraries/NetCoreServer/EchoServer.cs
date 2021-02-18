@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -18,7 +17,6 @@ namespace NetworkBenchmark.NetCoreServer
 {
 	internal class EchoServer : UdpServer, IServer
 	{
-		private volatile bool benchmarkPreparing;
 		private volatile bool listen;
 		private volatile bool benchmarkRunning;
 		private readonly BenchmarkStatistics benchmarkStatistics;
@@ -33,12 +31,10 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			base.Start();
 			listen = true;
-			benchmarkPreparing = true;
 		}
 
 		public void StartBenchmark()
 		{
-			benchmarkPreparing = false;
 			benchmarkRunning = true;
 		}
 
