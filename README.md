@@ -194,6 +194,8 @@ To test a library remotely, you can use the parameter `--execution-mode Server` 
 Server: `./NetworkBenchmarkDotNet --library ENet --execution-mode Server -d -1`  
 Client: `./NetworkBenchmarkDotNet --library ENet --execution-mode Client -d 10 --address YOUR_ADDRESS`
 
+If you change the address in QuickBenchmark.cs, you can also run a more sophisticated remote benchmark this way.
+
 ## Contributions
 
 Your favorite library is missing, or you feel like the benchmarks are not testing everything relevant? Let's evolve the benchmark together! Either hit me up via [E-mail](mailto:public@deml.io) to discuss your idea, or [open an issue](../../issues), or make a pull request directly. There are a few rules in order to not make the benchmark too cluttered.

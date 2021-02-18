@@ -23,7 +23,7 @@ namespace NetworkBenchmark
 
 		/// <summary>
 		/// Address to use, supports ipv4 and ipv6
-		///
+		/// If the address is not localhost, the execution-mode is switched to Client
 		/// </summary>
 		[Params("::1")]
 		public string Address { get; set; }
@@ -53,6 +53,11 @@ namespace NetworkBenchmark
 			config.ClientTickRate = TickRate;
 			config.ServerTickRate = TickRate;
 			config.Address = Address;
+			if (Address != "::1" && Address != "127.0.0.1")
+			{
+				config.ExecutionMode = ExecutionMode.Client;
+			}
+			
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			config.Transmission = Transmission;
