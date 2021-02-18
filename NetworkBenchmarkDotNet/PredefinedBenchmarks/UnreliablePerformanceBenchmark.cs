@@ -17,6 +17,10 @@ namespace NetworkBenchmark
 	{
 		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
 		public NetworkLibrary Library { get; set; }
+
+		[Params(TransmissionType.Unreliable)]
+		public TransmissionType Transmission { get; set; }
+
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
 		public override int ClientCount { get; set; } = 500;
 		public override int MessageTarget { get; set; } = 500 * 1000;
@@ -31,6 +35,7 @@ namespace NetworkBenchmark
 
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
+			config.Transmission = Transmission;
 			PrepareBenchmark();
 		}
 
@@ -42,6 +47,7 @@ namespace NetworkBenchmark
 
 			config.ParallelMessages = 10;
 			config.MessageByteSize = 32;
+			config.Transmission = Transmission;
 			PrepareBenchmark();
 		}
 
