@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -84,8 +83,24 @@ namespace NetworkBenchmark.NetCoreServer
 			ReceiveAsync();
 		}
 
+		protected override void OnDisconnected()
+		{
+			base.OnDisconnected();
+
+			if (benchmarkRunning || benchmarkPreparing)
+			{
+				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
+				Interlocked.Increment(ref benchmarkStatistics.Errors);
+			}
+		}
+
 		protected override void OnReceived(EndPoint endpoint, byte[] buffer, long offset, long size)
 		{
+			if (!listen)
+			{
+				return;
+			}
+
 			// Continue receive datagrams
 			// Important: Receive using thread pool is necessary here to avoid stack overflow with Socket.ReceiveFromAsync() method!
 			ThreadPool.QueueUserWorkItem(o => { ReceiveAsync(); });
@@ -101,14 +116,11 @@ namespace NetworkBenchmark.NetCoreServer
 
 		protected override void OnError(SocketError error)
 		{
-			Console.WriteLine($"Client {id} caught an error with code {error}");
-
-			if (!benchmarkRunning)
+			if (benchmarkRunning)
 			{
-				return;
+				Utilities.WriteVerboseLine($"Error Client {id}: {error}");
+				Interlocked.Increment(ref benchmarkStatistics.Errors);
 			}
-
-			benchmarkStatistics.Errors++;
 		}
 	}
 }

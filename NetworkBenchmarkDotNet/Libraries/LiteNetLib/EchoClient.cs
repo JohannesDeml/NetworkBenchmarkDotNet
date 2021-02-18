@@ -91,7 +91,7 @@ namespace NetworkBenchmark.LiteNetLib
 			}
 
 			// Run in own task to not block the main thread
-			var clientDisconnected = Task.Factory.StartNew(() => { peer.Disconnect(); }, TaskCreationOptions.LongRunning);
+			Task.Factory.StartNew(() => { peer.Disconnect(); }, TaskCreationOptions.LongRunning);
 		}
 
 		public override void StopClient()
@@ -99,7 +99,7 @@ namespace NetworkBenchmark.LiteNetLib
 			base.StopClient();
 
 			// Run in own task to not block the main thread
-			var stopClient = Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
+			Task.Factory.StartNew(() => { netManager.Stop(false); }, TaskCreationOptions.LongRunning);
 		}
 
 		public override void Dispose()
@@ -130,7 +130,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
 		{
-			if (disconnectInfo.Reason == DisconnectReason.Timeout && BenchmarkRunning)
+			if (disconnectInfo.Reason == DisconnectReason.Timeout && (BenchmarkRunning || BenchmarkPreparing))
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected due to timeout. Probably the server is overwhelmed by the requests.");
 				Interlocked.Increment(ref benchmarkStatistics.Errors);
