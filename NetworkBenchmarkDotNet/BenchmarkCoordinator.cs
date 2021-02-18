@@ -11,6 +11,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
@@ -158,12 +159,13 @@ namespace NetworkBenchmark
 
 			var totalBytes = BenchmarkStatistics.MessagesClientReceived * Config.MessageByteSize;
 			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = BenchmarkStatistics.Duration.TotalMilliseconds / (BenchmarkStatistics.MessagesClientReceived / 1000.0d);
+			var latency = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
+				TimeUnit.Millisecond);
 
 			sb.AppendLine($"Total data: {totalMb:0.00} MB");
 			sb.AppendLine($"Data throughput: {totalMb / BenchmarkStatistics.Duration.TotalSeconds:0.00} MB/s");
 			sb.AppendLine($"Message throughput: {BenchmarkStatistics.MessagesClientReceived / BenchmarkStatistics.Duration.TotalSeconds:n0} msg/s");
-			sb.AppendLine($"Message latency: {latency:0.000} μs");
+			sb.AppendLine($"Client Message latency: {latency.ToString()}");
 			sb.AppendLine("```");
 			sb.AppendLine();
 
