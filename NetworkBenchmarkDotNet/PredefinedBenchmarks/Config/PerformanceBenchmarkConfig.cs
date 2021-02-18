@@ -25,7 +25,7 @@ namespace NetworkBenchmark
 			AddJob(Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
-				.WithIterationCount(20)
+				.WithIterationCount(10)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true)
