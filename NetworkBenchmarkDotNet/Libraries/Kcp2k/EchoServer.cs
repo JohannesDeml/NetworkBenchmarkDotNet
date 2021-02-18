@@ -99,7 +99,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		public override void Dispose()
 		{
-			// TODO server.Dispose();
+			// Server already stopped, maybe there is the need to dispose something else?
 		}
 	}
 }

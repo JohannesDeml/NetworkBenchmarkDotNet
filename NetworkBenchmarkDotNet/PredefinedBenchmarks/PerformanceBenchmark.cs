@@ -15,7 +15,7 @@ namespace NetworkBenchmark
 	[Config(typeof(PerformanceBenchmarkConfig))]
 	public class PerformanceBenchmark : APredefinedBenchmark
 	{
-		[ParamsAllValues]
+		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
 		public NetworkLibrary Library { get; set; }
 
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
