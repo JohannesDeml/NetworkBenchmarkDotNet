@@ -123,12 +123,18 @@ namespace NetworkBenchmark.Enet
 				case EventType.None:
 					break;
 
+				case EventType.Timeout:
+					if (BenchmarkPreparing || BenchmarkRunning)
+					{
+						Utilities.WriteVerboseLine($"Client {id} timed out while benchmark is running.");
+					}
+					break;
+				
 				case EventType.Disconnect:
-					if (BenchmarkRunning)
+					if (BenchmarkPreparing || BenchmarkRunning)
 					{
 						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 					}
-
 					break;
 
 				case EventType.Receive:

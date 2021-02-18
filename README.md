@@ -191,8 +191,8 @@ Predefined benchmarks take some time to run, but generate reproducible numbers. 
 ### Remote Benchmarks
 
 To test a library remotely, you can use the parameter `--execution-mode Server` and `--execution-mode Client` respectively. This setup requires to first start the server with the correct library (and probably an indefinite execution duration) on your target server, and then the client process. Here is an example:  
-Server: `./NetworkBenchmarkDotNet --library ENet --execution-mode Server -d -1`  
-Client: `./NetworkBenchmarkDotNet --library ENet --execution-mode Client -d 10 --address YOUR_ADDRESS`
+Server: `./NetworkBenchmarkDotNet --library ENet --transmission Reliable --execution-mode Server --address YOUR_ADDRESS -d -1`  
+Client: `./NetworkBenchmarkDotNet --library ENet --transmission Reliable --execution-mode Client --address YOUR_ADDRESS --clients 100 -d 10`
 
 If you change the address in QuickBenchmark.cs, you can also run a more sophisticated remote benchmark this way.
 
