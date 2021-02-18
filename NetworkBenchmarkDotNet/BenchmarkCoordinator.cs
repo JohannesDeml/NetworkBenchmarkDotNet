@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Text;
 using System.Threading;
 
@@ -43,13 +44,24 @@ namespace NetworkBenchmark
 			networkBenchmark.Initialize(Config, BenchmarkStatistics);
 			Utilities.WriteVerbose(".");
 
-			var serverTask = networkBenchmark.StartServer();
-			var clientTask = networkBenchmark.StartClients();
-			serverTask.Wait();
-			clientTask.Wait();
+			if (Config.IsRunServer())
+			{
+				var serverTask = networkBenchmark.StartServer();
+				serverTask.Wait();
+			}
+
+			if (Config.IsRunClients())
+			{
+				var clientTask = networkBenchmark.StartClients();
+				clientTask.Wait();
+			}
+
 			Utilities.WriteVerbose(".");
 
-			networkBenchmark.ConnectClients().Wait();
+			if (Config.IsRunClients())
+			{
+				networkBenchmark.ConnectClients().Wait();
+			}
 			Utilities.WriteVerboseLine(" Done");
 		}
 
@@ -60,6 +72,12 @@ namespace NetworkBenchmark
 		/// <param name="networkBenchmark">Library to run</param>
 		public static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
 		{
+			if (Config.Duration < 0)
+			{
+				RunInfinitely(networkBenchmark);
+				return;
+			}
+
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
 			StartBenchmark(networkBenchmark);
 
@@ -67,6 +85,26 @@ namespace NetworkBenchmark
 
 			StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
+		}
+
+		/// <summary>
+		/// Useful for ExecutionMode.Server
+		/// </summary>
+		/// <param name="networkBenchmark"></param>
+		private static void RunInfinitely(INetworkBenchmark networkBenchmark)
+		{
+			Utilities.WriteVerbose($"-> Run infinitely {Config.Library}... (write q to quit)");
+			StartBenchmark(networkBenchmark);
+
+			while (true)
+			{
+				var input = Console.ReadLine();
+				if (input == "q")
+				{
+					return;
+				}
+				Console.WriteLine("write q to quit");
+			}
 		}
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)
@@ -85,16 +123,26 @@ namespace NetworkBenchmark
 		public static void CleanupBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose("-> Clean up.");
-			networkBenchmark.DisconnectClients().Wait();
 
-			networkBenchmark.StopClients().Wait();
-			networkBenchmark.DisposeClients().Wait();
+			if (Config.IsRunClients())
+			{
+				networkBenchmark.DisconnectClients().Wait();
+				networkBenchmark.StopClients().Wait();
+				networkBenchmark.DisposeClients().Wait();
+			}
 			Utilities.WriteVerbose(".");
 
 
-			networkBenchmark.StopServer().Wait();
+			if (Config.IsRunServer())
+			{
+				networkBenchmark.StopServer().Wait();
+			}
 			Utilities.WriteVerbose(".");
-			networkBenchmark.DisposeServer().Wait();
+			if (Config.IsRunServer())
+			{
+				networkBenchmark.DisposeServer().Wait();
+			}
+
 			networkBenchmark.Deinitialize();
 			Utilities.WriteVerboseLine(" Done");
 			Utilities.WriteVerboseLine("");

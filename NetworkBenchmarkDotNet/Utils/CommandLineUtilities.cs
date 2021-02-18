@@ -22,6 +22,10 @@ namespace NetworkBenchmark
 					new[] {"--benchmark", "-b"},
 					getDefaultValue: () => BenchmarkMode.Custom,
 					"Run predefined benchmarks"),
+				new Option<ExecutionMode>(
+					new[] {"--execution-mode", "-m"},
+					getDefaultValue: () => ExecutionMode.Complete,
+					"Control what parts to run"),
 				new Option<TestType>(
 					new[] {"--test", "-t"},
 					getDefaultValue: () => TestType.PingPong,

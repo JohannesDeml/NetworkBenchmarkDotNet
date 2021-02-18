@@ -23,6 +23,12 @@ namespace NetworkBenchmark
 		public BenchmarkMode Benchmark { get; set; }
 
 		/// <summary>
+		/// Define with parts of the library are run
+		/// When testing locally, set this to complete.
+		/// </summary>
+		public ExecutionMode ExecutionMode { get; set; }
+
+		/// <summary>
 		/// Test type that is used in the benchmark
 		/// </summary>
 		public TestType Test { get; set; }
@@ -41,6 +47,7 @@ namespace NetworkBenchmark
 		/// Time the test will run
 		/// This time excludes preparations such as clients connecting to the server.
 		/// This time excludes cleanup such as clients disconnecting from the server.
+		/// Setting this to a negative value will make the process run infinitely
 		/// </summary>
 		public int Duration { get; set; }
 
@@ -128,6 +135,16 @@ namespace NetworkBenchmark
 			}
 		}
 
+		public bool IsRunServer()
+		{
+			return (ExecutionMode & ExecutionMode.Server) == ExecutionMode.Server;
+		}
+
+		public bool IsRunClients()
+		{
+			return (ExecutionMode & ExecutionMode.Client) == ExecutionMode.Client;
+		}
+
 		public string ToFormattedString()
 		{
 			var sb = new StringBuilder();
@@ -135,7 +152,7 @@ namespace NetworkBenchmark
 			AppendEnvironmentSetup(sb);
 			sb.AppendLine($"* Running {Library} for {Duration} seconds");
 			sb.AppendLine($"* Test: {Test} with {Transmission} messages");
-			sb.AppendLine($"* Address: {Address}, Port: {Port}");
+			sb.AppendLine($"* Address: {Address}, Port: {Port}, Mode: {ExecutionMode}");
 			sb.AppendLine($"* Number of clients: {Clients}");
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize} bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
@@ -166,6 +183,7 @@ namespace NetworkBenchmark
 		public void AppendCommandlineInstruction(StringBuilder sb)
 		{
 			sb.Append("./NetworkBenchmarkDotNet");
+			sb.Append($" --execution-mode {ExecutionMode}");
 			sb.Append($" --test {Test}");
 			sb.Append($" --transmission {Transmission}");
 			sb.Append($" --library {Library}");
@@ -182,6 +200,7 @@ namespace NetworkBenchmark
 
 		public static void ApplyPredefinedBenchmarkConfiguration(Configuration config)
 		{
+			config.ExecutionMode = ExecutionMode.Complete;
 			config.Test = TestType.PingPong;
 			config.Transmission = TransmissionType.Unreliable;
 			config.Address = "::1";
