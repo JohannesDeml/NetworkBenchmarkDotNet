@@ -133,7 +133,7 @@ DateTime=02/17/2021 16:23:23
 * Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the Garbage benchmark.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
 * To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
-* KCP has been recently added and might have some room for improvements. Especially using `Thread.Sleep` on Windows creates [noticeable delays](https://social.msdn.microsoft.com/Forums/vstudio/en-US/facc2b57-9a27-4049-bb32-ef093fbf4c29/threadsleep1-sleeps-for-156-ms?forum=clr).
+* Kcp2k has been recently added and might have some room for improvements. Especially using `Thread.Sleep` on Windows creates [noticeable delays](https://social.msdn.microsoft.com/Forums/vstudio/en-US/facc2b57-9a27-4049-bb32-ef093fbf4c29/threadsleep1-sleeps-for-156-ms?forum=clr). For now it is excluded of the predefined benchmarks, until its execution and cleanup are improved.
 
 
 
@@ -144,7 +144,7 @@ Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) 3.1 & 5
 Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
 ## Usage
-In general there are two different types of benchmarks: Custom and predefined benchmarks. Custom benchmarks and be defined through the [command-line options](#command-line-options). Predefined Benchmarks are set in code and are executed through [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet). They are used for the statistics presented here and are more accurate and better reproducible then Custom benchmarks. However, they also take a longer time to finish.
+In general there are two different types of benchmarks: Custom and predefined benchmarks. Custom benchmarks and be defined through the [command-line options](#command-line-options). Predefined Benchmarks are set in code and are executed through [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet). They are used for the statistics presented here and are more accurate and better reproducible then Custom benchmarks. However, they also take a longer time to finish. You can also run the clients and server on different machines to test the libraries over your local network or remotely (see [remote benchmarks](#remote-benchmarks)).
 
 ### Custom Benchmarks
 
@@ -157,10 +157,11 @@ Usage:
 
 Options:
   -b, --benchmark <All|Custom|Essential|Garbage|Performance|Quick>    Run predefined benchmarks [default: Custom]
+  -m, --execution-mode <Client|Complete|Server>                       Control what parts to run [default: Complete]
   -t, --test <PingPong>                                               Test type [default: PingPong]
   --transmission <Reliable|Unreliable>                                Transmission type [default: Unreliable]
   -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                 Library target [default: ENet]
-  -d, --duration <duration>                                           Test duration in seconds [default: 10]
+  -d, --duration <duration>                                           Test duration in seconds (-1 for manual stopping) [default: 10]
   --address <address>                                                 IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
   --port <port>                                                       Socket Port [default: 3330]
   --clients <clients>                                                 # Simultaneous clients [default: 500]
@@ -186,6 +187,12 @@ Predefined benchmarks take some time to run, but generate reproducible numbers. 
 * **Essential** (>15min): Running Performance + Garbage Benchmark
 
 ![Run Predefined Benchmark windows command-line screenshot](./Docs/run-predefined-benchmark.png)
+
+### Remote Benchmarks
+
+To test a library remotely, you can use the parameter `--execution-mode Server` and `--execution-mode Client` respectively. This setup requires to first start the server with the correct library (and probably an indefinite execution duration) on your target server, and then the client process. Here is an example:  
+Server: `./NetworkBenchmarkDotNet --library ENet --execution-mode Server -d -1`  
+Client: `./NetworkBenchmarkDotNet --library ENet --execution-mode Client -d 10 --address YOUR_ADDRESS`
 
 ## Contributions
 

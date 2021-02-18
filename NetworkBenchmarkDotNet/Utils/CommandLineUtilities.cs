@@ -41,7 +41,7 @@ namespace NetworkBenchmark
 				new Option<int>(
 					new[] {"--duration", "-d"},
 					getDefaultValue: () => 10,
-					"Test duration in seconds"),
+					"Test duration in seconds (-1 for manual stopping)"),
 				new Option<string>(
 					"--address",
 					getDefaultValue: () => "::1",

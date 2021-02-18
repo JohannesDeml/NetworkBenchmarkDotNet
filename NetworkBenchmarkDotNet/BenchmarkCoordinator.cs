@@ -72,12 +72,6 @@ namespace NetworkBenchmark
 		/// <param name="networkBenchmark">Library to run</param>
 		public static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
 		{
-			if (Config.Duration < 0)
-			{
-				RunInfinitely(networkBenchmark);
-				return;
-			}
-
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
 			StartBenchmark(networkBenchmark);
 
@@ -88,23 +82,14 @@ namespace NetworkBenchmark
 		}
 
 		/// <summary>
-		/// Useful for ExecutionMode.Server
+		/// Runs until the user stops the process
 		/// </summary>
 		/// <param name="networkBenchmark"></param>
-		private static void RunInfinitely(INetworkBenchmark networkBenchmark)
+		public static void RunIndefinitely(INetworkBenchmark networkBenchmark)
 		{
-			Utilities.WriteVerbose($"-> Run infinitely {Config.Library}... (write q to quit)");
+			Utilities.WriteVerbose($"-> Run indefinitely {Config.Library}... (press enter to quit)");
 			StartBenchmark(networkBenchmark);
-
-			while (true)
-			{
-				var input = Console.ReadLine();
-				if (input == "q")
-				{
-					return;
-				}
-				Console.WriteLine("write q to quit");
-			}
+			Console.ReadLine();
 		}
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)

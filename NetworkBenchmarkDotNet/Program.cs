@@ -71,7 +71,14 @@ namespace NetworkBenchmark
 			try
 			{
 				BenchmarkCoordinator.PrepareBenchmark(networkBenchmark);
-				BenchmarkCoordinator.RunTimedBenchmark(networkBenchmark);
+				if (BenchmarkCoordinator.Config.Duration < 0)
+				{
+					BenchmarkCoordinator.RunIndefinitely(networkBenchmark);
+				}
+				else
+				{
+					BenchmarkCoordinator.RunTimedBenchmark(networkBenchmark);
+				}
 			}
 			catch (Exception e)
 			{
