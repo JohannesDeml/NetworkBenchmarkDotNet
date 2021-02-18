@@ -47,7 +47,8 @@ namespace NetworkBenchmark
 		{
 			if ((mode & BenchmarkMode.Performance) != 0)
 			{
-				RunBenchmark<PerformanceBenchmark>();
+				RunBenchmark<UnreliablePerformanceBenchmark>();
+				RunBenchmark<ReliablePerformanceBenchmark>();
 				Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 			}
 

@@ -8,33 +8,14 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
 	[Config(typeof(PerformanceBenchmarkConfig))]
-	public class PerformanceBenchmark : APredefinedBenchmark
+	public class UnreliablePerformanceBenchmark : APredefinedBenchmark
 	{
-		/// <summary>
-		/// These libraries will be used in the benchmarks with unreliable transmission
-		/// </summary>
-		public IEnumerable<object> UnreliableTransmissionLibraries()
-		{
-			yield return NetworkLibrary.ENet;
-			yield return NetworkLibrary.LiteNetLib;
-			yield return NetworkLibrary.NetCoreServer;
-		}
-
-		/// <summary>
-		/// These libraries will be used in the benchmarks with reliable transmission
-		/// </summary>
-		public IEnumerable<object> ReliableTransmissionLibraries()
-		{
-			yield return NetworkLibrary.ENet;
-			yield return NetworkLibrary.LiteNetLib;
-		}
-
+		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
 		public NetworkLibrary Library { get; set; }
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
 		public override int ClientCount { get; set; } = 500;
@@ -64,46 +45,22 @@ namespace NetworkBenchmark
 			PrepareBenchmark();
 		}
 
-		[GlobalSetup(Target = nameof(PingPongReliable))]
-		public void PreparePingPongReliable()
-		{
-			BenchmarkCoordinator.ApplyPredefinedConfiguration();
-			var config = BenchmarkCoordinator.Config;
-
-			config.ParallelMessages = 1;
-			config.MessageByteSize = 32;
-			config.Transmission = TransmissionType.Reliable;
-			PrepareBenchmark();
-		}
-
 
 		[Benchmark]
-		[ArgumentsSource(nameof(UnreliableTransmissionLibraries))]
-		public long PingPongUnreliable(NetworkLibrary library)
+		public long PingPongUnreliable()
 		{
-			Library = library;
 			return RunBenchmark();
 		}
 
 		[Benchmark]
-		[ArgumentsSource(nameof(UnreliableTransmissionLibraries))]
-		public long PingPongBatchedUnreliable(NetworkLibrary library)
+		public long PingPongBatchedUnreliable()
 		{
-			Library = library;
-			return RunBenchmark();
-		}
-
-		[Benchmark]
-		[ArgumentsSource(nameof(ReliableTransmissionLibraries))]
-		public long PingPongReliable(NetworkLibrary library)
-		{
-			Library = library;
 			return RunBenchmark();
 		}
 
 		public override string ToString()
 		{
-			return "PerformanceBenchmark";
+			return "UnreliablePerformanceBenchmark";
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GarbageBenchmark.cs">
+// <copyright file="PerformanceBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -12,37 +12,38 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(GarbageBenchmarkConfig))]
-	public class GarbageBenchmark : APredefinedBenchmark
+	[Config(typeof(PerformanceBenchmarkConfig))]
+	public class ReliablePerformanceBenchmark : APredefinedBenchmark
 	{
-		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
+		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib)]
 		public NetworkLibrary Library { get; set; }
+		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
+		public override int ClientCount { get; set; } = 500;
+		public override int MessageTarget { get; set; } = 500 * 1000;
 
-		public override int ClientCount { get; set; } = 10;
-		public override int MessageTarget { get; set; } = 10 * 1000;
-		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
 		protected override NetworkLibrary LibraryTarget => Library;
 
-		[GlobalSetup(Target = nameof(Garbage))]
-		public void PrepareGarbageBenchmark()
+		[GlobalSetup(Target = nameof(PingPongReliable))]
+		public void PreparePingPongReliable()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
 
-			config.ParallelMessages = 10;
-			config.MessageByteSize = 128;
+			config.ParallelMessages = 1;
+			config.MessageByteSize = 32;
+			config.Transmission = TransmissionType.Reliable;
 			PrepareBenchmark();
 		}
 
 		[Benchmark]
-		public long Garbage()
+		public long PingPongReliable()
 		{
 			return RunBenchmark();
 		}
 
 		public override string ToString()
 		{
-			return "GarbageBenchmark";
+			return "ReliablePerformanceBenchmark";
 		}
 	}
 }
