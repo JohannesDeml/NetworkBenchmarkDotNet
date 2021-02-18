@@ -18,7 +18,7 @@ namespace NetworkBenchmark.Enet
 	{
 		public override bool IsStarted => serverThread != null && serverThread.IsAlive;
 
-		private readonly BenchmarkSetup config;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly Thread serverThread;
 		private readonly Host host;
@@ -27,7 +27,7 @@ namespace NetworkBenchmark.Enet
 		private readonly int timeout;
 		private readonly PacketFlags packetFlags;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;

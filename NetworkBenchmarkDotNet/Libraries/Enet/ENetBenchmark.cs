@@ -16,20 +16,20 @@ namespace NetworkBenchmark.Enet
 {
 	internal class ENetBenchmark : ANetworkBenchmark
 	{
-		public override void Initialize(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public override void Initialize(Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			ENet.Library.Initialize();
 			base.Initialize(config, benchmarkStatistics);
 		}
 
-		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkStatistics statistics)
+		protected override IServer CreateNewServer(Configuration config, BenchmarkStatistics statistics)
 		{
-			return new EchoServer(setup, statistics);
+			return new EchoServer(config, statistics);
 		}
 
-		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
+		protected override IClient CreateNewClient(int id, Configuration config, BenchmarkStatistics statistics)
 		{
-			return new EchoClient(id, setup, statistics);
+			return new EchoClient(id, config, statistics);
 		}
 
 		public override void Deinitialize()

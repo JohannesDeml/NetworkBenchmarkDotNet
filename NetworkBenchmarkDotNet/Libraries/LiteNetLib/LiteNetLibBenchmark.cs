@@ -15,14 +15,14 @@ namespace NetworkBenchmark.LiteNetLib
 {
 	internal class LiteNetLibBenchmark : ANetworkBenchmark
 	{
-		protected override IServer CreateNewServer(BenchmarkSetup setup, BenchmarkStatistics statistics)
+		protected override IServer CreateNewServer(Configuration config, BenchmarkStatistics statistics)
 		{
-			return new EchoServer(setup, statistics);
+			return new EchoServer(config, statistics);
 		}
 
-		protected override IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics)
+		protected override IClient CreateNewClient(int id, Configuration config, BenchmarkStatistics statistics)
 		{
-			return new EchoClient(id, setup, statistics);
+			return new EchoClient(id, config, statistics);
 		}
 
 		public static DeliveryMethod GetDeliveryMethod(TransmissionType transmissionType)

@@ -21,7 +21,7 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool benchmarkRunning;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(IPAddress.Parse(config.Address), config.Port)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(IPAddress.Parse(config.Address), config.Port)
 		{
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 			this.benchmarkStatistics = benchmarkStatistics;

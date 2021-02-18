@@ -31,7 +31,7 @@ namespace NetworkBenchmark
 			config.Benchmark = Mode;
 			config.Clients = ClientCount;
 			config.Library = LibraryTarget;
-			Console.Write(config.PrintSetup());
+			Console.Write(config.ToFormattedString());
 
 			libraryImpl = INetworkBenchmark.CreateNetworkBenchmark(LibraryTarget);
 			BenchmarkCoordinator.PrepareBenchmark(libraryImpl);

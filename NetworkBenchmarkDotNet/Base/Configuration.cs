@@ -14,7 +14,7 @@ using System.Text;
 
 namespace NetworkBenchmark
 {
-	public class BenchmarkSetup
+	public class Configuration
 	{
 		/// <summary>
 		/// Run the predefined benchmark
@@ -82,11 +82,13 @@ namespace NetworkBenchmark
 
 		/// <summary>
 		/// Number of Updates per second for each client
+		/// Not supported by all libraries!
 		/// </summary>
 		public int ClientTickRate { get; set; }
 
 		/// <summary>
 		/// Number of Updates per second for the server
+		/// Not supported by all libraries!
 		/// </summary>
 		public int ServerTickRate { get; set; }
 
@@ -126,7 +128,7 @@ namespace NetworkBenchmark
 			}
 		}
 
-		public string PrintSetup()
+		public string ToFormattedString()
 		{
 			var sb = new StringBuilder();
 
@@ -146,7 +148,7 @@ namespace NetworkBenchmark
 			return sb.ToString();
 		}
 
-		public string PrintEnvironment()
+		public string ExecutionEnvironmentToString()
 		{
 			var sb = new StringBuilder();
 			AppendEnvironmentSetup(sb);
@@ -178,7 +180,7 @@ namespace NetworkBenchmark
 			sb.Append($" --server-tick-rate {ServerTickRate}");
 		}
 
-		public static void ApplyPredefinedBenchmarkConfiguration(BenchmarkSetup config)
+		public static void ApplyPredefinedBenchmarkConfiguration(Configuration config)
 		{
 			config.Test = TestType.PingPong;
 			config.Transmission = TransmissionType.Unreliable;

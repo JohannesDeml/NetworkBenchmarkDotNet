@@ -18,7 +18,7 @@ namespace NetworkBenchmark.Kcp2k
 	{
 		public override bool IsStarted => serverThread != null && serverThread.IsAlive && server.IsActive();
 
-		private readonly BenchmarkSetup config;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly KcpServer server;
 		private readonly Thread serverThread;
@@ -27,7 +27,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private readonly byte[] message;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;

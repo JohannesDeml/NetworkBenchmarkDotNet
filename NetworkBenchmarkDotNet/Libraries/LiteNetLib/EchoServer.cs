@@ -20,14 +20,14 @@ namespace NetworkBenchmark.LiteNetLib
 	{
 		public override bool IsStarted => netManager != null && netManager.IsRunning;
 
-		private readonly BenchmarkSetup config;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly byte[] message;
 		private readonly DeliveryMethod deliveryMethod;
 
-		public EchoServer(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;

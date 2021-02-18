@@ -22,7 +22,7 @@ namespace NetworkBenchmark.Enet
 
 		private bool isDisposed;
 		private readonly int id;
-		private readonly BenchmarkSetup config;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly byte[] message;
@@ -33,7 +33,7 @@ namespace NetworkBenchmark.Enet
 		private readonly Thread listenThread;
 		private Peer peer;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.id = id;
 			this.config = config;

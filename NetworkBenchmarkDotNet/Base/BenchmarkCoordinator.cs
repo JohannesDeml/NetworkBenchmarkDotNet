@@ -15,7 +15,7 @@ namespace NetworkBenchmark
 {
 	public static class BenchmarkCoordinator
 	{
-		public static BenchmarkSetup Config { get; set; }
+		public static Configuration Config { get; set; }
 		public static readonly BenchmarkStatistics BenchmarkStatistics = new BenchmarkStatistics();
 
 		/// <summary>
@@ -25,10 +25,10 @@ namespace NetworkBenchmark
 		{
 			if (Config == null)
 			{
-				Config = new BenchmarkSetup();
+				Config = new Configuration();
 			}
 
-			BenchmarkSetup.ApplyPredefinedBenchmarkConfiguration(Config);
+			Configuration.ApplyPredefinedBenchmarkConfiguration(Config);
 		}
 
 		/// <summary>

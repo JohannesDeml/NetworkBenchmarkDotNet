@@ -22,7 +22,7 @@ namespace NetworkBenchmark
 		{
 			RootCommand rootCommand = CommandLineUtilities.GenerateRootCommand();
 
-			rootCommand.Handler = CommandHandler.Create<BenchmarkSetup>((config) =>
+			rootCommand.Handler = CommandHandler.Create<Configuration>((config) =>
 			{
 				BenchmarkCoordinator.Config = config;
 				var mode = config.Benchmark;
@@ -30,12 +30,12 @@ namespace NetworkBenchmark
 
 				if (mode == BenchmarkMode.Custom)
 				{
-					Console.Write(config.PrintSetup());
+					Console.Write(config.ToFormattedString());
 					RunCustomBenchmark();
 					return 0;
 				}
 
-				Console.Write(config.PrintEnvironment());
+				Console.Write(config.ExecutionEnvironmentToString());
 				RunPredefinedBenchmarks(mode);
 				return 0;
 			});

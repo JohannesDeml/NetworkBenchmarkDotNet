@@ -15,13 +15,13 @@ namespace NetworkBenchmark
 {
 	public abstract class ANetworkBenchmark : INetworkBenchmark
 	{
-		private BenchmarkSetup config;
+		private Configuration config;
 		private BenchmarkStatistics benchmarkStatistics;
 		private IServer echoServer;
 		private List<IClient> echoClients;
 
 
-		public virtual void Initialize(BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics)
+		public virtual void Initialize(Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -29,7 +29,7 @@ namespace NetworkBenchmark
 			echoClients = new List<IClient>();
 		}
 
-		protected abstract IServer CreateNewServer(BenchmarkSetup setup, BenchmarkStatistics statistics);
+		protected abstract IServer CreateNewServer(Configuration config, BenchmarkStatistics statistics);
 
 		public Task StartServer()
 		{
@@ -47,7 +47,7 @@ namespace NetworkBenchmark
 			return Task.CompletedTask;
 		}
 
-		protected abstract IClient CreateNewClient(int id, BenchmarkSetup setup, BenchmarkStatistics statistics);
+		protected abstract IClient CreateNewClient(int id, Configuration config, BenchmarkStatistics statistics);
 
 		public Task ConnectClients()
 		{

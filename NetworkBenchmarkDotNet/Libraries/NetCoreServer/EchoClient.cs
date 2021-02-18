@@ -28,7 +28,7 @@ namespace NetworkBenchmark.NetCoreServer
 		private readonly int initialMessages;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		public EchoClient(int id, BenchmarkSetup config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
