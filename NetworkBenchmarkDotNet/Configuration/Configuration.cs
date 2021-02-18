@@ -150,10 +150,14 @@ namespace NetworkBenchmark
 			var sb = new StringBuilder();
 
 			AppendEnvironmentSetup(sb);
-			sb.AppendLine($"* Running {Library} for {Duration} seconds");
+			sb.AppendLine($"* Running {Library} for {GetDurationString()}");
 			sb.AppendLine($"* Test: {Test} with {Transmission} messages");
 			sb.AppendLine($"* Address: {Address}, Port: {Port}, Mode: {ExecutionMode}");
-			sb.AppendLine($"* Number of clients: {Clients}");
+			if (IsRunClients())
+			{
+				sb.AppendLine($"* Number of clients: {Clients}");
+			}
+			
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize} bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Reproduce: `");
@@ -163,6 +167,15 @@ namespace NetworkBenchmark
 			sb.AppendLine();
 
 			return sb.ToString();
+		}
+
+		private string GetDurationString() {
+			if (Duration < 0)
+			{
+				return "indefinite time";
+			}
+
+			return $"{Duration} seconds";
 		}
 
 		public string ExecutionEnvironmentToString()
