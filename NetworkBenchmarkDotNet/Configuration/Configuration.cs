@@ -137,12 +137,12 @@ namespace NetworkBenchmark
 
 		public bool IsRunServer()
 		{
-			return (ExecutionMode & ExecutionMode.Server) == ExecutionMode.Server;
+			return (ExecutionMode & ExecutionMode.Server) != 0;
 		}
 
 		public bool IsRunClients()
 		{
-			return (ExecutionMode & ExecutionMode.Client) == ExecutionMode.Client;
+			return (ExecutionMode & ExecutionMode.Client) != 0;
 		}
 
 		public string ToFormattedString()

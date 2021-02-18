@@ -87,9 +87,13 @@ namespace NetworkBenchmark
 		/// <param name="networkBenchmark"></param>
 		public static void RunIndefinitely(INetworkBenchmark networkBenchmark)
 		{
-			Utilities.WriteVerbose($"-> Run indefinitely {Config.Library}... (press enter to quit)");
+			Utilities.WriteVerbose($"-> Run indefinitely {Config.Library}... (press enter to stop)");
 			StartBenchmark(networkBenchmark);
+
 			Console.ReadLine();
+
+			StopBenchmark(networkBenchmark);
+			Utilities.WriteVerboseLine(" Done");
 		}
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)
