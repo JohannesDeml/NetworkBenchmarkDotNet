@@ -31,6 +31,6 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Run both clients and server
 		/// </summary>
-		Complete = 1 << 2 -1
+		Complete = (1 << 2) -1
 	}
 }
