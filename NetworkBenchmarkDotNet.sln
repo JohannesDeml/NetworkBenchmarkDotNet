@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkBenchmarkDotNet", "N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kcp2k", "Kcp2k\Kcp2k.csproj", "{03C5C23F-A642-41F5-8CB7-4D985629B2DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telepathy", "Telepathy\Telepathy\Telepathy.csproj", "{E3219B82-5773-4427-BBEF-30762714DD5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3219B82-5773-4427-BBEF-30762714DD5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3219B82-5773-4427-BBEF-30762714DD5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3219B82-5773-4427-BBEF-30762714DD5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3219B82-5773-4427-BBEF-30762714DD5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
