@@ -18,7 +18,7 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Library target for the benchmark
 		/// </summary>
-		[Params(NetworkLibrary.ENet)]
+		[Params(NetworkLibrary.Telepathy)]
 		public NetworkLibrary Library { get; set; }
 
 		/// <summary>
@@ -28,13 +28,13 @@ namespace NetworkBenchmark
 		[Params("::1")]
 		public string Address { get; set; }
 
-		[Params(60)]
+		[Params(120)]
 		public int TickRate { get; set; }
 
 		[Params(100, 1000)]
 		public override int ClientCount { get; set; }
 
-		[Params(TransmissionType.Reliable, TransmissionType.Unreliable)]
+		[Params(TransmissionType.Reliable)]
 		public TransmissionType Transmission { get; set; }
 
 		[Params(100 * 1000)]
@@ -57,7 +57,7 @@ namespace NetworkBenchmark
 			{
 				config.ExecutionMode = ExecutionMode.Client;
 			}
-			
+
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			config.Transmission = Transmission;
