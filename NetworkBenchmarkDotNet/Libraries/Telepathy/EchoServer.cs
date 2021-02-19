@@ -67,9 +67,10 @@ namespace NetworkBenchmark.Telepathy
 				sw.Restart();
 				server.Tick(10000);
 
-				if (sw.ElapsedMilliseconds < interval)
+				var elapsed = sw.ElapsedMilliseconds;
+				if (elapsed < interval)
 				{
-					TimeUtilities.HighPrecisionThreadSleep(interval - (int) sw.ElapsedMilliseconds);
+					TimeUtilities.HighPrecisionThreadSleep(interval - (int) elapsed);
 				}
 			}
 

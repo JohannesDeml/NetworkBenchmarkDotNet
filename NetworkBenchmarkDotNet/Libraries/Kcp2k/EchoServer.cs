@@ -64,9 +64,10 @@ namespace NetworkBenchmark.Kcp2k
 				sw.Restart();
 				server.Tick();
 
-				if (sw.ElapsedMilliseconds < interval)
+				var elapsed = sw.ElapsedMilliseconds;
+				if (elapsed < interval)
 				{
-					TimeUtilities.HighPrecisionThreadSleep(interval - (int) sw.ElapsedMilliseconds);
+					TimeUtilities.HighPrecisionThreadSleep(interval - (int) elapsed);
 				}
 			}
 
