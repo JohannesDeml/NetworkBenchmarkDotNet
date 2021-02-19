@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using kcp2k;
 
@@ -31,6 +32,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpClientConnection client;
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
+		private readonly int interval;
 
 		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
@@ -39,6 +41,7 @@ namespace NetworkBenchmark.Kcp2k
 			this.benchmarkStatistics = benchmarkStatistics;
 			messageArray = config.Message;
 			noDelay = true;
+			interval = Utilities.CalculateTimeout(config.ClientTickRate);
 			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
 
 			client = new KcpClientConnection();
@@ -64,13 +67,18 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void TickLoop()
 		{
-			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
+			client.Connect(config.Address, (ushort) config.Port, noDelay, (uint) interval);
+			var sw = new Stopwatch();
 
 			while (Listen)
 			{
+				sw.Restart();
 				Tick();
-				Thread.Sleep(1);
+
+				if (sw.ElapsedMilliseconds < interval)
+				{
+					TimeUtilities.HighPrecisionThreadSleep(interval - (int) sw.ElapsedMilliseconds);
+				}
 			}
 		}
 
