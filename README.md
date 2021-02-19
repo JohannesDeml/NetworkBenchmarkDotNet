@@ -4,7 +4,7 @@
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0) [![.NET Core 3.1](https://img.shields.io/badge/.NET_Core-3.1-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 ## Table of Contents
 
@@ -70,67 +70,63 @@ This test collects information about generated garbage while running the benchma
 ### Ubuntu 20.04
 
 To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.   
-[Detailed Benchmark Hardware](https://pcpartpicker.com/b/Wtykcf)
-
+[Hardware Details](https://pcpartpicker.com/b/Wtykcf)
 
 ``` ini
 BenchmarkDotNet=v0.12.1, OS=ubuntu 20.04
 Intel Core i5-3570K CPU 3.40GHz (Ivy Bridge), 1 CPU, 4 logical and 4 physical cores
 .NET Core SDK=5.0.103
   [Host]     : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
-  Job-CAYZXA : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
+  Job-YNISTP : .NET Core 5.0.3 (CoreCLR 5.0.321.7203, CoreFX 5.0.321.7203), X64 RyuJIT
 
 Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
 Force=True  Server=True  InvocationCount=1  
-IterationCount=20  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  Version=0.8.2  OS=Linux 5.8.0-43-generic #49~20.04.1-Ubuntu SMP Fri Feb 5 09:57:56 UTC 2021  
-DateTime=02/17/2021 16:22:28  
+IterationCount=10  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  Version=0.9.0  OS=Linux 5.8.0-43-generic #49~20.04.1-Ubuntu SMP Fri Feb 5 09:57:56 UTC 2021  
+DateTime=02/18/2021 16:18:27  
 ```
-|       Method |       Library | Clients |      Throughput |        Mean |     Error |    StdDev |
-|------------- |-------------- |--------:|----------------:|------------:|----------:|----------:|
-| **Performance1** |          **ENet** |     **500** |   **184,330 msg/s** |  **2,712.5 ms** |  **13.29 ms** |  **14.77 ms** |
-| Performance2 |          ENet |     500 | 1,127,749 msg/s |    443.4 ms |   1.91 ms |   1.96 ms |
-| **Performance1** | **NetCoreServer** |     **500** |   **110,626 msg/s** |  **4,519.7 ms** |  **20.66 ms** |  **21.21 ms** |
-| Performance2 | NetCoreServer |     500 |    95,698 msg/s |  5,224.8 ms |  15.82 ms |  16.93 ms |
-| **Performance1** |    **LiteNetLib** |     **500** |    **93,768 msg/s** |  **5,332.3 ms** |  **22.10 ms** |  **24.57 ms** |
-| Performance2 |    LiteNetLib |     500 |   259,604 msg/s |  1,926.0 ms |  35.52 ms |  40.90 ms |
-| **Performance1** |         **Kcp2k** |     **500** |    **24,551 msg/s** | **20,365.5 ms** | **290.54 ms** | **334.59 ms** |
-| Performance2 |         Kcp2k |     500 |   124,884 msg/s |  4,003.7 ms | 133.17 ms | 153.36 ms |
+|                    Method |       Library | Transmission | Clients |      Throughput |       Mean |    Error |   StdDev |
+|-------------------------- |-------------- |------------- |--------:|----------------:|-----------:|---------:|---------:|
+| **PingPongReliable** |       **ENet** |     **Reliable** |     **500** | **90,333 msg/s** | **5.535 s** | **0.0311 s** | **0.0205 s** |
+|        PingPongUnreliable |          ENet |   Unreliable |     500 |   185,112 msg/s | 2,701.1 ms | 21.57 ms | 12.83 ms |
+| PingPongBatchedUnreliable |          ENet |   Unreliable |     500 | 1,129,598 msg/s |   442.6 ms |  4.83 ms |  2.87 ms |
+|        **PingPongUnreliable** | **NetCoreServer** |   **Unreliable** |     **500** |    **96,514 msg/s** | **5,180.6 ms** | **64.21 ms** | **42.47 ms** |
+| PingPongBatchedUnreliable | NetCoreServer |   Unreliable |     500 |    97,245 msg/s | 5,141.6 ms | 55.11 ms | 36.45 ms |
+| **PingPongReliable** | **LiteNetLib** |     **Reliable** |     **500** | **82,804 msg/s** | **6.038 s** | **0.0671 s** | **0.0444 s** |
+|        PingPongUnreliable |    LiteNetLib |   Unreliable |     500 |    91,222 msg/s | 5,481.2 ms | 51.56 ms | 34.11 ms |
+| PingPongBatchedUnreliable |    LiteNetLib |   Unreliable |     500 |   251,421 msg/s | 1,988.7 ms | 56.09 ms | 33.38 ms |
 
-
-![Benchmark Results](./Docs/PerformanceLinux.png)
+![Benchmark Results](./Docs/Results-Ubuntu20.04.1-.NETCore5.0.png)
 
 ### Windows 10
 To reproduce the benchmarks, run `./NetworkBenchmarkDotNet -b Essential`.  
-[Detailed Benchmark Hardware](https://pcpartpicker.com/b/8MMcCJ) (Note that this machine has a lot more performance than the linux machine)
-
+[Hardware Details](https://pcpartpicker.com/b/8MMcCJ) (Note that this machine has a lot more performance than the linux machine)
 
 ``` ini
 BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19042
 AMD Ryzen 7 3700X, 1 CPU, 16 logical and 8 physical cores
-.NET Core SDK=5.0.100
-  [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
-  Job-KWKBOV : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+.NET Core SDK=5.0.103
+  [Host]     : .NET Core 5.0.3 (CoreCLR 5.0.321.7212, CoreFX 5.0.321.7212), X64 RyuJIT
+  Job-ODIPRB : .NET Core 5.0.3 (CoreCLR 5.0.321.7212, CoreFX 5.0.321.7212), X64 RyuJIT
 
 Platform=X64  Runtime=.NET Core 5.0  Concurrent=True  
 Force=True  Server=True  InvocationCount=1  
-IterationCount=20  LaunchCount=1  UnrollFactor=1  
-WarmupCount=1  Version=0.8.2  OS=Microsoft Windows 10.0.19042  
-DateTime=02/17/2021 16:23:23  
+IterationCount=10  LaunchCount=1  UnrollFactor=1  
+WarmupCount=1  Version=0.9.0  OS=Microsoft Windows 10.0.19042  
+DateTime=02/18/2021 16:18:02  
 ```
-|       Method |       Library | Clients |    Throughput |        Mean |     Error |    StdDev |
-|------------- |-------------- |--------:|--------------:|------------:|----------:|----------:|
-| **Performance1** |          **ENet** |     **500** | **103,408 msg/s** |  **4,835.2 ms** | **273.39 ms** | **314.84 ms** |
-| Performance2 |          ENet |     500 | 713,546 msg/s |    700.7 ms |  40.59 ms |  46.75 ms |
-| **Performance1** | **NetCoreServer** |     **500** |  **72,938 msg/s** |  **6,855.1 ms** |  **36.20 ms** |  **40.24 ms** |
-| Performance2 | NetCoreServer |     500 |  70,188 msg/s |  7,123.8 ms |  11.23 ms |  12.02 ms |
-| **Performance1** |    **LiteNetLib** |     **500** | **101,078 msg/s** |  **4,946.7 ms** |  **27.74 ms** |  **28.48 ms** |
-| Performance2 |    LiteNetLib |     500 | 874,633 msg/s |    571.7 ms |   8.18 ms |   9.42 ms |
-| **Performance1** |         **Kcp2k** |     **500** |  **15,536 msg/s** | **32,183.3 ms** | **484.33 ms** | **538.33 ms** |
-| Performance2 |         Kcp2k |     500 |  67,639 msg/s |  7,392.2 ms | 231.14 ms | 266.18 ms |
+|                    Method |       Library | Transmission | Clients |    Throughput |       Mean |       Error |    StdDev |
+|-------------------------- |-------------- |------------- |--------:|--------------:|-----------:|------------:|----------:|
+| **PingPongReliable** |       **ENet** |     **Reliable** |     **500** | **51,718 msg/s** | **9.668 s** | **0.1468 s** | **0.0768 s** |
+|        PingPongUnreliable |          ENet |   Unreliable |     500 |  93,960 msg/s | 5,321.4 ms | 1,040.97 ms | 688.54 ms |
+| PingPongBatchedUnreliable |          ENet |   Unreliable |     500 | 687,775 msg/s |   727.0 ms |    84.13 ms |  55.65 ms |
+|        **PingPongUnreliable** | **NetCoreServer** |   **Unreliable** |     **500** |  **72,975 msg/s** | **6,851.6 ms** |    **41.01 ms** |  **27.12 ms** |
+| PingPongBatchedUnreliable | NetCoreServer |   Unreliable |     500 |  78,644 msg/s | 6,357.8 ms |    42.78 ms |  25.46 ms |
+| **PingPongReliable** | **LiteNetLib** |     **Reliable** |     **500** | **88,463 msg/s** | **5.652 s** | **0.0231 s** | **0.0138 s** |
+|        PingPongUnreliable |    LiteNetLib |   Unreliable |     500 |  90,985 msg/s | 5,495.4 ms |    30.93 ms |  20.46 ms |
+| PingPongBatchedUnreliable |    LiteNetLib |   Unreliable |     500 | 771,852 msg/s |   647.8 ms |    13.48 ms |   8.92 ms |
 
-
-![Benchmark Results](./Docs/PerformanceWindows.png)
+![Benchmark Results](./Docs/Results-Windows10-.NETCore5.0.png)
 
 ### Notes
 
