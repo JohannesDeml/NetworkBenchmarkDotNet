@@ -14,6 +14,7 @@ using NetworkBenchmark.Enet;
 using NetworkBenchmark.Kcp2k;
 using NetworkBenchmark.LiteNetLib;
 using NetworkBenchmark.NetCoreServer;
+using NetworkBenchmark.Telepathy;
 
 namespace NetworkBenchmark
 {
@@ -34,6 +35,9 @@ namespace NetworkBenchmark
 
 				case NetworkLibrary.Kcp2k:
 					return new Kcp2kBenchmark();
+
+				case NetworkLibrary.Telepathy:
+					return new TelepathyBenchmark();
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(library), library, null);

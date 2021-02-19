@@ -11,9 +11,9 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using kcp2k;
+using Telepathy;
 
-namespace NetworkBenchmark.Kcp2k
+namespace NetworkBenchmark.Telepathy
 {
 	internal class EchoClient : AClient
 	{
@@ -29,8 +29,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private readonly Thread tickThread;
 		private readonly byte[] messageArray;
-		private readonly KcpClientConnection client;
-		private readonly KcpChannel communicationChannel;
+		private readonly Client client;
 		private readonly bool noDelay;
 		private readonly int interval;
 
@@ -42,16 +41,17 @@ namespace NetworkBenchmark.Kcp2k
 			messageArray = config.Message;
 			noDelay = true;
 			interval = Utilities.CalculateTimeout(config.ClientTickRate);
-			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
+			TelepathyBenchmark.ProcessTransmissionType(config.Transmission);
 
-			client = new KcpClientConnection();
+			client = new Client(512);
+			client.NoDelay = noDelay;
 
-			client.OnAuthenticated = OnPeerConnected;
+			client.OnConnected = OnPeerConnected;
 			client.OnData = OnNetworkReceive;
 			client.OnDisconnected = OnPeerDisconnected;
 
 			tickThread = new Thread(TickLoop);
-			tickThread.Name = $"Kcp2k Client {id}";
+			tickThread.Name = $"Telepathy Client {id}";
 			tickThread.IsBackground = true;
 
 			isConnected = false;
@@ -67,25 +67,19 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void TickLoop()
 		{
-			client.Connect(config.Address, (ushort) config.Port, noDelay, (uint) interval);
+			client.Connect(config.Address, (ushort) config.Port);
 			var sw = new Stopwatch();
 
 			while (Listen)
 			{
 				sw.Restart();
-				Tick();
+				client.Tick(10000);
 
 				if (sw.ElapsedMilliseconds < interval)
 				{
 					TimeUtilities.HighPrecisionThreadSleep(interval - (int) sw.ElapsedMilliseconds);
 				}
 			}
-		}
-
-		private void Tick()
-		{
-			client.RawReceive();
-			client.Tick();
 		}
 
 		public override void StartBenchmark()
@@ -95,10 +89,10 @@ namespace NetworkBenchmark.Kcp2k
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(messageArray, communicationChannel);
+				Send(messageArray);
 			}
 
-			Tick();
+			client.Tick(100);
 		}
 
 		public override void DisconnectClient()
@@ -117,14 +111,14 @@ namespace NetworkBenchmark.Kcp2k
 			isDisposed = true;
 		}
 
-		private void Send(ArraySegment<byte> message, KcpChannel channel)
+		private void Send(ArraySegment<byte> message)
 		{
 			if (!IsConnected)
 			{
 				return;
 			}
 
-			client.SendData(message, channel);
+			client.Send(message);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
@@ -138,7 +132,7 @@ namespace NetworkBenchmark.Kcp2k
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(messageArray, communicationChannel);
+				Send(messageArray);
 			}
 		}
 

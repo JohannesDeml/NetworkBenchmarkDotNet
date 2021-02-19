@@ -31,6 +31,11 @@ namespace NetworkBenchmark
 		/// https://github.com/vis2k/kcp2k
 		/// https://github.com/JohannesDeml/kcp2k/tree/networkbenchmarkdotnet/kcp2k/Assets/kcp2k
 		/// </summary>
-		Kcp2k
+		Kcp2k,
+
+		/// <summary>
+		/// https://github.com/vis2k/Telepathy
+		/// </summary>
+		Telepathy
 	}
 }
