@@ -125,6 +125,11 @@ namespace NetworkBenchmark.Telepathy
 
 		private void OnPeerConnected()
 		{
+			if (BenchmarkRunning)
+			{
+				Utilities.WriteVerboseLine($"Client {id} connected while benchmark is running.");
+			}
+
 			isConnected = true;
 		}
 

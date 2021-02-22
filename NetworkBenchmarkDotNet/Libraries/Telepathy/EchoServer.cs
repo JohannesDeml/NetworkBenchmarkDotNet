@@ -79,10 +79,7 @@ namespace NetworkBenchmark.Telepathy
 
 		private void OnConnected(int connectionId)
 		{
-			if (benchmarkRunning)
-			{
-				Utilities.WriteVerboseLine($"Client {connectionId} connected while benchmark is running.");
-			}
+			// Checking for connection while running in client, since the server gets the connect after the client
 		}
 
 		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment)
