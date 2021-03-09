@@ -19,7 +19,7 @@ namespace NetworkBenchmark
 		public NetworkLibrary Library { get; set; }
 
 		public override int ClientCount { get; set; } = 10;
-		public override int MessageTarget { get; set; } = 10 * 1000;
+		public override int MessageTarget { get; set; } = 10_000;
 		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
 		protected override NetworkLibrary LibraryTarget => Library;
 

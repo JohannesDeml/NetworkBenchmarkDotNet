@@ -37,7 +37,7 @@ namespace NetworkBenchmark
 		[Params(TransmissionType.Reliable, TransmissionType.Unreliable)]
 		public TransmissionType Transmission { get; set; }
 
-		[Params(100 * 1000)]
+		[Params(100_000)]
 		public override int MessageTarget { get; set; }
 
 		protected override BenchmarkMode Mode => BenchmarkMode.Quick;
@@ -57,7 +57,7 @@ namespace NetworkBenchmark
 			{
 				config.ExecutionMode = ExecutionMode.Client;
 			}
-			
+
 			config.ParallelMessages = 1;
 			config.MessageByteSize = 32;
 			config.Transmission = Transmission;
