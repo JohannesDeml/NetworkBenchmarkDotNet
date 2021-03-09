@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="QuickBenchmark.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="CcuBenchmark.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -12,8 +12,8 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(QuickBenchmarkConfig))]
-	public class QuickBenchmark : APredefinedBenchmark
+	[Config(typeof(CcuBenchmarkConfig))]
+	public class CcuBenchmark : APredefinedBenchmark
 	{
 		/// <summary>
 		/// Library target for the benchmark
@@ -21,45 +21,28 @@ namespace NetworkBenchmark
 		[Params(NetworkLibrary.ENet)]
 		public NetworkLibrary Library { get; set; }
 
-		/// <summary>
-		/// Address to use, supports ipv4 and ipv6
-		/// If the address is not localhost, the execution-mode is switched to Client
-		/// </summary>
-		[Params("::1")]
-		public string Address { get; set; }
-
-		[Params(60)]
-		public int TickRate { get; set; }
-
-		[Params(100, 1000)]
-		public override int ClientCount { get; set; }
-
-		[Params(32)]
+		[Params(32, 500)]
 		public int MessageByteSize { get; set; }
 
-		[Params(TransmissionType.Reliable, TransmissionType.Unreliable)]
+		[Params(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+			1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000)]
+		public override int ClientCount { get; set; }
+
+		[Params(TransmissionType.Unreliable)]
 		public TransmissionType Transmission { get; set; }
 
 		[Params(100_000)]
 		public override int MessageTarget { get; set; }
 
-		protected override BenchmarkMode Mode => BenchmarkMode.Quick;
+		protected override BenchmarkMode Mode => BenchmarkMode.Ccu;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 
-		[GlobalSetup(Target = nameof(Quick))]
-		public void PrepareQuickBenchmark()
+		[GlobalSetup(Target = nameof(Ccu))]
+		public void PrepareCcuBenchmark()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
-
-			config.ClientTickRate = TickRate;
-			config.ServerTickRate = TickRate;
-			config.Address = Address;
-			if (Address != "::1" && Address != "127.0.0.1")
-			{
-				config.ExecutionMode = ExecutionMode.Client;
-			}
 
 			config.ParallelMessages = 1;
 			config.MessageByteSize = MessageByteSize;
@@ -68,14 +51,14 @@ namespace NetworkBenchmark
 		}
 
 		[Benchmark]
-		public long Quick()
+		public long Ccu()
 		{
 			return RunBenchmark();
 		}
 
 		public override string ToString()
 		{
-			return "QuickBenchmark";
+			return "CcuBenchmark";
 		}
 	}
 }

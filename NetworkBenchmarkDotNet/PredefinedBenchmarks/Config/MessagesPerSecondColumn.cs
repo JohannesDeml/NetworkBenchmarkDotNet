@@ -20,9 +20,9 @@ namespace NetworkBenchmark
 {
 	public class MessagesPerSecondColumn : IColumn
 	{
-		public string Id => "MessagesPerSecond";
+		public string Id => perClient? "MessagesPerSecondPerClient" : "MessagesPerSecond";
 
-		public string ColumnName => "Throughput";
+		public string ColumnName => perClient? "ThroughputPerClient" : "Throughput";
 
 		public bool AlwaysShow => true;
 
@@ -35,6 +35,17 @@ namespace NetworkBenchmark
 		public UnitType UnitType => UnitType.Dimensionless;
 
 		public string Legend => null;
+
+		private bool perClient;
+
+		public MessagesPerSecondColumn(): this(false)
+		{
+		}
+
+		public MessagesPerSecondColumn(bool perClient)
+		{
+			this.perClient = perClient;
+		}
 
 		public string GetValue(Summary summary, BenchmarkCase benchmarkCase)
 		{
@@ -64,11 +75,17 @@ namespace NetworkBenchmark
 
 			var paramInstances = benchmarkCase.Parameters;
 			instance.MessageTarget = UpdateInstanceValueSave(instance.MessageTarget, paramInstances, nameof(instance.MessageTarget));
+			instance.ClientCount = UpdateInstanceValueSave(instance.ClientCount, paramInstances, nameof(instance.ClientCount));
 
 			int messageCount = instance.MessageTarget;
 			var statistics = report.ResultStatistics;
 			var meanSeconds = TimeUnit.Convert(statistics.Mean, TimeUnit.Nanosecond, TimeUnit.Second);
 			var msgPerSecond = messageCount / meanSeconds;
+
+			if (perClient)
+			{
+				msgPerSecond /= instance.ClientCount;
+			}
 
 
 			var cultureInfo = summary.GetCultureInfo();
