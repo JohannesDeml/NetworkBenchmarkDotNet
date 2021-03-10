@@ -21,23 +21,26 @@ namespace NetworkBenchmark
 		public bool IsConnected { get; }
 
 		/// <summary>
-		/// The client is disconnected and has no actively listening component
-		/// (.e.g. no running listen thread)
-		/// Becomes true after StopClient is called
-		/// </summary>
-		public bool IsStopped { get; }
-
-		/// <summary>
 		/// The client is disposed
 		/// Becomes true after Dispose is called
 		/// </summary>
 		public bool IsDisposed { get; }
 
 		/// <summary>
-		/// Start the client and  connect it to the server
+		/// Start the client and connect it to the server
 		/// If the client runs in a separate thread, start this thread here
 		/// </summary>
 		public void StartClient();
+
+		/// <summary>
+		/// Connect to the server
+		/// </summary>
+		public void ConnectClient();
+
+		/// <summary>
+		/// Update tick for client
+		/// </summary>
+		public void Tick();
 
 		/// <summary>
 		/// Triggers the client to start the benchmark and send messages to the server

@@ -18,7 +18,7 @@ namespace NetworkBenchmark
 		private Configuration config;
 		private BenchmarkStatistics benchmarkStatistics;
 		private IServer echoServer;
-		private List<IClient> echoClients;
+		private List<ClientGroup> clientGroups;
 
 
 		public virtual void Initialize(Configuration config, BenchmarkStatistics benchmarkStatistics)
@@ -26,7 +26,7 @@ namespace NetworkBenchmark
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			echoServer = CreateNewServer(config, benchmarkStatistics);
-			echoClients = new List<IClient>();
+			clientGroups = new List<ClientGroup>();
 		}
 
 		protected abstract IServer CreateNewServer(Configuration config, BenchmarkStatistics statistics);
@@ -37,35 +37,43 @@ namespace NetworkBenchmark
 			return Utilities.WaitForServerToStart(echoServer);
 		}
 
-		public Task StartClients()
+		// TODO no task
+		public Task InitializeClients()
 		{
-			for (int i = 0; i < config.Clients; i++)
+			int clientId = 0;
+			int clientsPerGroupLower = config.Clients / config.ClientGroups;
+			int groupsWithAdditionalClient = config.Clients % config.ClientGroups;
+
+			for (int i = 0; i < config.ClientGroups; i++)
 			{
-				echoClients.Add(CreateNewClient(i, config, benchmarkStatistics));
+				var group = new ClientGroup(i, config, benchmarkStatistics);
+				var clientCount = (i < groupsWithAdditionalClient)? clientsPerGroupLower + 1 :clientsPerGroupLower;
+				group.InitializeClients(ref clientId, clientCount, this);
+				clientGroups.Add(group);
 			}
 
 			return Task.CompletedTask;
 		}
 
-		protected abstract IClient CreateNewClient(int id, Configuration config, BenchmarkStatistics statistics);
+		public abstract IClient CreateNewClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics statistics);
 
 		public Task ConnectClients()
 		{
-			for (int i = 0; i < config.Clients; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].StartClient();
+				clientGroups[i].StartClients();
 			}
 
-			return Utilities.WaitForClientsToConnect(echoClients);
+			return Utilities.WaitForClientGroupsToConnect(clientGroups);
 		}
 
 		public void StartBenchmark()
 		{
 			echoServer.StartBenchmark();
 
-			for (int i = 0; i < echoClients.Count; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].StartBenchmark();
+				clientGroups[i].StartBenchmark();
 			}
 		}
 
@@ -73,20 +81,20 @@ namespace NetworkBenchmark
 		{
 			echoServer.StopBenchmark();
 
-			for (int i = 0; i < echoClients.Count; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].StopBenchmark();
+				clientGroups[i].StopBenchmark();
 			}
 		}
 
 		public Task DisconnectClients()
 		{
-			for (int i = 0; i < echoClients.Count; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].DisconnectClient();
+				clientGroups[i].DisconnectClients();
 			}
 
-			return Utilities.WaitForClientsToDisconnect(echoClients);
+			return Utilities.WaitForClientGroupsToDisconnect(clientGroups);
 		}
 
 		public Task StopServer()
@@ -97,22 +105,22 @@ namespace NetworkBenchmark
 
 		public Task StopClients()
 		{
-			for (int i = 0; i < echoClients.Count; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].StopClient();
+				clientGroups[i].StopClients();
 			}
 
-			return Utilities.WaitForClientsToStop(echoClients);
+			return Utilities.WaitForClientGroupsToStop(clientGroups);
 		}
 
 		public Task DisposeClients()
 		{
-			for (int i = 0; i < echoClients.Count; i++)
+			for (int i = 0; i < clientGroups.Count; i++)
 			{
-				echoClients[i].Dispose();
+				clientGroups[i].Dispose();
 			}
 
-			return Utilities.WaitForClientsToDispose(echoClients);
+			return Utilities.WaitForClientGroupsToDispose(clientGroups);
 		}
 
 		public Task DisposeServer()

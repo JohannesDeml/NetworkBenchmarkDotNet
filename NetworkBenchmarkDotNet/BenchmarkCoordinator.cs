@@ -51,18 +51,16 @@ namespace NetworkBenchmark
 				serverTask.Wait();
 			}
 
-			if (Config.IsRunClients())
-			{
-				var clientTask = networkBenchmark.StartClients();
-				clientTask.Wait();
-			}
-
 			Utilities.WriteVerbose(".");
 
+
 			if (Config.IsRunClients())
 			{
+				var clientTask = networkBenchmark.InitializeClients();
+				clientTask.Wait();
 				networkBenchmark.ConnectClients().Wait();
 			}
+
 			Utilities.WriteVerboseLine(" Done");
 		}
 
@@ -117,8 +115,11 @@ namespace NetworkBenchmark
 			if (Config.IsRunClients())
 			{
 				networkBenchmark.DisconnectClients().Wait();
+				Utilities.WriteVerbose("|");
 				networkBenchmark.StopClients().Wait();
+				Utilities.WriteVerbose("|");
 				networkBenchmark.DisposeClients().Wait();
+				Utilities.WriteVerbose("|");
 			}
 			Utilities.WriteVerbose(".");
 
@@ -159,13 +160,16 @@ namespace NetworkBenchmark
 
 			var totalBytes = BenchmarkStatistics.MessagesClientReceived * Config.MessageByteSize;
 			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
+			var clientRtt = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
 				TimeUnit.Millisecond);
 
 			sb.AppendLine($"Total data: {totalMb:0.00} MB");
 			sb.AppendLine($"Data throughput: {totalMb / BenchmarkStatistics.Duration.TotalSeconds:0.00} MB/s");
 			sb.AppendLine($"Message throughput: {BenchmarkStatistics.MessagesClientReceived / BenchmarkStatistics.Duration.TotalSeconds:n0} msg/s");
-			sb.AppendLine($"Client Message latency: {latency.ToString()}");
+			if (Config.ParallelMessages == 1)
+			{
+				sb.AppendLine($"Client Round Trip Time: {clientRtt.ToString()}");
+			}
 			sb.AppendLine("```");
 			sb.AppendLine();
 

@@ -17,24 +17,20 @@ namespace NetworkBenchmark.Kcp2k
 	internal class EchoClient : AClient
 	{
 		public override bool IsConnected => isConnected;
-		public override bool IsStopped => tickThread == null || !tickThread.IsAlive;
 		public override bool IsDisposed => isDisposed;
 
 		private bool isConnected;
 		private bool isDisposed;
-		private readonly int id;
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		private readonly Thread tickThread;
 		private readonly byte[] messageArray;
 		private readonly KcpClientConnection client;
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(id, clientGroup)
 		{
-			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			messageArray = config.Message;
@@ -43,13 +39,9 @@ namespace NetworkBenchmark.Kcp2k
 
 			client = new KcpClientConnection();
 
-			client.OnAuthenticated = OnPeerConnected;
+			client.OnAuthenticated = OnConnected;
 			client.OnData = OnNetworkReceive;
-			client.OnDisconnected = OnPeerDisconnected;
-
-			tickThread = new Thread(TickLoop);
-			tickThread.Name = $"Kcp2k Client {id}";
-			tickThread.IsBackground = true;
+			client.OnDisconnected = OnDisconnected;
 
 			isConnected = false;
 			isDisposed = false;
@@ -58,23 +50,16 @@ namespace NetworkBenchmark.Kcp2k
 		public override void StartClient()
 		{
 			base.StartClient();
-			tickThread.Start();
 			isDisposed = false;
 		}
 
-		private void TickLoop()
+		public override void ConnectClient()
 		{
 			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
 			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
-
-			while (Listen)
-			{
-				Tick();
-				Thread.Sleep(1);
-			}
 		}
 
-		private void Tick()
+		public override void Tick()
 		{
 			client.RawReceive();
 			client.Tick();
@@ -105,6 +90,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		public override void Dispose()
 		{
+			base.Dispose();
 			//TODO dispose client once supported
 			isDisposed = true;
 		}
@@ -120,9 +106,9 @@ namespace NetworkBenchmark.Kcp2k
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
-		private void OnPeerConnected()
+		protected override void OnConnected()
 		{
-			Console.WriteLine("Benchmark client connected");
+			base.OnConnected();
 			isConnected = true;
 		}
 
@@ -135,13 +121,9 @@ namespace NetworkBenchmark.Kcp2k
 			}
 		}
 
-		private void OnPeerDisconnected()
+		protected override void OnDisconnected()
 		{
-			if (BenchmarkRunning)
-			{
-				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
-			}
-
+			base.OnDisconnected();
 			isConnected = false;
 		}
 	}

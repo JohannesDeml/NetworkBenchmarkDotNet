@@ -75,39 +75,39 @@ namespace NetworkBenchmark
 			return Math.Max(1000 / tickRate, 1);
 		}
 
-		public static Task WaitForClientsToConnect<T>(List<T> clients) where T : IClient
+		public static Task WaitForClientGroupsToConnect<T>(List<T> clientGroups) where T : ClientGroup
 		{
-			return WaitForClients(clients, (T client) => { return client.IsConnected; });
+			return WaitForClientGroups(clientGroups, (T clientGroup) => { return clientGroup.IsConnected; });
 		}
 
-		public static Task WaitForClientsToDisconnect<T>(List<T> clients) where T : IClient
+		public static Task WaitForClientGroupsToDisconnect<T>(List<T> clientGroups) where T : ClientGroup
 		{
-			return WaitForClients(clients, (T client) => { return !client.IsConnected; });
+			return WaitForClientGroups(clientGroups, (T clientGroup) => { return !clientGroup.IsConnected; });
 		}
 
-		public static Task WaitForClientsToStop<T>(List<T> clients) where T : IClient
+		public static Task WaitForClientGroupsToStop<T>(List<T> clientGroups) where T : ClientGroup
 		{
-			return WaitForClients(clients, (T client) => { return client.IsStopped; });
+			return WaitForClientGroups(clientGroups, (T clientGroup) => { return clientGroup.IsStopped; });
 		}
 
-		public static Task WaitForClientsToDispose<T>(List<T> clients) where T : IClient
+		public static Task WaitForClientGroupsToDispose<T>(List<T> clientGroups) where T : ClientGroup
 		{
-			return WaitForClients(clients, (T client) => { return client.IsDisposed; });
+			return WaitForClientGroups(clientGroups, (T clientGroup) => { return clientGroup.IsDisposed; });
 		}
 
-		public static Task WaitForClients<T>(List<T> clients, Func<T, bool> condition) where T : IClient
+		public static Task WaitForClientGroups<T>(List<T> clientGroups, Func<T, bool> condition) where T : ClientGroup
 		{
-			var waitForAllClients = Task.Run(() =>
+			var waitForAllClientGroups = Task.Run(() =>
 			{
-				for (int i = 0; i < clients.Count; i++)
+				for (int i = 0; i < clientGroups.Count; i++)
 				{
-					while (!condition(clients[i]))
+					while (!condition(clientGroups[i]))
 					{
 						Thread.Sleep(10);
 					}
 				}
 			});
-			return waitForAllClients;
+			return waitForAllClientGroups;
 		}
 
 		public static Task WaitForServerToStart<T>(T server) where T : IServer

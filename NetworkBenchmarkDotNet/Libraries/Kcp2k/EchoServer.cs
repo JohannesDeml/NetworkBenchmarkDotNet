@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using kcp2k;
 
@@ -56,10 +57,19 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			server.Start((ushort) config.Port);
 
+			var loopDuration = Utilities.CalculateTimeout(config.ServerTickRate);
+			var sw = new Stopwatch();
+
 			while (listen)
 			{
+				sw.Restart();
 				server.Tick();
-				TimeUtilities.HighPrecisionThreadSleep(1);
+
+				var remainingLoopTime = (int)sw.ElapsedMilliseconds - loopDuration;
+				if (remainingLoopTime > 0)
+				{
+					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);
+				}
 			}
 
 			server.Stop();

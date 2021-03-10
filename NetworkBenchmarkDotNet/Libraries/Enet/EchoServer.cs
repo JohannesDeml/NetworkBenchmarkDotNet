@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using ENet;
 
@@ -54,26 +55,42 @@ namespace NetworkBenchmark.Enet
 		private void ListenLoop()
 		{
 			host.Create(address, config.Clients);
-			Event netEvent;
+
+
+			var loopDuration = Utilities.CalculateTimeout(config.ServerTickRate);
+			var sw = new Stopwatch();
 
 			while (listen)
 			{
-				bool polled = false;
+				sw.Restart();
+				Tick();
 
-				while (!polled)
+				var remainingLoopTime = (int)sw.ElapsedMilliseconds - loopDuration;
+				if (remainingLoopTime > 0)
 				{
-					if (host.CheckEvents(out netEvent) <= 0)
-					{
-						// blocks up to the timeout if no events are received
-						// if a packet is received earlier, it stops blocking
-						if (host.Service(timeout, out netEvent) <= 0)
-							break;
-
-						polled = true;
-					}
-
-					HandleNetEvent(netEvent);
+					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);
 				}
+			}
+		}
+
+		private void Tick()
+		{
+			Event netEvent;
+			bool polled = false;
+
+			while (!polled)
+			{
+				if (host.CheckEvents(out netEvent) <= 0)
+				{
+					// blocks up to the timeout if no events are received
+					// if a packet is received earlier, it stops blocking
+					if (host.Service(timeout, out netEvent) <= 0)
+						break;
+
+					polled = true;
+				}
+
+				HandleNetEvent(netEvent);
 			}
 		}
 

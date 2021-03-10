@@ -17,11 +17,9 @@ namespace NetworkBenchmark.Enet
 	internal class EchoClient : AClient
 	{
 		public override bool IsConnected => peer.State == PeerState.Connected;
-		public override bool IsStopped => listenThread == null || !listenThread.IsAlive;
 		public override bool IsDisposed => isDisposed;
 
 		private bool isDisposed;
-		private readonly int id;
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
@@ -30,12 +28,10 @@ namespace NetworkBenchmark.Enet
 		private readonly PacketFlags packetFlags;
 		private readonly Host host;
 		private readonly Address address;
-		private readonly Thread listenThread;
 		private Peer peer;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(id, clientGroup)
 		{
-			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			message = config.Message;
@@ -47,16 +43,37 @@ namespace NetworkBenchmark.Enet
 			address.SetHost(config.Address);
 			address.Port = (ushort) config.Port;
 			isDisposed = false;
-
-			listenThread = new Thread(ListenLoop);
-			listenThread.Name = $"ENet Client {id}";
-			listenThread.IsBackground = true;
 		}
 
-		public override void StartClient()
+		public override void ConnectClient()
 		{
-			base.StartClient();
-			listenThread.Start();
+			host.Create();
+			peer = host.Connect(address, 4);
+		}
+
+		public override void Tick()
+		{
+			Event netEvent;
+
+			while (Listen)
+			{
+				bool polled = false;
+
+				while (!polled)
+				{
+					if (host.CheckEvents(out netEvent) <= 0)
+					{
+						// blocks up to the timeout if no events are received
+						// if a packet is received earlier, it stops blocking
+						if (host.Service(0, out netEvent) <= 0)
+							return;
+
+						polled = true;
+					}
+
+					HandleNetEvent(netEvent);
+				}
+			}
 		}
 
 		public override void StartBenchmark()
@@ -77,7 +94,7 @@ namespace NetworkBenchmark.Enet
 				return;
 			}
 
-			peer.DisconnectNow(0);
+			peer.Disconnect(0);
 		}
 
 		public override void Dispose()
@@ -85,34 +102,7 @@ namespace NetworkBenchmark.Enet
 			host.Flush();
 			host.Dispose();
 			isDisposed = true;
-		}
-
-		private void ListenLoop()
-		{
-			host.Create();
-			peer = host.Connect(address, 4);
-
-			Event netEvent;
-
-			while (Listen)
-			{
-				bool polled = false;
-
-				while (!polled)
-				{
-					if (host.CheckEvents(out netEvent) <= 0)
-					{
-						// blocks up to the timeout if no events are received
-						// if a packet is received earlier, it stops blocking
-						if (host.Service(timeout, out netEvent) <= 0)
-							break;
-
-						polled = true;
-					}
-
-					HandleNetEvent(netEvent);
-				}
-			}
+			base.Dispose();
 		}
 
 		private void HandleNetEvent(Event netEvent)
@@ -129,11 +119,12 @@ namespace NetworkBenchmark.Enet
 					}
 					break;
 
+				case EventType.Connect:
+					OnConnected();
+					break;
+
 				case EventType.Disconnect:
-					if (BenchmarkPreparing || BenchmarkRunning)
-					{
-						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
-					}
+					OnDisconnected();
 					break;
 
 				case EventType.Receive:

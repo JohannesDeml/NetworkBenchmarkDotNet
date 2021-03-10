@@ -31,7 +31,7 @@ namespace NetworkBenchmark
 		[Params(60)]
 		public int TickRate { get; set; }
 
-		[Params(100, 1000)]
+		[Params(100, 1000, 2000)]
 		public override int ClientCount { get; set; }
 
 		[Params(TransmissionType.Reliable, TransmissionType.Unreliable)]

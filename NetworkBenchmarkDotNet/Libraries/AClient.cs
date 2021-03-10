@@ -14,11 +14,6 @@ namespace NetworkBenchmark
 	{
 		public abstract bool IsConnected { get; }
 
-		public virtual bool IsStopped
-		{
-			get { return !IsConnected; }
-		}
-
 		public abstract bool IsDisposed { get; }
 
 		/// <summary>
@@ -34,11 +29,24 @@ namespace NetworkBenchmark
 		/// </summary>
 		protected volatile bool BenchmarkRunning;
 
+		protected int id;
+		protected ClientGroup clientGroup;
+
+		protected AClient(int id, ClientGroup clientGroup)
+		{
+			this.id = id;
+			this.clientGroup = clientGroup;
+		}
+
 		public virtual void StartClient()
 		{
 			Listen = true;
 			BenchmarkPreparing = true;
 		}
+
+		public abstract void ConnectClient();
+
+		public abstract void Tick();
 
 		public virtual void StartBenchmark()
 		{
@@ -58,6 +66,24 @@ namespace NetworkBenchmark
 
 		public abstract void DisconnectClient();
 
-		public abstract void Dispose();
+		public virtual void Dispose()
+		{
+			clientGroup.OnClientDisposed();
+		}
+
+		protected virtual void OnConnected()
+		{
+			clientGroup.OnClientConnected();
+		}
+
+		protected virtual void OnDisconnected()
+		{
+			if (BenchmarkRunning)
+			{
+				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
+			}
+
+			clientGroup.OnClientDisconnected();
+		}
 	}
 }

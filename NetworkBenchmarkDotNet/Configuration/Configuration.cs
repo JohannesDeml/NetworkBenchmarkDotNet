@@ -67,6 +67,12 @@ namespace NetworkBenchmark
 		public int Clients { get; set; }
 
 		/// <summary>
+		/// Number of client groups that are created
+		/// Each group runs in its own thread
+		/// </summary>
+		public int ClientGroups { get; set; } = 8;
+
+		/// <summary>
 		/// Number of messages each client exchanges with the server in parallel
 		/// Interesting if you want to see how well messages are merged
 		/// </summary>
@@ -157,7 +163,7 @@ namespace NetworkBenchmark
 			{
 				sb.AppendLine($"* Number of clients: {Clients}");
 			}
-			
+
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize} bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Reproduce: `");
@@ -196,19 +202,26 @@ namespace NetworkBenchmark
 		public void AppendCommandlineInstruction(StringBuilder sb)
 		{
 			sb.Append("./NetworkBenchmarkDotNet");
-			sb.Append($" --execution-mode {ExecutionMode}");
-			sb.Append($" --test {Test}");
-			sb.Append($" --transmission {Transmission}");
-			sb.Append($" --library {Library}");
-			sb.Append($" --duration {Duration}");
-			sb.Append($" --address {Address}");
-			sb.Append($" --port {Port}");
-			sb.Append($" --clients {Clients}");
-			sb.Append($" --parallel-messages {ParallelMessages}");
-			sb.Append($" --message-byte-size {MessageByteSize}");
-			sb.Append($" --message-payload {MessagePayload}");
-			sb.Append($" --client-tick-rate {ClientTickRate}");
-			sb.Append($" --server-tick-rate {ServerTickRate}");
+			if (Benchmark == BenchmarkMode.Custom || Benchmark == BenchmarkMode.Quick)
+			{
+				sb.Append($" --execution-mode {ExecutionMode}");
+				sb.Append($" --test {Test}");
+				sb.Append($" --transmission {Transmission}");
+				sb.Append($" --library {Library}");
+				sb.Append($" --duration {Duration}");
+				sb.Append($" --address {Address}");
+				sb.Append($" --port {Port}");
+				sb.Append($" --clients {Clients}");
+				sb.Append($" --parallel-messages {ParallelMessages}");
+				sb.Append($" --message-byte-size {MessageByteSize}");
+				sb.Append($" --message-payload {MessagePayload}");
+				sb.Append($" --client-tick-rate {ClientTickRate}");
+				sb.Append($" --server-tick-rate {ServerTickRate}");
+			}
+			else
+			{
+				sb.Append($" --mode {Benchmark}");
+			}
 		}
 
 		public static void ApplyPredefinedBenchmarkConfiguration(Configuration config)

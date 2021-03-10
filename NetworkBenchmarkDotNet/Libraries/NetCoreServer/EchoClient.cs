@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -17,20 +18,20 @@ namespace NetworkBenchmark.NetCoreServer
 {
 	internal class EchoClient : UdpClient, IClient
 	{
-		public bool IsStopped => !IsConnected;
-
 		private volatile bool benchmarkPreparing;
 		private volatile bool listen;
 		private volatile bool benchmarkRunning;
 
 		private readonly int id;
+		private readonly ClientGroup clientGroup;
 		private readonly byte[] message;
 		private readonly int initialMessages;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
+		public EchoClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
+			this.clientGroup = clientGroup;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
 			message = config.Message;
@@ -43,6 +44,16 @@ namespace NetworkBenchmark.NetCoreServer
 			listen = true;
 			benchmarkPreparing = true;
 			Connect();
+		}
+
+		public void ConnectClient()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Tick()
+		{
+			throw new NotImplementedException();
 		}
 
 		public void StartBenchmark()

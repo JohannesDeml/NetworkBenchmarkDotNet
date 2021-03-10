@@ -20,9 +20,9 @@ namespace NetworkBenchmark.Kcp2k
 			return new EchoServer(config, statistics);
 		}
 
-		protected override IClient CreateNewClient(int id, Configuration config, BenchmarkStatistics statistics)
+		public override IClient CreateNewClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics statistics)
 		{
-			return new EchoClient(id, config, statistics);
+			return new EchoClient(id, clientGroup, config, statistics);
 		}
 
 		public static KcpChannel GetChannel(TransmissionType transmissionType)

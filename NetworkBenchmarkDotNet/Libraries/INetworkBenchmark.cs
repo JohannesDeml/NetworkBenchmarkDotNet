@@ -58,7 +58,17 @@ namespace NetworkBenchmark
 		/// Note: Server might not be started at that time
 		/// </summary>
 		/// <returns>Awaitable Task for when clients are created and finished starting.</returns>
-		Task StartClients();
+		Task InitializeClients();
+
+		/// <summary>
+		/// Create a new client
+		/// </summary>
+		/// <param name="id">Client id</param>
+		/// <param name="clientGroup">Group the client is attached to</param>
+		/// <param name="config">Configuration to use for the client</param>
+		/// <param name="statistics">Data object to store statistics</param>
+		/// <returns></returns>
+		IClient CreateNewClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics statistics);
 
 		/// <summary>
 		/// Connect the running clients with the server.

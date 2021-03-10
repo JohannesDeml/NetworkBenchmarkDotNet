@@ -24,7 +24,6 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private bool isConnected;
 		private bool isDisposed;
-		private readonly int id;
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
@@ -34,9 +33,8 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, ClientGroup clientGroup, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(id, clientGroup)
 		{
-			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 			message = config.Message;
@@ -68,6 +66,16 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.Start();
 			peer = netManager.Connect(config.Address, config.Port, "ConnectionKey");
 			isDisposed = false;
+		}
+
+		public override void ConnectClient()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Tick()
+		{
+			throw new NotImplementedException();
 		}
 
 		public override void StartBenchmark()
