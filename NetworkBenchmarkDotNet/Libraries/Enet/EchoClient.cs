@@ -89,7 +89,6 @@ namespace NetworkBenchmark.Enet
 
 		private void ListenLoop()
 		{
-			Listen = true;
 			host.Create();
 			peer = host.Connect(address, 4);
 
@@ -129,7 +128,7 @@ namespace NetworkBenchmark.Enet
 						Utilities.WriteVerboseLine($"Client {id} timed out while benchmark is running.");
 					}
 					break;
-				
+
 				case EventType.Disconnect:
 					if (BenchmarkPreparing || BenchmarkRunning)
 					{
