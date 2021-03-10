@@ -51,7 +51,7 @@ namespace NetworkBenchmark.NetCoreServer
 			throw new NotImplementedException();
 		}
 
-		public void Tick()
+		public void Tick(int elapsedMs)
 		{
 			throw new NotImplementedException();
 		}

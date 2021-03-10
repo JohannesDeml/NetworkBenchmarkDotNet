@@ -40,7 +40,8 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Update tick for client
 		/// </summary>
-		public void Tick();
+		/// <param name="elapsedMs">Time passed since last Update</param>
+		public void Tick(int elapsedMs);
 
 		/// <summary>
 		/// Triggers the client to start the benchmark and send messages to the server

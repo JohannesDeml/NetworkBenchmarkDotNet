@@ -47,18 +47,19 @@ namespace NetworkBenchmark
 
 			if (Config.IsRunServer())
 			{
-				var serverTask = networkBenchmark.StartServer();
-				serverTask.Wait();
+				Utilities.WriteVerbose("S");
+				networkBenchmark.StartServer().Wait();
+				Utilities.WriteVerbose("S");
 			}
-
-			Utilities.WriteVerbose(".");
 
 
 			if (Config.IsRunClients())
 			{
-				var clientTask = networkBenchmark.InitializeClients();
-				clientTask.Wait();
+				Utilities.WriteVerbose("C");
+				networkBenchmark.InitializeClients().Wait();
+				Utilities.WriteVerbose("C");
 				networkBenchmark.ConnectClients().Wait();
+				Utilities.WriteVerbose("C");
 			}
 
 			Utilities.WriteVerboseLine(" Done");
@@ -114,24 +115,23 @@ namespace NetworkBenchmark
 
 			if (Config.IsRunClients())
 			{
+				Utilities.WriteVerbose("C");
 				networkBenchmark.DisconnectClients().Wait();
-				Utilities.WriteVerbose("|");
+				Utilities.WriteVerbose("C");
 				networkBenchmark.StopClients().Wait();
-				Utilities.WriteVerbose("|");
+				Utilities.WriteVerbose("C");
 				networkBenchmark.DisposeClients().Wait();
-				Utilities.WriteVerbose("|");
+				Utilities.WriteVerbose("C");
 			}
-			Utilities.WriteVerbose(".");
 
 
 			if (Config.IsRunServer())
 			{
+				Utilities.WriteVerbose("S");
 				networkBenchmark.StopServer().Wait();
-			}
-			Utilities.WriteVerbose(".");
-			if (Config.IsRunServer())
-			{
+				Utilities.WriteVerbose("S");
 				networkBenchmark.DisposeServer().Wait();
+				Utilities.WriteVerbose("S");
 			}
 
 			networkBenchmark.Deinitialize();

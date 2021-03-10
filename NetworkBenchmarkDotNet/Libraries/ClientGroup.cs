@@ -36,6 +36,7 @@ namespace NetworkBenchmark
 		/// </summary>
 		protected volatile bool BenchmarkRunning;
 
+		private readonly int id;
 		private readonly List<IClient> clients;
 		private readonly Thread tickThread;
 		private readonly Configuration config;
@@ -46,6 +47,7 @@ namespace NetworkBenchmark
 
 		public ClientGroup(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
 		{
+			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
 
@@ -90,10 +92,18 @@ namespace NetworkBenchmark
 
 			while (Listen)
 			{
+				var lastElapsed = (int)sw.ElapsedMilliseconds;
 				sw.Restart();
-				Tick();
+				if (BenchmarkRunning || BenchmarkPreparing)
+				{
+					Tick(lastElapsed);
+				}
+				else
+				{
+					SaveTick(lastElapsed);
+				}
 
-				var remainingLoopTime = (int)sw.ElapsedMilliseconds - loopDuration;
+				var remainingLoopTime = loopDuration - (int)sw.ElapsedMilliseconds;
 				if (remainingLoopTime > 0)
 				{
 					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);
@@ -101,12 +111,34 @@ namespace NetworkBenchmark
 			}
 		}
 
-		private void Tick()
+		private void Tick(int elapsedMs)
 		{
 			for (int i = 0; i < clients.Count; i++)
 			{
 				var client = clients[i];
-				client.Tick();
+				client.Tick(elapsedMs);
+			}
+		}
+
+		private void SaveTick(int elapsedMs)
+		{
+			for (int i = 0; i < clients.Count; i++)
+			{
+				var client = clients[i];
+				if (client.IsDisposed || !client.IsConnected)
+				{
+					continue;
+				}
+
+				try
+				{
+					client.Tick(elapsedMs);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					throw;
+				}
 			}
 		}
 
@@ -135,12 +167,13 @@ namespace NetworkBenchmark
 
 		public virtual void StopClients()
 		{
+			Listen = false;
+
 			for (int i = 0; i < clients.Count; i++)
 			{
 				var client = clients[i];
 				client.StopClient();
 			}
-			Listen = false;
 		}
 
 		public void DisconnectClients()

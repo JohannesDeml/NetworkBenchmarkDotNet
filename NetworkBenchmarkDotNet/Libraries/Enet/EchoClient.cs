@@ -51,28 +51,25 @@ namespace NetworkBenchmark.Enet
 			peer = host.Connect(address, 4);
 		}
 
-		public override void Tick()
+		public override void Tick(int elapsedMs)
 		{
 			Event netEvent;
 
-			while (Listen)
+			bool polled = false;
+
+			while (!polled)
 			{
-				bool polled = false;
-
-				while (!polled)
+				if (host.CheckEvents(out netEvent) <= 0)
 				{
-					if (host.CheckEvents(out netEvent) <= 0)
-					{
-						// blocks up to the timeout if no events are received
-						// if a packet is received earlier, it stops blocking
-						if (host.Service(0, out netEvent) <= 0)
-							return;
+					// blocks up to the timeout if no events are received
+					// if a packet is received earlier, it stops blocking
+					if (host.Service(0, out netEvent) <= 0)
+						return;
 
-						polled = true;
-					}
-
-					HandleNetEvent(netEvent);
+					polled = true;
 				}
+
+				HandleNetEvent(netEvent);
 			}
 		}
 
@@ -94,7 +91,8 @@ namespace NetworkBenchmark.Enet
 				return;
 			}
 
-			peer.Disconnect(0);
+			peer.DisconnectNow(0);
+			OnDisconnected();
 		}
 
 		public override void Dispose()
@@ -113,10 +111,7 @@ namespace NetworkBenchmark.Enet
 					break;
 
 				case EventType.Timeout:
-					if (BenchmarkPreparing || BenchmarkRunning)
-					{
-						Utilities.WriteVerboseLine($"Client {id} timed out while benchmark is running.");
-					}
+					OnDisconnected();
 					break;
 
 				case EventType.Connect:

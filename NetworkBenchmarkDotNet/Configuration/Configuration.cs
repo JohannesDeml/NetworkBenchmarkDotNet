@@ -70,7 +70,7 @@ namespace NetworkBenchmark
 		/// Number of client groups that are created
 		/// Each group runs in its own thread
 		/// </summary>
-		public int ClientGroups { get; set; } = 8;
+		public int ClientGroups { get; set; } = 14;
 
 		/// <summary>
 		/// Number of messages each client exchanges with the server in parallel
@@ -110,6 +110,7 @@ namespace NetworkBenchmark
 		public void PrepareForNewBenchmark()
 		{
 			GenerateMessageBytes();
+			ClientGroups = Math.Min(ClientGroups, Clients);
 		}
 
 		private void GenerateMessageBytes()

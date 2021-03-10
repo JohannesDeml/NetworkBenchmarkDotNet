@@ -48,7 +48,7 @@ namespace NetworkBenchmark.LiteNetLib
 			}
 
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
-			netManager.UnsyncedEvents = true;
+
 			netManager.DisconnectTimeout = 10000;
 
 			isConnected = false;
@@ -63,19 +63,20 @@ namespace NetworkBenchmark.LiteNetLib
 		public override void StartClient()
 		{
 			base.StartClient();
-			netManager.Start();
-			peer = netManager.Connect(config.Address, config.Port, "ConnectionKey");
+			netManager.StartInManualMode(0);
+
 			isDisposed = false;
 		}
 
 		public override void ConnectClient()
 		{
-			throw new NotImplementedException();
+			peer = netManager.Connect(config.Address, config.Port, "ConnectionKey");
 		}
 
-		public override void Tick()
+		public override void Tick(int elapsedMs)
 		{
-			throw new NotImplementedException();
+			netManager.ManualReceive();
+			netManager.ManualUpdate(elapsedMs);
 		}
 
 		public override void StartBenchmark()
@@ -118,6 +119,7 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.NetworkErrorEvent -= OnNetworkError;
 
 			isDisposed = true;
+			base.Dispose();
 		}
 
 		private void Send(byte[] bytes)
@@ -134,6 +136,7 @@ namespace NetworkBenchmark.LiteNetLib
 		private void OnPeerConnected(NetPeer peer)
 		{
 			isConnected = true;
+			base.OnConnected();
 		}
 
 		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -146,6 +149,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 			this.peer = null;
 			isConnected = false;
+			base.OnDisconnected();
 		}
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliverymethod)

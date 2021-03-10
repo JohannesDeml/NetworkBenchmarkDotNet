@@ -59,7 +59,7 @@ namespace NetworkBenchmark.Kcp2k
 			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
 		}
 
-		public override void Tick()
+		public override void Tick(int elapsedMs)
 		{
 			client.RawReceive();
 			client.Tick();
@@ -75,7 +75,7 @@ namespace NetworkBenchmark.Kcp2k
 				Send(messageArray, communicationChannel);
 			}
 
-			Tick();
+			Tick(0);
 		}
 
 		public override void DisconnectClient()

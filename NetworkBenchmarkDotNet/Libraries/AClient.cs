@@ -46,7 +46,7 @@ namespace NetworkBenchmark
 
 		public abstract void ConnectClient();
 
-		public abstract void Tick();
+		public abstract void Tick(int elapsedMs);
 
 		public virtual void StartBenchmark()
 		{
@@ -78,7 +78,7 @@ namespace NetworkBenchmark
 
 		protected virtual void OnDisconnected()
 		{
-			if (BenchmarkRunning)
+			if (BenchmarkPreparing || BenchmarkRunning)
 			{
 				Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 			}

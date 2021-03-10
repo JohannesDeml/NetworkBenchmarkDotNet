@@ -65,7 +65,7 @@ namespace NetworkBenchmark.Kcp2k
 				sw.Restart();
 				server.Tick();
 
-				var remainingLoopTime = (int)sw.ElapsedMilliseconds - loopDuration;
+				var remainingLoopTime = loopDuration - (int)sw.ElapsedMilliseconds;
 				if (remainingLoopTime > 0)
 				{
 					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);

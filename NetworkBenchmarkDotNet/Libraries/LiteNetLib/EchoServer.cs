@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -24,6 +25,7 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
+		private readonly Thread serverThread;
 		private readonly byte[] message;
 		private readonly DeliveryMethod deliveryMethod;
 
@@ -49,12 +51,37 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.NetworkReceiveEvent += OnNetworkReceive;
 			listener.NetworkErrorEvent += OnNetworkError;
 			listener.PeerDisconnectedEvent += OnPeerDisconnected;
+
+			serverThread = new Thread(TickLoop);
+			serverThread.Name = "LiteNetLib Server";
+			serverThread.Priority = ThreadPriority.AboveNormal;
 		}
 
 		public override void StartServer()
 		{
 			base.StartServer();
-			netManager.Start(config.Port);
+			netManager.StartInManualMode(config.Port);
+			serverThread.Start();
+		}
+
+		private void TickLoop()
+		{
+			var loopDuration = Utilities.CalculateTimeout(config.ServerTickRate);
+			var sw = new Stopwatch();
+
+			while (listen)
+			{
+				var lastElapsed = (int)sw.ElapsedMilliseconds;
+				sw.Restart();
+				netManager.ManualReceive();
+				netManager.ManualUpdate(lastElapsed);
+
+				var remainingLoopTime = loopDuration - (int)sw.ElapsedMilliseconds;
+				if (remainingLoopTime > 0)
+				{
+					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);
+				}
+			}
 		}
 
 		public override void StopServer()

@@ -65,7 +65,7 @@ namespace NetworkBenchmark.Enet
 				sw.Restart();
 				Tick();
 
-				var remainingLoopTime = (int)sw.ElapsedMilliseconds - loopDuration;
+				var remainingLoopTime = loopDuration - (int)sw.ElapsedMilliseconds;
 				if (remainingLoopTime > 0)
 				{
 					TimeUtilities.HighPrecisionThreadSleep(remainingLoopTime);
@@ -76,21 +76,21 @@ namespace NetworkBenchmark.Enet
 		private void Tick()
 		{
 			Event netEvent;
-			bool polled = false;
 
-			while (!polled)
+			while (listen)
 			{
-				if (host.CheckEvents(out netEvent) <= 0)
-				{
-					// blocks up to the timeout if no events are received
-					// if a packet is received earlier, it stops blocking
-					if (host.Service(timeout, out netEvent) <= 0)
-						break;
+				bool polled = false;
 
-					polled = true;
+				while (!polled) {
+					if (host.CheckEvents(out netEvent) <= 0) {
+						if (host.Service(0, out netEvent) <= 0)
+							return;
+
+						polled = true;
+					}
+
+					HandleNetEvent(netEvent);
 				}
-
-				HandleNetEvent(netEvent);
 			}
 		}
 
