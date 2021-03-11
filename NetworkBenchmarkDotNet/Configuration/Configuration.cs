@@ -236,8 +236,8 @@ namespace NetworkBenchmark
 			config.Verbose = false;
 			config.MessagePayload = MessagePayload.Random;
 			config.MessageByteSize = 32;
-			config.ServerTickRate = 60;
-			config.ClientTickRate = 60;
+			config.ServerTickRate = 120;
+			config.ClientTickRate = 120;
 		}
 	}
 }
