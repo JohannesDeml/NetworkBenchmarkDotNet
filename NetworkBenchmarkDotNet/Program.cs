@@ -52,16 +52,22 @@ namespace NetworkBenchmark
 				Console.WriteLine($"Finished {BenchmarkMode.Performance} Benchmark");
 			}
 
-			if ((mode & BenchmarkMode.Quick) != 0)
-			{
-				RunBenchmark<QuickBenchmark>();
-				Console.WriteLine($"Finished {BenchmarkMode.Quick} Benchmark");
-			}
-
 			if ((mode & BenchmarkMode.Garbage) != 0)
 			{
 				RunBenchmark<GarbageBenchmark>();
 				Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
+			}
+
+			if ((mode & BenchmarkMode.Ccu) != 0)
+			{
+				RunBenchmark<CcuBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Ccu} Benchmark");
+			}
+
+			if ((mode & BenchmarkMode.Quick) != 0)
+			{
+				RunBenchmark<QuickBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Quick} Benchmark");
 			}
 		}
 

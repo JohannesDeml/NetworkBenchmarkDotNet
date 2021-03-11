@@ -40,16 +40,23 @@ namespace NetworkBenchmark
 		Essential = (1 << 2) - 1,
 
 		/// <summary>
-		/// Run a Quick Benchmark
-		/// This benchmark might change over time and is kind of sandbox playground to test different settings with a fast run strategy.
-		/// The results of this benchmark are not pre-jitted and are not as precise as the Essential benchmarks
-		/// Runtime: ~30 seconds
+		/// Run Benchmark Ccu
+		/// Compares messages per second received by each client for different numbers of currently connected clients
+		/// Runtime: ~5 minutes
 		/// </summary>
-		Quick = 1 << 2,
+		Ccu = 1 << 2,
 
 		/// <summary>
 		/// Run all predefined benchmarks
 		/// </summary>
 		All = (1 << 3) - 1,
+
+		/// <summary>
+		/// Run a Quick Benchmark
+		/// This benchmark might change over time and is kind of sandbox playground to test different settings with a fast run strategy.
+		/// The results of this benchmark are not pre-jitted and are not as precise as the Essential benchmarks
+		/// Runtime: ~30 seconds
+		/// </summary>
+		Quick = 1 << 3,
 	}
 }
