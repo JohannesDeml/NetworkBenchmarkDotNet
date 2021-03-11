@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkBenchmarkDotNet", "N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kcp2k", "Kcp2k\Kcp2k.csproj", "{03C5C23F-A642-41F5-8CB7-4D985629B2DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "LiteNetLib\LiteNetLib\LiteNetLib.csproj", "{C6551124-4DAB-4E08-8FA7-14BF1E95998A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03C5C23F-A642-41F5-8CB7-4D985629B2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6551124-4DAB-4E08-8FA7-14BF1E95998A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6551124-4DAB-4E08-8FA7-14BF1E95998A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6551124-4DAB-4E08-8FA7-14BF1E95998A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6551124-4DAB-4E08-8FA7-14BF1E95998A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

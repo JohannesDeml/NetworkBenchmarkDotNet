@@ -38,7 +38,7 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
 			if (!config.Address.Contains(':'))
 			{
-				netManager.IPv6Enabled = IPv6Mode.Disabled;
+				netManager.IPv6Mode = IPv6Mode.Disabled;
 			}
 
 			netManager.UnsyncedEvents = true;
