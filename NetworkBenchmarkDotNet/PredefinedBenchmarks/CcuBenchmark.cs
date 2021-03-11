@@ -18,14 +18,13 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Library target for the benchmark
 		/// </summary>
-		[Params(NetworkLibrary.ENet)]
+		[Params(NetworkLibrary.LiteNetLib)]
 		public NetworkLibrary Library { get; set; }
 
 		[Params(32, 500)]
 		public int MessageByteSize { get; set; }
 
-		[Params(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-			1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000)]
+		[Params(100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000)]
 		public override int ClientCount { get; set; }
 
 		[Params(TransmissionType.Unreliable)]
