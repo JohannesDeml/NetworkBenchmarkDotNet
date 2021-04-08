@@ -12,7 +12,7 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
         <LangVersion>9</LangVersion>
-        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <TargetFramework>net5.0</TargetFramework>
         <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
         <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
@@ -32,7 +32,7 @@
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
       <PackageReference Include="ENet-CSharp" Version="2.4.6" />
-      <PackageReference Include="NetCoreServer" Version="3.0.22" />
+      <PackageReference Include="NetCoreServer" Version="5.0.15" />
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
     </ItemGroup>
 
@@ -48,12 +48,13 @@
     </ItemGroup>
 
 
+
     <PropertyGroup>
         <ServerGarbageCollection>true</ServerGarbageCollection>
     </PropertyGroup>
 
     <PropertyGroup>
-        <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+        <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     </PropertyGroup>
 
     <PropertyGroup>
