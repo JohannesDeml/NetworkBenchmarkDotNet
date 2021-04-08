@@ -159,13 +159,16 @@ namespace NetworkBenchmark
 
 			var totalBytes = BenchmarkStatistics.MessagesClientReceived * Config.MessageByteSize;
 			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var latency = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
+			var clientRtt = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
 				TimeUnit.Millisecond);
 
 			sb.AppendLine($"Total data: {totalMb:0.00} MB");
 			sb.AppendLine($"Data throughput: {totalMb / BenchmarkStatistics.Duration.TotalSeconds:0.00} MB/s");
 			sb.AppendLine($"Message throughput: {BenchmarkStatistics.MessagesClientReceived / BenchmarkStatistics.Duration.TotalSeconds:n0} msg/s");
-			sb.AppendLine($"Client Message latency: {latency.ToString()}");
+			if (Config.ParallelMessages == 1)
+			{
+				sb.AppendLine($"Client Round Trip Time: {clientRtt.ToString()}");
+			}
 			sb.AppendLine("```");
 			sb.AppendLine();
 
