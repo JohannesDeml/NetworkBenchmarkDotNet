@@ -1,6 +1,6 @@
 # Network Benchmark .NET
 
-*Low Level .NET Core / .NET 5 Networking libraries benchmarked for UDP socket performance*
+*Low Level .NET 5 Networking libraries benchmarked for UDP socket performance*
 
 ![Screenshot](./Docs/screenshot.png)
 
@@ -23,7 +23,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ### Supported Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.6)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.7)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
@@ -36,7 +36,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Port of KCP with 100% C# Code, Future Technology for [Mirror-NG](https://github.com/MirrorNG/MirrorNG)
   * Packetsize overhead: 24 byte
   * [Unity Example](https://github.com/vis2k/kcp2k)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 3.0.22)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 5.0.15)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
@@ -140,7 +140,7 @@ DateTime=02/18/2021 16:18:02
 
 ## Installation
 
-Make sure you have [.NetCore SDK](https://dotnet.microsoft.com/download) 3.1 & 5.0 installed.
+Make sure you have [.Net 5 SDK](https://dotnet.microsoft.com/download) installed.
 
 Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
@@ -206,12 +206,12 @@ Your favorite library is missing, or you feel like the benchmarks are not testin
 Your new proposed library ... 
 
 * works with Unity as a Client
-* works with .Net Core (or .NET 5) for the server 
+* works with .NET 5 for the server 
 * uses UDP (additional RUDP would be nice)
 * is Open Source (can still be commercial)
 * is stable enough not to break in the benchmarks
 * is in active development
-* is interesting/relevant for others
+* adds value to the benchmarks
 
 #### How to add a library
 
