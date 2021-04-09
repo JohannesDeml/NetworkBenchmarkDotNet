@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkBenchmarkDotNet", "N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kcp2k", "Kcp2k\Kcp2k.csproj", "{03C5C23F-A642-41F5-8CB7-4D985629B2DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "LiteNetLib\LiteNetLib\LiteNetLib.csproj", "{C6551124-4DAB-4E08-8FA7-14BF1E95998A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

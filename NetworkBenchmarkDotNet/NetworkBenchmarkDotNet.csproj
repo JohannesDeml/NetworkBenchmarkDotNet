@@ -32,7 +32,6 @@
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
       <PackageReference Include="ENet-CSharp" Version="2.4.6" />
-      <PackageReference Include="LiteNetLib" Version="0.9.4" />
       <PackageReference Include="NetCoreServer" Version="5.0.15" />
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
     </ItemGroup>
@@ -45,6 +44,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Kcp2k\Kcp2k.csproj" />
+      <ProjectReference Include="..\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
     </ItemGroup>
 
 
