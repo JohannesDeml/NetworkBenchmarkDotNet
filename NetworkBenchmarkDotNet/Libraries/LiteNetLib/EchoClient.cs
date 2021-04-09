@@ -46,7 +46,11 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager = new NetManager(listener);
 			if (!config.Address.Contains(':'))
 			{
-				netManager.IPv6Mode = IPv6Mode.Disabled;
+				// For LiteNetLib 1.0 and above
+				//netManager.IPv6Mode = IPv6Mode.Disabled;
+
+				// LiteNetLib up to 0.9.4
+				netManager.IPv6Enabled = IPv6Mode.Disabled;
 			}
 
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
