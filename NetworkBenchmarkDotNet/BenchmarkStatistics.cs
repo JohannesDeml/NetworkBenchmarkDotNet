@@ -10,14 +10,15 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
+using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
 	public class BenchmarkStatistics
 	{
-		public TimeSpan Duration { get; private set; }
-
 		private readonly Stopwatch stopwatch;
+		private TimeSpan duration;
 
 		public long MessagesClientSent;
 		public long MessagesClientReceived;
@@ -48,7 +49,44 @@ namespace NetworkBenchmark
 		public void StopBenchmark()
 		{
 			stopwatch.Stop();
-			Duration = stopwatch.Elapsed;
+			duration = stopwatch.Elapsed;
+		}
+
+		public string PrintStatistics(Configuration config)
+		{
+			var sb = new StringBuilder();
+
+			sb.AppendLine("```");
+			sb.AppendLine($"Results {config.Library} with {config.Transmission} {config.Test}");
+			if (Errors > 0)
+			{
+				sb.AppendLine($"Errors: {Errors}");
+				sb.AppendLine();
+			}
+
+			sb.AppendLine($"Duration: {duration.TotalSeconds:0.000} s");
+			sb.AppendLine($"Messages sent by clients: {MessagesClientSent:n0}");
+			sb.AppendLine($"Messages server received: {MessagesServerReceived:n0}");
+			sb.AppendLine($"Messages sent by server: {MessagesServerSent:n0}");
+			sb.AppendLine($"Messages clients received: {MessagesClientReceived:n0}");
+			sb.AppendLine();
+
+			var totalBytes = MessagesClientReceived * config.MessageByteSize;
+			var totalMb = totalBytes / (1024.0d * 1024.0d);
+			var clientRtt = new TimeInterval(duration.TotalMilliseconds * config.Clients / MessagesClientReceived,
+				TimeUnit.Millisecond);
+
+			sb.AppendLine($"Total data: {totalMb:0.00} MB");
+			sb.AppendLine($"Data throughput: {totalMb / duration.TotalSeconds:0.00} MB/s");
+			sb.AppendLine($"Message throughput: {MessagesClientReceived / duration.TotalSeconds:n0} msg/s");
+			if (config.ParallelMessages == 1)
+			{
+				sb.AppendLine($"Client Round Trip Time: {clientRtt.ToString()}");
+			}
+			sb.AppendLine("```");
+			sb.AppendLine();
+
+			return sb.ToString();
 		}
 	}
 }

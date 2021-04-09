@@ -9,9 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Text;
 using System.Threading;
-using Perfolizer.Horology;
 
 namespace NetworkBenchmark
 {
@@ -63,6 +61,7 @@ namespace NetworkBenchmark
 			{
 				networkBenchmark.ConnectClients().Wait();
 			}
+
 			Utilities.WriteVerboseLine(" Done");
 		}
 
@@ -120,6 +119,7 @@ namespace NetworkBenchmark
 				networkBenchmark.StopClients().Wait();
 				networkBenchmark.DisposeClients().Wait();
 			}
+
 			Utilities.WriteVerbose(".");
 
 
@@ -127,6 +127,7 @@ namespace NetworkBenchmark
 			{
 				networkBenchmark.StopServer().Wait();
 			}
+
 			Utilities.WriteVerbose(".");
 			if (Config.IsRunServer())
 			{
@@ -140,39 +141,7 @@ namespace NetworkBenchmark
 
 		public static string PrintStatistics()
 		{
-			var sb = new StringBuilder();
-
-			sb.AppendLine("```");
-			sb.AppendLine($"Results {Config.Library} with {Config.Transmission} {Config.Test}");
-			if (BenchmarkStatistics.Errors > 0)
-			{
-				sb.AppendLine($"Errors: {BenchmarkStatistics.Errors}");
-				sb.AppendLine();
-			}
-
-			sb.AppendLine($"Duration: {BenchmarkStatistics.Duration.TotalSeconds:0.000} s");
-			sb.AppendLine($"Messages sent by clients: {BenchmarkStatistics.MessagesClientSent:n0}");
-			sb.AppendLine($"Messages server received: {BenchmarkStatistics.MessagesServerReceived:n0}");
-			sb.AppendLine($"Messages sent by server: {BenchmarkStatistics.MessagesServerSent:n0}");
-			sb.AppendLine($"Messages clients received: {BenchmarkStatistics.MessagesClientReceived:n0}");
-			sb.AppendLine();
-
-			var totalBytes = BenchmarkStatistics.MessagesClientReceived * Config.MessageByteSize;
-			var totalMb = totalBytes / (1024.0d * 1024.0d);
-			var clientRtt = new TimeInterval(BenchmarkStatistics.Duration.TotalMilliseconds * Config.Clients / BenchmarkStatistics.MessagesClientReceived,
-				TimeUnit.Millisecond);
-
-			sb.AppendLine($"Total data: {totalMb:0.00} MB");
-			sb.AppendLine($"Data throughput: {totalMb / BenchmarkStatistics.Duration.TotalSeconds:0.00} MB/s");
-			sb.AppendLine($"Message throughput: {BenchmarkStatistics.MessagesClientReceived / BenchmarkStatistics.Duration.TotalSeconds:n0} msg/s");
-			if (Config.ParallelMessages == 1)
-			{
-				sb.AppendLine($"Client Round Trip Time: {clientRtt.ToString()}");
-			}
-			sb.AppendLine("```");
-			sb.AppendLine();
-
-			return sb.ToString();
+			return BenchmarkStatistics.PrintStatistics(Config);
 		}
 	}
 }
