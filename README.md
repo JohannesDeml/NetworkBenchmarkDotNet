@@ -45,17 +45,17 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ## Benchmarks
 
-### Benchmark [PingPongUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+### Benchmark [PingPongUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/UnreliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
-### Benchmark [PingPongBatchedUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+### Benchmark [PingPongBatchedUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/UnreliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **10 messages** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance.
 
-### Benchmark [PingPongReliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/PerformanceBenchmark.cs)
+### Benchmark [PingPongReliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/ReliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **reliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
