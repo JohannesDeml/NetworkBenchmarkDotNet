@@ -18,7 +18,7 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Library target for the benchmark
 		/// </summary>
-		[Params(NetworkLibrary.ENet)]
+		[Params(NetworkLibrary.LiteNetLib)]
 		public NetworkLibrary Library { get; set; }
 
 		/// <summary>

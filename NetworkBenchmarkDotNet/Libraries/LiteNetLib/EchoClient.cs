@@ -52,6 +52,7 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;
+			netManager.UseNativeSockets = true;
 
 			isConnected = false;
 			isDisposed = false;
