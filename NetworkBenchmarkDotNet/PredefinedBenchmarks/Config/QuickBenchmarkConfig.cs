@@ -37,13 +37,7 @@ namespace NetworkBenchmark
 			// Here you can test different runtimes
 			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
-			AddColumn(new MessagesPerSecondColumn());
-			AddColumn(FixedColumn.VersionColumn);
-			AddColumn(FixedColumn.OperatingSystemColumn);
-			AddColumn(FixedColumn.DateTimeColumn);
-
-			AddExporter(MarkdownExporter.GitHub);
-			AddExporter(new CsvExporter(CsvSeparator.Comma, ConfigConstants.CsvStyle));
+			ConfigHelper.AddDefaultColumns(this);
 
 			// You can also use additional diagnosers.
 			// Those might result in large trace files and can take some time to process after the benchmark finished
