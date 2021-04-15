@@ -31,12 +31,11 @@ namespace NetworkBenchmark
 				.WithIterationCount(5)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true);
+				.WithGcForce(true)
+				.WithPlatform(Platform.X64);
 
 			// Here you can test different runtimes
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core50)
-				.WithPlatform(Platform.X64));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
 			AddColumn(new MessagesPerSecondColumn());
 			AddColumn(FixedColumn.VersionColumn);

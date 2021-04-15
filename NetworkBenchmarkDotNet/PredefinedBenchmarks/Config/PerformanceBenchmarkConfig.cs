@@ -22,15 +22,16 @@ namespace NetworkBenchmark
 		{
 			Add(DefaultConfig.Instance);
 
-			AddJob(Job.Default
+			Job baseJob = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
 				.WithIterationCount(10)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true)
-				.WithRuntime(CoreRuntime.Core50)
-				.WithPlatform(Platform.X64));
+				.WithPlatform(Platform.X64);
+
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
 			AddColumn(new NumClientsColumn());
 			AddColumn(new MessagesPerSecondColumn());

@@ -29,15 +29,10 @@ namespace NetworkBenchmark
 				.WithIterationCount(10)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true);
+				.WithGcForce(true)
+				.WithPlatform(Platform.X64);
 
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core50)
-				.WithPlatform(Platform.X64));
-
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core31)
-				.WithPlatform(Platform.X64));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
 			AddColumn(FixedColumn.VersionColumn);
 			AddColumn(FixedColumn.OperatingSystemColumn);
