@@ -34,6 +34,8 @@ namespace NetworkBenchmark
 			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
 			ConfigHelper.AddDefaultColumns(this);
+			AddColumn(new NumClientsColumn());
+			AddColumn(new MessagesPerSecondColumn());
 		}
 	}
 }
