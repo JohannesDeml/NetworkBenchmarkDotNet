@@ -31,20 +31,15 @@ namespace NetworkBenchmark
 				.WithIterationCount(5)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true);
+				.WithGcForce(true)
+				.WithPlatform(Platform.X64);
 
 			// Here you can test different runtimes
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core50)
-				.WithPlatform(Platform.X64));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
+			ConfigHelper.AddDefaultColumns(this);
+			AddColumn(new NumClientsColumn());
 			AddColumn(new MessagesPerSecondColumn());
-			AddColumn(FixedColumn.VersionColumn);
-			AddColumn(FixedColumn.OperatingSystemColumn);
-			AddColumn(FixedColumn.DateTimeColumn);
-
-			AddExporter(MarkdownExporter.GitHub);
-			AddExporter(new CsvExporter(CsvSeparator.Comma, ConfigConstants.CsvStyle));
 
 			// You can also use additional diagnosers.
 			// Those might result in large trace files and can take some time to process after the benchmark finished

@@ -29,22 +29,12 @@ namespace NetworkBenchmark
 				.WithIterationCount(10)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true);
+				.WithGcForce(true)
+				.WithPlatform(Platform.X64);
 
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core50)
-				.WithPlatform(Platform.X64));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
-			AddJob(baseJob
-				.WithRuntime(CoreRuntime.Core31)
-				.WithPlatform(Platform.X64));
-
-			AddColumn(FixedColumn.VersionColumn);
-			AddColumn(FixedColumn.OperatingSystemColumn);
-			AddColumn(FixedColumn.DateTimeColumn);
-
-			AddExporter(MarkdownExporter.GitHub);
-			AddExporter(new CsvExporter(CsvSeparator.Comma, ConfigConstants.CsvStyle));
+			ConfigHelper.AddDefaultColumns(this);
 
 			AddDiagnoser(MemoryDiagnoser.Default);
 			AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
