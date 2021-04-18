@@ -7,7 +7,7 @@
         <Company>Johannes Deml</Company>
         <RootNamespace>NetworkingBenchmark</RootNamespace>
         <PackageVersion>1.0.0</PackageVersion>
-        <AssemblyVersion>cutting-edge</AssemblyVersion>
+        <AssemblyVersion>1.0.0.1</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
@@ -16,7 +16,7 @@
         <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
         <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
-        <FileVersion>cutting-edge</FileVersion>
+        <FileVersion>1.0.0.1</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsWindows)'=='true'">
