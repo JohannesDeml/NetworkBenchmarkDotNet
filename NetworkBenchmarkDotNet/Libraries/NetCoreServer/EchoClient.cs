@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -33,7 +34,10 @@ namespace NetworkBenchmark.NetCoreServer
 			this.id = id;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
-			message = config.Message;
+			// Use Pinned Object Heap to reduce GC pressure
+			message = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(message, 0);
+
 			initialMessages = config.ParallelMessages;
 			this.benchmarkStatistics = benchmarkStatistics;
 		}

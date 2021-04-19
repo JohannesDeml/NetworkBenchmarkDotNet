@@ -24,7 +24,6 @@ namespace NetworkBenchmark.Enet
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		private readonly byte[] message;
 		private readonly int timeout;
 		private readonly PacketFlags packetFlags;
 		private readonly Host host;
@@ -32,12 +31,11 @@ namespace NetworkBenchmark.Enet
 		private readonly Thread listenThread;
 		private Peer peer;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			message = config.Message;
 			timeout = Utilities.CalculateTimeout(this.config.ClientTickRate);
 			packetFlags = ENetBenchmark.GetPacketFlags(config.Transmission);
 
@@ -65,7 +63,7 @@ namespace NetworkBenchmark.Enet
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(message, 0, peer);
+				Send(Message, 0, peer);
 			}
 		}
 
@@ -151,8 +149,8 @@ namespace NetworkBenchmark.Enet
 
 		private void OnReceiveMessage(Event netEvent)
 		{
-			netEvent.Packet.CopyTo(message);
-			Send(message, 0, peer);
+			netEvent.Packet.CopyTo(Message);
+			Send(Message, 0, peer);
 		}
 
 		private void Send(byte[] data, byte channelID, Peer peer)

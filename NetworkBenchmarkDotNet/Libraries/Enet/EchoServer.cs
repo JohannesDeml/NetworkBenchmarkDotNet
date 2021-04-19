@@ -22,11 +22,10 @@ namespace NetworkBenchmark.Enet
 		private readonly Thread serverThread;
 		private readonly Host host;
 		private readonly Address address;
-		private readonly byte[] message;
 		private readonly int timeout;
 		private readonly PacketFlags packetFlags;
 
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -35,7 +34,6 @@ namespace NetworkBenchmark.Enet
 
 			host = new Host();
 			address = new Address();
-			message = new byte[config.MessageByteSize];
 
 			address.Port = (ushort) config.Port;
 			address.SetHost(config.Address);
@@ -105,8 +103,8 @@ namespace NetworkBenchmark.Enet
 
 		private void OnReceiveMessage(Event netEvent)
 		{
-			netEvent.Packet.CopyTo(message);
-			Send(message, 0, netEvent.Peer);
+			netEvent.Packet.CopyTo(MessageBuffer);
+			Send(MessageBuffer, 0, netEvent.Peer);
 		}
 
 		public override void Dispose()

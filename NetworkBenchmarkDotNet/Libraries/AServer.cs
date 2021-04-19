@@ -8,6 +8,8 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark
 {
 	public abstract class AServer : IServer
@@ -17,7 +19,14 @@ namespace NetworkBenchmark
 		protected volatile bool benchmarkPreparing;
 		protected volatile bool listen;
 		protected volatile bool benchmarkRunning;
+		protected readonly byte[] MessageBuffer;
 
+
+		protected AServer(Configuration config)
+		{
+			// Use Pinned Object Heap to reduce GC pressure
+			MessageBuffer = GC.AllocateArray<byte>(config.MessageByteSize, true);
+		}
 
 		public virtual void StartServer()
 		{

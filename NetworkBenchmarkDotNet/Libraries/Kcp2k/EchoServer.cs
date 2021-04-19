@@ -25,9 +25,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
-		private readonly byte[] message;
-
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -37,9 +35,6 @@ namespace NetworkBenchmark.Kcp2k
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);
 			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, noDelay, interval);
-
-
-			message = new byte[config.MessageByteSize];
 
 			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
@@ -78,8 +73,8 @@ namespace NetworkBenchmark.Kcp2k
 			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-				Array.Copy(arraySegment.Array, arraySegment.Offset, message, 0, arraySegment.Count);
-				Send(connectionId, message, communicationChannel);
+				Array.Copy(arraySegment.Array, arraySegment.Offset, MessageBuffer, 0, arraySegment.Count);
+				Send(connectionId, MessageBuffer, communicationChannel);
 			}
 		}
 
