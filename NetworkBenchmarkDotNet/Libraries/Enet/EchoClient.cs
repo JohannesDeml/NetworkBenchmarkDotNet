@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EnetClient.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="EchoClient.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Threading;
 using ENet;
 
@@ -127,6 +126,7 @@ namespace NetworkBenchmark.Enet
 					{
 						Utilities.WriteVerboseLine($"Client {id} timed out while benchmark is running.");
 					}
+
 					break;
 
 				case EventType.Disconnect:
@@ -134,6 +134,7 @@ namespace NetworkBenchmark.Enet
 					{
 						Utilities.WriteVerboseLine($"Client {id} disconnected while benchmark is running.");
 					}
+
 					break;
 
 				case EventType.Receive:

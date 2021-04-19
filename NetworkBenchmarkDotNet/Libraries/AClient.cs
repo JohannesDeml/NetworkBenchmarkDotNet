@@ -25,10 +25,12 @@ namespace NetworkBenchmark
 		/// Benchmark is preparing to be run
 		/// </summary>
 		protected volatile bool BenchmarkPreparing;
+
 		/// <summary>
 		/// Client should listen for incoming messages
 		/// </summary>
 		protected volatile bool Listen;
+
 		/// <summary>
 		/// Is a benchmark running (and therefore messages should be counted in the statistics)
 		/// </summary>

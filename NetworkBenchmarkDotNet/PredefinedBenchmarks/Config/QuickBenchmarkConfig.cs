@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InDepthBenchmarkConfig.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="QuickBenchmarkConfig.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -9,11 +9,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Environments;
-using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Jobs;
 
 namespace NetworkBenchmark

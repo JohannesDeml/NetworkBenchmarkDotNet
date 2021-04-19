@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkSetup.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="Configuration.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -157,7 +157,7 @@ namespace NetworkBenchmark
 			{
 				sb.AppendLine($"* Number of clients: {Clients}");
 			}
-			
+
 			sb.AppendLine($"* Parallel messages: {ParallelMessages:n0}, Size: {MessageByteSize} bytes, Payload: {MessagePayload}");
 			sb.AppendLine($"* TickRate per second: Client: {ClientTickRate}, Server: {ServerTickRate}");
 			sb.AppendLine($"* Reproduce: `");
@@ -169,7 +169,8 @@ namespace NetworkBenchmark
 			return sb.ToString();
 		}
 
-		private string GetDurationString() {
+		private string GetDurationString()
+		{
 			if (Duration < 0)
 			{
 				return "indefinite time";

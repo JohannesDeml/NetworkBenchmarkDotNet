@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BenchmarkData.cs">
+// <copyright file="BenchmarkStatistics.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -83,6 +83,7 @@ namespace NetworkBenchmark
 			{
 				sb.AppendLine($"Client Round Trip Time: {clientRtt.ToString()}");
 			}
+
 			sb.AppendLine("```");
 			sb.AppendLine();
 
