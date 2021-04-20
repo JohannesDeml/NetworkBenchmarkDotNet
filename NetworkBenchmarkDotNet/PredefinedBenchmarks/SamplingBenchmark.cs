@@ -20,11 +20,11 @@ namespace NetworkBenchmark
 
 		public override int ClientCount { get; set; } = 1;
 		public override int MessageTarget { get; set; } = 100_000;
-		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
+		protected override BenchmarkMode Mode => BenchmarkMode.Sampling;
 		protected override NetworkLibrary LibraryTarget => Library;
 
-		[GlobalSetup(Target = nameof(Garbage))]
-		public void PrepareGarbageBenchmark()
+		[GlobalSetup(Target = nameof(SampleSimpleEcho))]
+		public void PrepareSamplingBenchmark()
 		{
 			BenchmarkCoordinator.ApplyPredefinedConfiguration();
 			var config = BenchmarkCoordinator.Config;
@@ -35,7 +35,7 @@ namespace NetworkBenchmark
 		}
 
 		[Benchmark]
-		public long Garbage()
+		public long SampleSimpleEcho()
 		{
 			return RunBenchmark();
 		}

@@ -28,11 +28,11 @@ namespace NetworkBenchmark
 		Performance = 1 << 0,
 
 		/// <summary>
-		/// Run Benchmark Garbage
-		/// Benchmark which collects GC information
-		/// Runtime: ~1 minute
+		/// Run Benchmark Sampling
+		/// Benchmark which collects GC information and CPU time samples
+		/// Runtime: ~30 seconds
 		/// </summary>
-		Garbage = 1 << 1,
+		Sampling = 1 << 1,
 
 		/// <summary>
 		/// Run all essential benchmarks (Performance, Garbage)

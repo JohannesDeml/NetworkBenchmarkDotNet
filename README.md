@@ -60,10 +60,10 @@ This test is for multiplexing / message merging performance.
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **reliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time.
 
-### Benchmark [Garbage](./NetworkBenchmarkDotNet/PredefinedBenchmarks/GarbageBenchmark.cs)
+### Benchmark [SampleEchoSimple](./NetworkBenchmarkDotNet/PredefinedBenchmarks/SamplingBenchmark.cs)
 
-Runs the benchmark with **10** clients, which pingpong **10 messages** each with the server. The benchmark runs until a total of **10,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
-This test collects information about generated garbage while running the benchmark.
+Runs the benchmark with **1** client, which pingpong **10 messages** each with the server. The benchmark runs until a total of **100,000** messages are sent to the server and back to the clients. Message size is **128 bytes**.  
+This test collects information about generated garbage and CPU times while running the benchmark. Those results can be analyzed with [PerfView](https://github.com/microsoft/perfview) on Windows.
 
 ## Benchmark Results
 
@@ -131,9 +131,9 @@ DateTime=02/18/2021 16:18:02
 ### Notes
 
 * The tests perform very different on Linux compared to Windows 10, since there are a lot of client threads involved and Linux seems to handle them a lot better.
-* Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the Garbage benchmark.
+* Creation, Connection and Disconnection and Disposal of the Server and Clients is not included in the performance benchmarks, but is included in the .nettrace files from the Sampling benchmark.
 * Since the clients and the server run on the same machine, there is a lot less network latency as in a real world application. On the other hand, the CPU pressure is a lot higher than for a normal server, since all the clients get there own threads and run on the same machine. Take the results with a grain of salt.
-* To access the Garbage results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
+* To access the Sampling results, you can use [PerfView](https://github.com/microsoft/perfview) to open the `.nettrace` files.
 * Kcp2k has been recently added and might have some room for improvements. Especially using `Thread.Sleep` on Windows creates [noticeable delays](https://social.msdn.microsoft.com/Forums/vstudio/en-US/facc2b57-9a27-4049-bb32-ef093fbf4c29/threadsleep1-sleeps-for-156-ms?forum=clr). For now it is excluded of the predefined benchmarks, until its execution and cleanup are improved.
 
 
@@ -157,23 +157,24 @@ Usage:
   NetworkBenchmarkDotNet [options]
 
 Options:
-  -b, --benchmark <All|Custom|Essential|Garbage|Performance|Quick>    Run predefined benchmarks [default: Custom]
-  -m, --execution-mode <Client|Complete|Server>                       Control what parts to run [default: Complete]
-  -t, --test <PingPong>                                               Test type [default: PingPong]
-  --transmission <Reliable|Unreliable>                                Transmission type [default: Unreliable]
-  -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                 Library target [default: ENet]
-  -d, --duration <duration>                                           Test duration in seconds (-1 for manual stopping) [default: 10]
-  --address <address>                                                 IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
-  --port <port>                                                       Socket Port [default: 3330]
-  --clients <clients>                                                 # Simultaneous clients [default: 500]
-  --parallel-messages <parallel-messages>                             # Parallel messages per client [default: 1]
-  --message-byte-size <message-byte-size>                             Message byte size sent by clients [default: 32]
-  --message-payload <Ones|Random|Zeros>                               Message load sent by clients [default: Random]
-  --verbose                                                           Verbose output of test steps and errors [default: True]
-  --client-tick-rate <client-tick-rate>                               Client ticks per second if supported [default: 60]
-  --server-tick-rate <server-tick-rate>                               Server ticks per second if supported [default: 60]
-  --version                                                           Show version information
-  -?, -h, --help                                                      Show help and usage information
+  -b, --benchmark <All|Custom|Essential|Performance|Quick|Sampling>    Run predefined benchmarks [default: Custom]
+  -m, --execution-mode <Client|Complete|Server>                        Control what parts to run [default: Complete]
+  -t, --test <PingPong>                                                Test type [default: PingPong]
+  --transmission <Reliable|Unreliable>                                 Transmission type [default: Unreliable]
+  -l, --library <ENet|Kcp2k|LiteNetLib|NetCoreServer>                  Library target [default: ENet]
+  -d, --duration <duration>                                            Test duration in seconds (-1 for manual stopping) [default: 10]
+  --address <address>                                                  IP Address, can be ipv4 (e.g. 127.0.0.1) or ipv6 (e.g. ::1) [default: ::1]
+  --port <port>                                                        Socket Port [default: 3330]
+  --clients <clients>                                                  # Simultaneous clients [default: 500]
+  --parallel-messages <parallel-messages>                              # Parallel messages per client [default: 1]
+  --message-byte-size <message-byte-size>                              Message byte size sent by clients [default: 32]
+  --message-payload <Ones|Random|Zeros>                                Message load sent by clients [default: Random]
+  --verbose                                                            Verbose output of test steps and errors [default: True]
+  --client-tick-rate <client-tick-rate>                                Client ticks per second if supported [default: 60]
+  --server-tick-rate <server-tick-rate>                                Server ticks per second if supported [default: 60]
+  --version                                                            Show version information
+  -?, -h, --help                                                       Show help and usage information
+
 ```
 
 ### Predefined Benchmarks
@@ -184,7 +185,7 @@ Predefined benchmarks take some time to run, but generate reproducible numbers. 
 
 * **Quick** (<1min): Runs a quick benchmark with whatever is set in [QuickBenchmark.cs](../../blob/master/NetworkBenchmarkDotNet/PredefinedBenchmarks/QuickBenchmark.cs)
 * **Performance** (>15min): High Performance statistical test with all included libraries
-* **Garbage** (<1min): Test with all included libraries using cpu sampling and memory allocation statistics
+* **Sampling** (<1min): Test with all included libraries using cpu sampling and memory allocation statistics
 * **Essential** (>15min): Running Performance + Garbage Benchmark
 
 ![Run Predefined Benchmark windows command-line screenshot](./Docs/run-predefined-benchmark.png)
