@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoClient.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -28,18 +27,16 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		private readonly byte[] message;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			message = config.Message;
 			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
 			listener = new EventBasedNetListener();
@@ -78,7 +75,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(message);
+				Send(Message);
 			}
 
 			netManager.TriggerUpdate();
@@ -146,7 +143,7 @@ namespace NetworkBenchmark.LiteNetLib
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(message);
+				Send(Message);
 				netManager.TriggerUpdate();
 			}
 

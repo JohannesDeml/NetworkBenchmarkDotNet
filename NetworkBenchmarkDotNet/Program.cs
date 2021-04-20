@@ -58,10 +58,10 @@ namespace NetworkBenchmark
 				Console.WriteLine($"Finished {BenchmarkMode.Quick} Benchmark");
 			}
 
-			if ((mode & BenchmarkMode.Garbage) != 0)
+			if ((mode & BenchmarkMode.Sampling) != 0)
 			{
-				RunBenchmark<GarbageBenchmark>();
-				Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
+				RunBenchmark<SamplingBenchmark>();
+				Console.WriteLine($"Finished {BenchmarkMode.Sampling} Benchmark");
 			}
 		}
 

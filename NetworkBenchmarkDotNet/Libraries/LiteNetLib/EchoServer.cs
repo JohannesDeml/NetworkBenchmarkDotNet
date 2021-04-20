@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoServer.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -24,10 +24,9 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
-		private readonly byte[] message;
 		private readonly DeliveryMethod deliveryMethod;
 
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -43,8 +42,6 @@ namespace NetworkBenchmark.LiteNetLib
 			}
 
 			netManager.UnsyncedEvents = true;
-
-			message = new byte[config.MessageByteSize];
 
 			listener.ConnectionRequestEvent += OnConnectionRequest;
 			listener.NetworkReceiveEvent += OnNetworkReceive;
@@ -90,8 +87,8 @@ namespace NetworkBenchmark.LiteNetLib
 
 			if (benchmarkRunning)
 			{
-				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
-				peer.Send(message, deliveryMethod);
+				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, MessageBuffer, 0, reader.UserDataSize);
+				peer.Send(MessageBuffer, deliveryMethod);
 				Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 				netManager.TriggerUpdate();
 			}

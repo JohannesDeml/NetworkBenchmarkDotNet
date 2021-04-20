@@ -8,6 +8,8 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark
 {
 	public abstract class AClient : IClient
@@ -25,14 +27,25 @@ namespace NetworkBenchmark
 		/// Benchmark is preparing to be run
 		/// </summary>
 		protected volatile bool BenchmarkPreparing;
+
 		/// <summary>
 		/// Client should listen for incoming messages
 		/// </summary>
 		protected volatile bool Listen;
+
 		/// <summary>
 		/// Is a benchmark running (and therefore messages should be counted in the statistics)
 		/// </summary>
 		protected volatile bool BenchmarkRunning;
+
+		protected readonly byte[] Message;
+
+		protected AClient(Configuration config)
+		{
+			// Use Pinned Object Heap to reduce GC pressure
+			Message = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(Message, 0);
+		}
 
 		public virtual void StartClient()
 		{

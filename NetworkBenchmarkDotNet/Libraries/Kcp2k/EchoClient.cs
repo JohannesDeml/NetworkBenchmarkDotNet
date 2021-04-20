@@ -27,17 +27,15 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly Thread tickThread;
-		private readonly byte[] messageArray;
 		private readonly KcpClientConnection client;
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			messageArray = config.Message;
 			noDelay = true;
 			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
 
@@ -87,7 +85,7 @@ namespace NetworkBenchmark.Kcp2k
 
 			for (int i = 0; i < parallelMessagesPerClient; i++)
 			{
-				Send(messageArray, communicationChannel);
+				Send(Message, communicationChannel);
 			}
 
 			Tick();
@@ -109,14 +107,14 @@ namespace NetworkBenchmark.Kcp2k
 			isDisposed = true;
 		}
 
-		private void Send(ArraySegment<byte> message, KcpChannel channel)
+		private void Send(ArraySegment<byte> buffer, KcpChannel channel)
 		{
 			if (!IsConnected)
 			{
 				return;
 			}
 
-			client.SendData(message, channel);
+			client.SendData(buffer, channel);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
@@ -131,7 +129,7 @@ namespace NetworkBenchmark.Kcp2k
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(messageArray, communicationChannel);
+				Send(Message, communicationChannel);
 			}
 		}
 

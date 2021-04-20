@@ -1,13 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ENetBenchmark.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
 //   public@deml.io
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
-
 
 using System;
 using ENet;
