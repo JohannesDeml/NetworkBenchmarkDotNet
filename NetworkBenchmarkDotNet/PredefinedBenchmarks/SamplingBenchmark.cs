@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GarbageBenchmark.cs">
+// <copyright file="SamplingBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -12,14 +12,14 @@ using BenchmarkDotNet.Attributes;
 
 namespace NetworkBenchmark
 {
-	[Config(typeof(GarbageBenchmarkConfig))]
-	public class GarbageBenchmark : APredefinedBenchmark
+	[Config(typeof(SamplingBenchmarkConfig))]
+	public class SamplingBenchmark : APredefinedBenchmark
 	{
 		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
 		public NetworkLibrary Library { get; set; }
 
-		public override int ClientCount { get; set; } = 10;
-		public override int MessageTarget { get; set; } = 10_000;
+		public override int ClientCount { get; set; } = 1;
+		public override int MessageTarget { get; set; } = 100_000;
 		protected override BenchmarkMode Mode => BenchmarkMode.Garbage;
 		protected override NetworkLibrary LibraryTarget => Library;
 

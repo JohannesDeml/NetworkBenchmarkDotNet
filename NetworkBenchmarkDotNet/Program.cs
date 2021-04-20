@@ -60,7 +60,7 @@ namespace NetworkBenchmark
 
 			if ((mode & BenchmarkMode.Garbage) != 0)
 			{
-				RunBenchmark<GarbageBenchmark>();
+				RunBenchmark<SamplingBenchmark>();
 				Console.WriteLine($"Finished {BenchmarkMode.Garbage} Benchmark");
 			}
 		}

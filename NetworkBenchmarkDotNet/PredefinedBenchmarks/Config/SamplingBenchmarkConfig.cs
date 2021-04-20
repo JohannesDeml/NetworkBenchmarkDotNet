@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GarbageBenchmarkConfig.cs">
+// <copyright file="SamplingBenchmarkConfig.cs">
 //   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -8,23 +8,26 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Diagnostics.Tracing;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
+using Microsoft.Diagnostics.NETCore.Client;
+using Microsoft.Diagnostics.Tracing.Parsers;
 
 namespace NetworkBenchmark
 {
-	public class GarbageBenchmarkConfig : ManualConfig
+	public class SamplingBenchmarkConfig : ManualConfig
 	{
-		public GarbageBenchmarkConfig()
+		public SamplingBenchmarkConfig()
 		{
 			Add(DefaultConfig.Instance);
 
 			Job baseJob = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
-				.WithIterationCount(10)
+				.WithIterationCount(1)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true)
@@ -34,8 +37,19 @@ namespace NetworkBenchmark
 
 			ConfigHelper.AddDefaultColumns(this);
 
-			AddDiagnoser(MemoryDiagnoser.Default);
-			AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
+			var providers = new[]
+			{
+				new EventPipeProvider(
+					name: ClrTraceEventParser.ProviderName,
+					eventLevel: EventLevel.Verbose,
+					keywords: (long) ClrTraceEventParser.Keywords.Default |
+					          (long) ClrTraceEventParser.Keywords.GC |
+					          (long) ClrTraceEventParser.Keywords.GCHandle |
+					          (long) ClrTraceEventParser.Keywords.Exception
+				),
+			};
+
+			AddDiagnoser(new EventPipeProfiler(providers: providers, performExtraBenchmarksRun: false));
 		}
 	}
 }
