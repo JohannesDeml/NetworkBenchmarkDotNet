@@ -74,11 +74,13 @@ namespace NetworkBenchmark.LiteNetLib
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
+
 			for (int i = 0; i < messageCount; i++)
 			{
-				Broadcast(MessageBuffer);
+				Broadcast(MessageBuffer, delivery);
 			}
 			netManager.TriggerUpdate();
 		}
@@ -114,9 +116,9 @@ namespace NetworkBenchmark.LiteNetLib
 			reader.Recycle();
 		}
 
-		private void Broadcast(byte[] data)
+		private void Broadcast(byte[] data, DeliveryMethod delivery)
 		{
-			netManager.SendToAll(data, deliveryMethod);
+			netManager.SendToAll(data, delivery);
 			var messagesSent = netManager.ConnectedPeersCount;
 			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}

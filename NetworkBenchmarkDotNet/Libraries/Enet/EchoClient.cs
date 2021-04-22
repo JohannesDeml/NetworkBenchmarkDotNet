@@ -61,7 +61,7 @@ namespace NetworkBenchmark.Enet
 			base.StartBenchmark();
 			if (!ManualMode)
 			{
-				SendMessages(config.ParallelMessages);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
 		}
 
@@ -84,13 +84,15 @@ namespace NetworkBenchmark.Enet
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			var flags = ENetBenchmark.GetPacketFlags(config.Transmission);
+
 			// Don't do this in a real-world application, ENet is not thread safe
 			// send should only be called in the thread that also calls host.Service
 			for (int i = 0; i < messageCount; i++)
 			{
-				Send(Message, 0, peer);
+				Send(Message, 0, peer, flags);
 			}
 		}
 
@@ -165,14 +167,14 @@ namespace NetworkBenchmark.Enet
 		private void OnReceiveMessage(Event netEvent)
 		{
 			netEvent.Packet.CopyTo(Message);
-			Send(Message, 0, peer);
+			Send(Message, 0, peer, packetFlags);
 		}
 
-		private void Send(byte[] data, byte channelID, Peer peer)
+		private void Send(byte[] data, byte channelID, Peer peer, PacketFlags flags)
 		{
 			Packet packet = default(Packet);
 
-			packet.Create(data, data.Length, packetFlags);
+			packet.Create(data, data.Length, flags);
 			peer.Send(channelID, ref packet);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}

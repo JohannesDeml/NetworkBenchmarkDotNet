@@ -76,7 +76,7 @@ namespace NetworkBenchmark.LiteNetLib
 			base.StartBenchmark();
 			if (!ManualMode)
 			{
-				SendMessages(config.ParallelMessages);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
 		}
 
@@ -111,11 +111,13 @@ namespace NetworkBenchmark.LiteNetLib
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
+
 			for (int i = 0; i < messageCount; i++)
 			{
-				Send(Message);
+				Send(Message, delivery);
 			}
 
 			netManager.TriggerUpdate();
@@ -123,14 +125,14 @@ namespace NetworkBenchmark.LiteNetLib
 
 		#endregion
 
-		private void Send(byte[] bytes)
+		private void Send(byte[] bytes, DeliveryMethod delivery)
 		{
 			if (!IsConnected)
 			{
 				return;
 			}
 
-			peer.Send(bytes, deliveryMethod);
+			peer.Send(bytes, delivery);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
@@ -158,7 +160,7 @@ namespace NetworkBenchmark.LiteNetLib
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
 				if (!ManualMode)
 				{
-					Send(Message);
+					Send(Message, deliverymethod);
 					netManager.TriggerUpdate();
 				}
 			}

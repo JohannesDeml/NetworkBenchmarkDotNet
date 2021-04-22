@@ -87,7 +87,7 @@ namespace NetworkBenchmark
 		/// The benchmark needs to be prepared once before running it.
 		/// </summary>
 		/// <param name="networkBenchmark">Library to run</param>
-		public static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
+		private static void RunTimedBenchmark(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose($"-> Run Benchmark {Config.Library}...");
 			StartBenchmark(networkBenchmark);
@@ -102,7 +102,7 @@ namespace NetworkBenchmark
 		/// Runs until the user stops the process
 		/// </summary>
 		/// <param name="networkBenchmark"></param>
-		public static void RunIndefinitely(INetworkBenchmark networkBenchmark)
+		private static void RunIndefinitely(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose($"-> Run indefinitely {Config.Library}... (press enter to stop)");
 			StartBenchmark(networkBenchmark);
@@ -118,12 +118,14 @@ namespace NetworkBenchmark
 		/// Runs until the user stops the process
 		/// </summary>
 		/// <param name="networkBenchmark"></param>
-		public static void RunManualMode(INetworkBenchmark networkBenchmark)
+		private static void RunManualMode(INetworkBenchmark networkBenchmark)
 		{
 			Utilities.WriteVerbose($"-> Run Manual Mode {Config.Library}\n");
 			StartBenchmark(networkBenchmark);
 
-			while (true)
+			bool running = true;
+
+			while (running)
 			{
 				var input = Console.ReadLine();
 				if (input == null)
@@ -138,45 +140,66 @@ namespace NetworkBenchmark
 					continue;
 				}
 
-				var target = parts[0][0];
-
-				if (target == 'q')
-				{
-					break;
-				}
-
-				if (parts.Length < 2 || !int.TryParse(parts[1], out int value))
-				{
-					PrintInvalidManualInput();
-					continue;
-				}
-
-				switch (target)
-				{
-					case 'c':
-						var clients = networkBenchmark.Clients;
-						for (int i = 0; i < clients.Count; i++)
-						{
-							clients[i].SendMessages(value);
-						}
-
-						break;
-					case 's':
-						networkBenchmark.Server.SendMessages(value);
-						break;
-					default:
-						PrintInvalidManualInput();
-						break;
-				}
+				running = ProcessManualInput(networkBenchmark, parts);
 			}
 
 			StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
 		}
 
+		private static bool ProcessManualInput(INetworkBenchmark networkBenchmark, string[] parts)
+		{
+			var target = parts[0][0];
+
+			if (target == 'q')
+			{
+				return false;
+			}
+
+			if (parts.Length < 2 || !int.TryParse(parts[1], out int value))
+			{
+				PrintInvalidManualInput();
+				return true;
+			}
+
+			var transmissionMode = Config.Transmission;
+			if (parts.Length >= 3)
+			{
+				var transmission = parts[2][0];
+				if (transmission == 'r')
+				{
+					transmissionMode = TransmissionType.Reliable;
+				}
+				else if (transmission == 'u')
+				{
+					transmissionMode = TransmissionType.Unreliable;
+				}
+			}
+
+			switch (target)
+			{
+				case 'c':
+					var clients = networkBenchmark.Clients;
+					for (int i = 0; i < clients.Count; i++)
+					{
+						clients[i].SendMessages(value, transmissionMode);
+					}
+
+					break;
+				case 's':
+					networkBenchmark.Server.SendMessages(value, transmissionMode);
+					break;
+				default:
+					PrintInvalidManualInput();
+					break;
+			}
+
+			return true;
+		}
+
 		private static void PrintInvalidManualInput()
 		{
-			Utilities.WriteVerbose($"Invalid - Enter a command, e.g. c 1 or s 4, to quit enter q");
+			Utilities.WriteVerbose($"Invalid - Enter a command, q|c|s (0-9)* [r|u] e.g. 'c 1' or 's 4 u', to quit enter q");
 		}
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)

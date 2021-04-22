@@ -118,13 +118,13 @@ namespace NetworkBenchmark.Enet
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
 			// Don't do this in a real-world application, ENet is not thread safe
 			// send should only be called in the thread that also calls host.Service
 			for (int i = 0; i < messageCount; i++)
 			{
-				Broadcast(MessageBuffer, 0);
+				Broadcast(MessageBuffer, 0, transmissionType);
 			}
 		}
 
@@ -139,11 +139,12 @@ namespace NetworkBenchmark.Enet
 			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 		}
 
-		private void Broadcast(byte[] data, byte channelId)
+		private void Broadcast(byte[] data, byte channelId, TransmissionType transmissionType)
 		{
 			Packet packet = default(Packet);
+			var flags = ENetBenchmark.GetPacketFlags(config.Transmission);
 
-			packet.Create(data, data.Length, packetFlags);
+			packet.Create(data, data.Length, flags);
 			host.Broadcast(channelId, ref packet);
 			var messagesSent = host.PeersCount;
 			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);

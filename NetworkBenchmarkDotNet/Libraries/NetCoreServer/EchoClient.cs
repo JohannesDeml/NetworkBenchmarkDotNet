@@ -25,22 +25,22 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool benchmarkRunning;
 
 		private readonly int id;
-		private readonly int initialMessages;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
-		private readonly bool ManualMode;
+		private readonly bool manualMode;
 		private readonly byte[] message;
 
 		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
+			this.config = config;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
-			ManualMode = config.Test == TestType.Manual;
+			manualMode = config.Test == TestType.Manual;
 			// Use Pinned Object Heap to reduce GC pressure
 			message = GC.AllocateArray<byte>(config.MessageByteSize, true);
 			config.Message.CopyTo(message, 0);
 
-			initialMessages = config.ParallelMessages;
 			this.benchmarkStatistics = benchmarkStatistics;
 		}
 
@@ -56,9 +56,9 @@ namespace NetworkBenchmark.NetCoreServer
 			benchmarkPreparing = false;
 			benchmarkRunning = true;
 
-			if (ManualMode)
+			if (manualMode)
 			{
-				SendMessages(initialMessages);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
 		}
 
@@ -79,8 +79,10 @@ namespace NetworkBenchmark.NetCoreServer
 
 		#region ManualMode
 
-		public void SendMessages(int messageCount)
+		public void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			NetCoreServerBenchmark.ProcessTransmissionType(transmissionType);
+
 			for (int i = 0; i < messageCount; i++)
 			{
 				SendMessage();
@@ -111,7 +113,7 @@ namespace NetworkBenchmark.NetCoreServer
 			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				if (!ManualMode)
+				if (!manualMode)
 				{
 					SendMessage();
 				}

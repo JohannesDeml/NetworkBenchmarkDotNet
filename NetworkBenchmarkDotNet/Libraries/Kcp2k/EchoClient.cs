@@ -83,7 +83,7 @@ namespace NetworkBenchmark.Kcp2k
 			base.StartBenchmark();
 			if (!ManualMode)
 			{
-				SendMessages(config.ParallelMessages);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
 		}
 
@@ -105,11 +105,13 @@ namespace NetworkBenchmark.Kcp2k
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			var channel = Kcp2kBenchmark.GetChannel(config.Transmission);
+
 			for (int i = 0; i < messageCount; i++)
 			{
-				Send(Message, communicationChannel);
+				Send(Message, channel);
 			}
 			Tick();
 		}

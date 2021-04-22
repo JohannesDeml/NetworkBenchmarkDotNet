@@ -62,7 +62,7 @@ namespace NetworkBenchmark
 
 		#region ManualMode
 
-        public abstract void SendMessages(int messageCount);
+        public abstract void SendMessages(int messageCount, TransmissionType transmissionType);
 
         #endregion
 	}

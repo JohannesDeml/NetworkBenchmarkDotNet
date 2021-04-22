@@ -54,11 +54,13 @@ namespace NetworkBenchmark.Kcp2k
 
 		#region ManualMode
 
-		public override void SendMessages(int messageCount)
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
+			var channel = Kcp2kBenchmark.GetChannel(transmissionType);
+
 			for (int i = 0; i < messageCount; i++)
 			{
-				Broadcast(MessageBuffer, communicationChannel);
+				Broadcast(MessageBuffer, channel);
 			}
 		}
 
