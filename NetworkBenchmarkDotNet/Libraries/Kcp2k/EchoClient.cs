@@ -81,14 +81,10 @@ namespace NetworkBenchmark.Kcp2k
 		public override void StartBenchmark()
 		{
 			base.StartBenchmark();
-			var parallelMessagesPerClient = config.ParallelMessages;
-
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			if (!ManualMode)
 			{
-				Send(Message, communicationChannel);
+				SendMessages(config.ParallelMessages);
 			}
-
-			Tick();
 		}
 
 		public override void DisconnectClient()
@@ -106,6 +102,19 @@ namespace NetworkBenchmark.Kcp2k
 			//TODO dispose client once supported
 			isDisposed = true;
 		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			for (int i = 0; i < messageCount; i++)
+			{
+				Send(Message, communicationChannel);
+			}
+			Tick();
+		}
+
+		#endregion
 
 		private void Send(ArraySegment<byte> buffer, KcpChannel channel)
 		{
@@ -129,7 +138,10 @@ namespace NetworkBenchmark.Kcp2k
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(Message, communicationChannel);
+				if (!ManualMode)
+				{
+					Send(Message, communicationChannel);
+				}
 			}
 		}
 

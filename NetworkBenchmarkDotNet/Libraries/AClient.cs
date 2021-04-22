@@ -38,10 +38,17 @@ namespace NetworkBenchmark
 		/// </summary>
 		protected volatile bool BenchmarkRunning;
 
+		/// <summary>
+		/// Manual Mode stops the default behavior and waits for user input to execute tasks
+		/// </summary>
+		protected readonly bool ManualMode;
+
 		protected readonly byte[] Message;
 
 		protected AClient(Configuration config)
 		{
+			ManualMode = config.Test == TestType.Manual;
+
 			// Use Pinned Object Heap to reduce GC pressure
 			Message = GC.AllocateArray<byte>(config.MessageByteSize, true);
 			config.Message.CopyTo(Message, 0);
@@ -72,5 +79,11 @@ namespace NetworkBenchmark
 		public abstract void DisconnectClient();
 
 		public abstract void Dispose();
+
+		#region ManualMode
+
+		public abstract void SendMessages(int messageCount);
+
+		#endregion
 	}
 }

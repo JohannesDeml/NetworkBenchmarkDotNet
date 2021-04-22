@@ -25,15 +25,17 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool benchmarkRunning;
 
 		private readonly int id;
-		private readonly byte[] message;
 		private readonly int initialMessages;
 		private readonly BenchmarkStatistics benchmarkStatistics;
+		private readonly bool ManualMode;
+		private readonly byte[] message;
 
 		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
+			ManualMode = config.Test == TestType.Manual;
 			// Use Pinned Object Heap to reduce GC pressure
 			message = GC.AllocateArray<byte>(config.MessageByteSize, true);
 			config.Message.CopyTo(message, 0);
@@ -54,16 +56,10 @@ namespace NetworkBenchmark.NetCoreServer
 			benchmarkPreparing = false;
 			benchmarkRunning = true;
 
-			for (int i = 0; i < initialMessages; i++)
+			if (ManualMode)
 			{
-				SendMessage();
+				SendMessages(initialMessages);
 			}
-		}
-
-		private void SendMessage()
-		{
-			Send(message);
-			benchmarkStatistics.MessagesClientSent++;
 		}
 
 		public void StopBenchmark()
@@ -80,6 +76,18 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			Disconnect();
 		}
+
+		#region ManualMode
+
+		public void SendMessages(int messageCount)
+		{
+			for (int i = 0; i < messageCount; i++)
+			{
+				SendMessage();
+			}
+		}
+
+		#endregion
 
 		protected override void OnConnected()
 		{
@@ -102,8 +110,11 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			if (benchmarkRunning)
 			{
-				benchmarkStatistics.MessagesClientReceived++;
-				SendMessage();
+				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
+				if (!ManualMode)
+				{
+					SendMessage();
+				}
 			}
 
 			if (listen)
@@ -121,6 +132,12 @@ namespace NetworkBenchmark.NetCoreServer
 				Utilities.WriteVerboseLine($"Error Client {id}: {error}");
 				Interlocked.Increment(ref benchmarkStatistics.Errors);
 			}
+		}
+
+		private void SendMessage()
+		{
+			Send(message);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 	}
 }

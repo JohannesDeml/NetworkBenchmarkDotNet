@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetworkBenchmark.Enet;
 using NetworkBenchmark.Kcp2k;
@@ -19,6 +20,9 @@ namespace NetworkBenchmark
 {
 	public interface INetworkBenchmark
 	{
+		public IServer Server { get; }
+		public List<IClient> Clients { get; }
+
 		public static INetworkBenchmark CreateNetworkBenchmark(NetworkLibrary library)
 		{
 			switch (library)

@@ -47,6 +47,23 @@ namespace NetworkBenchmark.Kcp2k
 			serverThread.Start();
 		}
 
+		public override void Dispose()
+		{
+			// Server already stopped, maybe there is the need to dispose something else?
+		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer, communicationChannel);
+			}
+		}
+
+		#endregion
+
 		private void TickLoop()
 		{
 			server.Start((ushort) config.Port);
@@ -73,8 +90,11 @@ namespace NetworkBenchmark.Kcp2k
 			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-				Array.Copy(arraySegment.Array, arraySegment.Offset, MessageBuffer, 0, arraySegment.Count);
-				Send(connectionId, MessageBuffer, communicationChannel);
+				if (!ManualMode)
+				{
+					Array.Copy(arraySegment.Array, arraySegment.Offset, MessageBuffer, 0, arraySegment.Count);
+					Send(connectionId, MessageBuffer, communicationChannel);
+				}
 			}
 		}
 
@@ -92,9 +112,15 @@ namespace NetworkBenchmark.Kcp2k
 			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 		}
 
-		public override void Dispose()
+		private void Broadcast(ArraySegment<byte> message, KcpChannel channel)
 		{
-			// Server already stopped, maybe there is the need to dispose something else?
+			foreach (var connection in server.connections.Values)
+			{
+				connection.SendData(message, channel);
+			}
+
+			var messagesSent = server.connections.Count;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 	}
 }

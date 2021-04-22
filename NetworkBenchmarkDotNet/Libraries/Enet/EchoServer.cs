@@ -85,7 +85,10 @@ namespace NetworkBenchmark.Enet
 					if (benchmarkRunning)
 					{
 						Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-						OnReceiveMessage(netEvent);
+						if (!ManualMode)
+						{
+							OnReceiveMessage(netEvent);
+						}
 					}
 
 					netEvent.Packet.Dispose();
@@ -113,6 +116,20 @@ namespace NetworkBenchmark.Enet
 			host.Dispose();
 		}
 
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			// Don't do this in a real-world application, ENet is not thread safe
+			// send should only be called in the thread that also calls host.Service
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer, 0);
+			}
+		}
+
+		#endregion
+
 		private void Send(byte[] data, byte channelId, Peer peer)
 		{
 			Packet packet = default(Packet);
@@ -120,6 +137,16 @@ namespace NetworkBenchmark.Enet
 			packet.Create(data, data.Length, packetFlags);
 			peer.Send(channelId, ref packet);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
+		}
+
+		private void Broadcast(byte[] data, byte channelId)
+		{
+			Packet packet = default(Packet);
+
+			packet.Create(data, data.Length, packetFlags);
+			host.Broadcast(channelId, ref packet);
+			var messagesSent = host.PeersCount;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 	}
 }

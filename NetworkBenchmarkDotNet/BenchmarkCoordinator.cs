@@ -65,6 +65,23 @@ namespace NetworkBenchmark
 			Utilities.WriteVerboseLine(" Done");
 		}
 
+		public static void RunBenchmark(INetworkBenchmark networkBenchmark)
+		{
+			if (Config.Test == TestType.Manual)
+			{
+				RunManualMode(networkBenchmark);
+				return;
+			}
+
+			if (Config.Duration < 0)
+			{
+				RunIndefinitely(networkBenchmark);
+				return;
+			}
+
+			RunTimedBenchmark(networkBenchmark);
+		}
+
 		/// <summary>
 		/// Run the benchmark for a specific duration
 		/// The benchmark needs to be prepared once before running it.
@@ -94,6 +111,72 @@ namespace NetworkBenchmark
 
 			StopBenchmark(networkBenchmark);
 			Utilities.WriteVerboseLine(" Done");
+		}
+
+		/// <summary>
+		/// Enables to enter defined commands
+		/// Runs until the user stops the process
+		/// </summary>
+		/// <param name="networkBenchmark"></param>
+		public static void RunManualMode(INetworkBenchmark networkBenchmark)
+		{
+			Utilities.WriteVerbose($"-> Run Manual Mode {Config.Library}\n");
+			StartBenchmark(networkBenchmark);
+
+			while (true)
+			{
+				var input = Console.ReadLine();
+				if (input == null)
+				{
+					PrintInvalidManualInput();
+					continue;
+				}
+				var parts = input.ToLower().Split(' ');
+				if (parts.Length == 0 || parts[0].Length == 0)
+				{
+					PrintInvalidManualInput();
+					continue;
+				}
+
+				var target = parts[0][0];
+
+				if (target == 'q')
+				{
+					break;
+				}
+
+				if (parts.Length < 2 || !int.TryParse(parts[1], out int value))
+				{
+					PrintInvalidManualInput();
+					continue;
+				}
+
+				switch (target)
+				{
+					case 'c':
+						var clients = networkBenchmark.Clients;
+						for (int i = 0; i < clients.Count; i++)
+						{
+							clients[i].SendMessages(value);
+						}
+
+						break;
+					case 's':
+						networkBenchmark.Server.SendMessages(value);
+						break;
+					default:
+						PrintInvalidManualInput();
+						break;
+				}
+			}
+
+			StopBenchmark(networkBenchmark);
+			Utilities.WriteVerboseLine(" Done");
+		}
+
+		private static void PrintInvalidManualInput()
+		{
+			Utilities.WriteVerbose($"Invalid - Enter a command, e.g. c 1 or s 4, to quit enter q");
 		}
 
 		public static void StartBenchmark(INetworkBenchmark networkBenchmark)

@@ -59,11 +59,9 @@ namespace NetworkBenchmark.Enet
 		public override void StartBenchmark()
 		{
 			base.StartBenchmark();
-			var parallelMessagesPerClient = config.ParallelMessages;
-
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			if (!ManualMode)
 			{
-				Send(Message, 0, peer);
+				SendMessages(config.ParallelMessages);
 			}
 		}
 
@@ -83,6 +81,20 @@ namespace NetworkBenchmark.Enet
 			host.Dispose();
 			isDisposed = true;
 		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			// Don't do this in a real-world application, ENet is not thread safe
+			// send should only be called in the thread that also calls host.Service
+			for (int i = 0; i < messageCount; i++)
+			{
+				Send(Message, 0, peer);
+			}
+		}
+
+		#endregion
 
 		private void ListenLoop()
 		{
@@ -139,7 +151,10 @@ namespace NetworkBenchmark.Enet
 					if (BenchmarkRunning)
 					{
 						Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-						OnReceiveMessage(netEvent);
+						if (!ManualMode)
+						{
+							OnReceiveMessage(netEvent);
+						}
 					}
 
 					netEvent.Packet.Dispose();

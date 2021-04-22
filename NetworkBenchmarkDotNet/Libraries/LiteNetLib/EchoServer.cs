@@ -72,6 +72,19 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 		}
 
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer);
+			}
+			netManager.TriggerUpdate();
+		}
+
+		#endregion
+
 		private void OnConnectionRequest(ConnectionRequest request)
 		{
 			if (netManager.ConnectedPeerList.Count > config.Clients)
@@ -86,17 +99,26 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod clientDeliveryMethod)
 		{
-			Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-
 			if (benchmarkRunning)
 			{
-				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, MessageBuffer, 0, reader.UserDataSize);
-				peer.Send(MessageBuffer, deliveryMethod);
-				Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
-				netManager.TriggerUpdate();
+				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
+				if (!ManualMode)
+				{
+					Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, MessageBuffer, 0, reader.UserDataSize);
+					peer.Send(MessageBuffer, deliveryMethod);
+					Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
+					netManager.TriggerUpdate();
+				}
 			}
 
 			reader.Recycle();
+		}
+
+		private void Broadcast(byte[] data)
+		{
+			netManager.SendToAll(data, deliveryMethod);
+			var messagesSent = netManager.ConnectedPeersCount;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)

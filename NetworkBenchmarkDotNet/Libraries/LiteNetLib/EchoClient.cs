@@ -74,14 +74,10 @@ namespace NetworkBenchmark.LiteNetLib
 		public override void StartBenchmark()
 		{
 			base.StartBenchmark();
-			var parallelMessagesPerClient = config.ParallelMessages;
-
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			if (!ManualMode)
 			{
-				Send(Message);
+				SendMessages(config.ParallelMessages);
 			}
-
-			netManager.TriggerUpdate();
 		}
 
 		public override void DisconnectClient()
@@ -112,6 +108,20 @@ namespace NetworkBenchmark.LiteNetLib
 
 			isDisposed = true;
 		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount)
+		{
+			for (int i = 0; i < messageCount; i++)
+			{
+				Send(Message);
+			}
+
+			netManager.TriggerUpdate();
+		}
+
+		#endregion
 
 		private void Send(byte[] bytes)
 		{
@@ -146,8 +156,11 @@ namespace NetworkBenchmark.LiteNetLib
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(Message);
-				netManager.TriggerUpdate();
+				if (!ManualMode)
+				{
+					Send(Message);
+					netManager.TriggerUpdate();
+				}
 			}
 
 			reader.Recycle();
