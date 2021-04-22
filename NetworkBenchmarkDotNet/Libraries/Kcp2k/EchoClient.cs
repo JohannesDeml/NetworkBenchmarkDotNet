@@ -107,7 +107,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
-			var channel = Kcp2kBenchmark.GetChannel(config.Transmission);
+			var channel = Kcp2kBenchmark.GetChannel(transmissionType);
 
 			for (int i = 0; i < messageCount; i++)
 			{

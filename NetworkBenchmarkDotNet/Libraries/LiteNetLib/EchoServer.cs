@@ -76,7 +76,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
-			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
+			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(transmissionType);
 
 			for (int i = 0; i < messageCount; i++)
 			{

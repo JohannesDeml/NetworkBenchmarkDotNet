@@ -142,7 +142,7 @@ namespace NetworkBenchmark.Enet
 		private void Broadcast(byte[] data, byte channelId, TransmissionType transmissionType)
 		{
 			Packet packet = default(Packet);
-			var flags = ENetBenchmark.GetPacketFlags(config.Transmission);
+			var flags = ENetBenchmark.GetPacketFlags(transmissionType);
 
 			packet.Create(data, data.Length, flags);
 			host.Broadcast(channelId, ref packet);

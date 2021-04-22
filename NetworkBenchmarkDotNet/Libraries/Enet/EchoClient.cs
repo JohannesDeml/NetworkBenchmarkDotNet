@@ -86,7 +86,7 @@ namespace NetworkBenchmark.Enet
 
 		public override void SendMessages(int messageCount, TransmissionType transmissionType)
 		{
-			var flags = ENetBenchmark.GetPacketFlags(config.Transmission);
+			var flags = ENetBenchmark.GetPacketFlags(transmissionType);
 
 			// Don't do this in a real-world application, ENet is not thread safe
 			// send should only be called in the thread that also calls host.Service
