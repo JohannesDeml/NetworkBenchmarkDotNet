@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="QuickBenchmarkConfig.cs">
+// <copyright file="SamplingBenchmarkConfig.cs">
 //   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -8,41 +8,48 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Diagnostics.Tracing;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Engines;
+using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
+using Microsoft.Diagnostics.NETCore.Client;
+using Microsoft.Diagnostics.Tracing.Parsers;
 
 namespace NetworkBenchmark
 {
-	public class QuickBenchmarkConfig : ManualConfig
+	public class SamplingBenchmarkConfig : ManualConfig
 	{
-		public QuickBenchmarkConfig()
+		public SamplingBenchmarkConfig()
 		{
 			Add(DefaultConfig.Instance);
 
 			Job baseJob = Job.Default
-				.WithStrategy(RunStrategy.Monitoring)
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
-				.WithIterationCount(5)
+				.WithIterationCount(1)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
 				.WithGcForce(true)
 				.WithPlatform(Platform.X64);
 
-			// Here you can test different runtimes
 			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
 
 			ConfigHelper.AddDefaultColumns(this);
-			AddColumn(new NumClientsColumn());
-			AddColumn(new MessagesPerSecondColumn());
 
-			// You can also use additional diagnosers.
-			// Those might result in large trace files and can take some time to process after the benchmark finished
-			// AddDiagnoser(MemoryDiagnoser.Default);
-			// AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
-			// AddDiagnoser(new EventPipeProfiler(EventPipeProfile.CpuSampling));
+			var providers = new[]
+			{
+				new EventPipeProvider(
+					name: ClrTraceEventParser.ProviderName,
+					eventLevel: EventLevel.Verbose,
+					keywords: (long) ClrTraceEventParser.Keywords.Default |
+					          (long) ClrTraceEventParser.Keywords.GC |
+					          (long) ClrTraceEventParser.Keywords.GCHandle |
+					          (long) ClrTraceEventParser.Keywords.Exception
+				),
+			};
+
+			AddDiagnoser(new EventPipeProfiler(providers: providers, performExtraBenchmarksRun: false));
 		}
 	}
 }

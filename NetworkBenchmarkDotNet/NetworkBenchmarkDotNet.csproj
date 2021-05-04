@@ -7,7 +7,7 @@
         <Company>Johannes Deml</Company>
         <RootNamespace>NetworkingBenchmark</RootNamespace>
         <PackageVersion>1.0.0</PackageVersion>
-        <AssemblyVersion>0.9.0</AssemblyVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
@@ -16,7 +16,7 @@
         <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
         <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
-        <FileVersion>0.9.0</FileVersion>
+        <FileVersion>1.0.0</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsWindows)'=='true'">
@@ -61,7 +61,7 @@
         <RetainVMGarbageCollection>true</RetainVMGarbageCollection>
         <StartupObject>NetworkBenchmark.Program</StartupObject>
         <Version>0.5.0</Version>
-        <Description>NCNB is a benchmark for low level networking libraries using UDP and can be used with Unity and for .Net Core standalone server applications. The benchmark focuses on latency, performance and scalability.</Description>
+        <Description>NNB is a benchmark for low level networking libraries using UDP and can be used with Unity and for .Net 5 standalone server applications. The benchmark focuses on latency, performance and scalability.</Description>
         <RepositoryUrl>https://github.com/JohannesDeml/NetworkBenchmarkDotNet</RepositoryUrl>
         <PackageTags>sockets, UDP, benchmark, network, Unity, network-benchmark</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>

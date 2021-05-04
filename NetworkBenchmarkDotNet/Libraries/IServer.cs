@@ -39,5 +39,11 @@ namespace NetworkBenchmark
 		/// Stop the server and its listening activity
 		/// </summary>
 		public void StopServer();
+
+		#region ManualMode
+
+		public void SendMessages(int messageCount, TransmissionType transmissionType);
+
+		#endregion
 	}
 }

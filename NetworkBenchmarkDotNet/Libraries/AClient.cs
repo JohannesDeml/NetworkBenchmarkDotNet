@@ -8,6 +8,8 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark
 {
 	public abstract class AClient : IClient
@@ -25,14 +27,32 @@ namespace NetworkBenchmark
 		/// Benchmark is preparing to be run
 		/// </summary>
 		protected volatile bool BenchmarkPreparing;
+
 		/// <summary>
 		/// Client should listen for incoming messages
 		/// </summary>
 		protected volatile bool Listen;
+
 		/// <summary>
 		/// Is a benchmark running (and therefore messages should be counted in the statistics)
 		/// </summary>
 		protected volatile bool BenchmarkRunning;
+
+		/// <summary>
+		/// Manual Mode stops the default behavior and waits for user input to execute tasks
+		/// </summary>
+		protected readonly bool ManualMode;
+
+		protected readonly byte[] Message;
+
+		protected AClient(Configuration config)
+		{
+			ManualMode = config.Test == TestType.Manual;
+
+			// Use Pinned Object Heap to reduce GC pressure
+			Message = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(Message, 0);
+		}
 
 		public virtual void StartClient()
 		{
@@ -59,5 +79,11 @@ namespace NetworkBenchmark
 		public abstract void DisconnectClient();
 
 		public abstract void Dispose();
+
+		#region ManualMode
+
+		public abstract void SendMessages(int messageCount, TransmissionType transmissionType);
+
+		#endregion
 	}
 }

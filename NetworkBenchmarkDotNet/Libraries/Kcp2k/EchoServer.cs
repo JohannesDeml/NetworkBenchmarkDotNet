@@ -25,9 +25,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
-		private readonly byte[] message;
-
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -37,9 +35,6 @@ namespace NetworkBenchmark.Kcp2k
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);
 			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, noDelay, interval);
-
-
-			message = new byte[config.MessageByteSize];
 
 			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
@@ -51,6 +46,25 @@ namespace NetworkBenchmark.Kcp2k
 			base.StartServer();
 			serverThread.Start();
 		}
+
+		public override void Dispose()
+		{
+			// Server already stopped, maybe there is the need to dispose something else?
+		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			var channel = Kcp2kBenchmark.GetChannel(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer, channel);
+			}
+		}
+
+		#endregion
 
 		private void TickLoop()
 		{
@@ -78,8 +92,11 @@ namespace NetworkBenchmark.Kcp2k
 			if (benchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-				Array.Copy(arraySegment.Array, arraySegment.Offset, message, 0, arraySegment.Count);
-				Send(connectionId, message, communicationChannel);
+				if (!ManualMode)
+				{
+					Array.Copy(arraySegment.Array, arraySegment.Offset, MessageBuffer, 0, arraySegment.Count);
+					Send(connectionId, MessageBuffer, communicationChannel);
+				}
 			}
 		}
 
@@ -97,9 +114,15 @@ namespace NetworkBenchmark.Kcp2k
 			Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
 		}
 
-		public override void Dispose()
+		private void Broadcast(ArraySegment<byte> message, KcpChannel channel)
 		{
-			// Server already stopped, maybe there is the need to dispose something else?
+			foreach (var connection in server.connections.Values)
+			{
+				connection.SendData(message, channel);
+			}
+
+			var messagesSent = server.connections.Count;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace NetworkBenchmark.Kcp2k
 				case TransmissionType.Reliable:
 					return KcpChannel.Reliable;
 				case TransmissionType.Unreliable:
-					return KcpChannel.Reliable;
+					return KcpChannel.Unreliable;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(transmissionType), $"Transmission Type {transmissionType} not supported");
 			}

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoClient.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -24,17 +25,22 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool benchmarkRunning;
 
 		private readonly int id;
-		private readonly byte[] message;
-		private readonly int initialMessages;
+		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
+		private readonly bool manualMode;
+		private readonly byte[] message;
 
 		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config.Address, config.Port)
 		{
 			this.id = id;
+			this.config = config;
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 
-			message = config.Message;
-			initialMessages = config.ParallelMessages;
+			manualMode = config.Test == TestType.Manual;
+			// Use Pinned Object Heap to reduce GC pressure
+			message = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(message, 0);
+
 			this.benchmarkStatistics = benchmarkStatistics;
 		}
 
@@ -50,16 +56,10 @@ namespace NetworkBenchmark.NetCoreServer
 			benchmarkPreparing = false;
 			benchmarkRunning = true;
 
-			for (int i = 0; i < initialMessages; i++)
+			if (manualMode)
 			{
-				SendMessage();
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
-		}
-
-		private void SendMessage()
-		{
-			Send(message);
-			benchmarkStatistics.MessagesClientSent++;
 		}
 
 		public void StopBenchmark()
@@ -76,6 +76,20 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			Disconnect();
 		}
+
+		#region ManualMode
+
+		public void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			NetCoreServerBenchmark.ProcessTransmissionType(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				SendMessage();
+			}
+		}
+
+		#endregion
 
 		protected override void OnConnected()
 		{
@@ -98,8 +112,11 @@ namespace NetworkBenchmark.NetCoreServer
 		{
 			if (benchmarkRunning)
 			{
-				benchmarkStatistics.MessagesClientReceived++;
-				SendMessage();
+				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
+				if (!manualMode)
+				{
+					SendMessage();
+				}
 			}
 
 			if (listen)
@@ -117,6 +134,12 @@ namespace NetworkBenchmark.NetCoreServer
 				Utilities.WriteVerboseLine($"Error Client {id}: {error}");
 				Interlocked.Increment(ref benchmarkStatistics.Errors);
 			}
+		}
+
+		private void SendMessage()
+		{
+			Send(message);
+			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 	}
 }

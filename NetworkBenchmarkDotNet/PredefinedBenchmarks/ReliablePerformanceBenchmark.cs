@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PerformanceBenchmark.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+// <copyright file="ReliablePerformanceBenchmark.cs">
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml

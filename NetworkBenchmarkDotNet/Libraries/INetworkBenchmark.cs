@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="INetworkBenchmark.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetworkBenchmark.Enet;
 using NetworkBenchmark.Kcp2k;
@@ -19,6 +20,9 @@ namespace NetworkBenchmark
 {
 	public interface INetworkBenchmark
 	{
+		public IServer Server { get; }
+		public List<IClient> Clients { get; }
+
 		public static INetworkBenchmark CreateNetworkBenchmark(NetworkLibrary library)
 		{
 			switch (library)
