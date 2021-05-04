@@ -56,7 +56,7 @@ namespace NetworkBenchmark.NetCoreServer
 			benchmarkPreparing = false;
 			benchmarkRunning = true;
 
-			if (manualMode)
+			if (!manualMode)
 			{
 				SendMessages(config.ParallelMessages, config.Transmission);
 			}
