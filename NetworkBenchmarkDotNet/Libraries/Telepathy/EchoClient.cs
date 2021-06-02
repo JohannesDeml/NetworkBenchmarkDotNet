@@ -33,7 +33,7 @@ namespace NetworkBenchmark.Telepathy
 		private readonly bool noDelay;
 		private readonly int interval;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.id = id;
 			this.config = config;
@@ -86,14 +86,11 @@ namespace NetworkBenchmark.Telepathy
 		public override void StartBenchmark()
 		{
 			base.StartBenchmark();
-			var parallelMessagesPerClient = config.ParallelMessages;
 
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			if (!ManualMode)
 			{
-				Send(messageArray);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
-
-			client.Tick(100);
 		}
 
 		public override void DisconnectClient()
@@ -111,6 +108,21 @@ namespace NetworkBenchmark.Telepathy
 			//TODO dispose client once supported
 			isDisposed = true;
 		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			TelepathyBenchmark.ProcessTransmissionType(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				Send(Message);
+			}
+			client.Tick(100);
+		}
+
+		#endregion
 
 		private void Send(ArraySegment<byte> message)
 		{

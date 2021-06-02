@@ -9,7 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using Telepathy;
 
@@ -28,7 +30,7 @@ namespace NetworkBenchmark.Telepathy
 
 		private readonly byte[] message;
 
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -109,6 +111,36 @@ namespace NetworkBenchmark.Telepathy
 		public override void Dispose()
 		{
 			// Server already stopped, maybe there is the need to dispose something else?
+		}
+
+		#region ManualMode
+
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			TelepathyBenchmark.ProcessTransmissionType(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer);
+			}
+		}
+
+		#endregion
+
+		private void Broadcast(ArraySegment<byte> message)
+		{
+			// Annoying that this needs reflection, maybe there is a better way
+			var fieldInfo = typeof(Server).GetField("clients", BindingFlags.NonPublic | BindingFlags.Instance);
+			var clients = fieldInfo.GetValue(server) as ConcurrentDictionary<int, ConnectionState>;
+
+
+			foreach (var connection in clients.Keys)
+			{
+				Send(connection, message);
+			}
+
+			var messagesSent = clients.Count;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 	}
 }
