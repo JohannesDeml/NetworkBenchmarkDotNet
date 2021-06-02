@@ -19,7 +19,7 @@ namespace NetworkBenchmark
 		#if WINDOWS
 		// See https://github.com/Leandros/WindowsHModular/blob/7f5df60fe3711b9a878cd3cba755f9f71b5d01ca/include/win32/windows.h#L2655
 		private const uint TIMERR_NOERROR = 0u;
-		
+
 		/// Get higher precision for Thread.Sleep on Windows
 		/// See https://web.archive.org/web/20051125042113/http://www.dotnet247.com/247reference/msgs/57/289291.aspx
 		/// See https://docs.microsoft.com/en-us/windows/win32/api/timeapi/nf-timeapi-timebeginperiod

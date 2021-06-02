@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoServer.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -8,6 +8,7 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -20,9 +21,16 @@ namespace NetworkBenchmark.NetCoreServer
 		private volatile bool listen;
 		private volatile bool benchmarkRunning;
 		private readonly BenchmarkStatistics benchmarkStatistics;
+		private readonly bool ManualMode;
+		private readonly byte[] message;
 
 		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(IPAddress.Parse(config.Address), config.Port)
 		{
+			ManualMode = config.Test == TestType.Manual;
+			// Use Pinned Object Heap to reduce GC pressure
+			message = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(message, 0);
+
 			NetCoreServerBenchmark.ProcessTransmissionType(config.Transmission);
 			this.benchmarkStatistics = benchmarkStatistics;
 		}
@@ -49,6 +57,20 @@ namespace NetworkBenchmark.NetCoreServer
 			listen = true;
 		}
 
+		#region ManualMode
+
+		public void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			NetCoreServerBenchmark.ProcessTransmissionType(transmissionType);
+			
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(message);
+			}
+		}
+
+		#endregion
+
 		protected override void OnStarted()
 		{
 			// Start receive datagrams
@@ -60,9 +82,12 @@ namespace NetworkBenchmark.NetCoreServer
 			if (benchmarkRunning)
 			{
 				benchmarkStatistics.MessagesServerReceived++;
-				// Echo the message back to the sender
-				SendAsync(endpoint, buffer, offset, size);
-				return;
+				if (!ManualMode)
+				{
+					// Echo the message back to the sender
+					SendAsync(endpoint, buffer, offset, size);
+					return;
+				}
 			}
 
 			// Keep listening for next possible benchmark
@@ -91,6 +116,11 @@ namespace NetworkBenchmark.NetCoreServer
 			{
 				benchmarkStatistics.Errors++;
 			}
+		}
+
+		private void Broadcast(byte[] bytes)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

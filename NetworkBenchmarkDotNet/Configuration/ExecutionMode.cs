@@ -24,13 +24,15 @@ namespace NetworkBenchmark
 		/// Run the clients
 		/// </summary>
 		Client = 1 << 0,
+
 		/// <summary>
 		/// Run the server
 		/// </summary>
 		Server = 1 << 1,
+
 		/// <summary>
 		/// Run both clients and server
 		/// </summary>
-		Complete = (1 << 2) -1
+		Complete = (1 << 2) - 1
 	}
 }

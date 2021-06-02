@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoServer.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -24,10 +24,9 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
-		private readonly byte[] message;
 		private readonly DeliveryMethod deliveryMethod;
 
-		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
@@ -38,12 +37,14 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
 			if (!config.Address.Contains(':'))
 			{
+				// For LiteNetLib 1.0 and above
+				//netManager.IPv6Mode = IPv6Mode.Disabled;
+
+				// LiteNetLib up to 0.9.4
 				netManager.IPv6Enabled = IPv6Mode.Disabled;
 			}
 
 			netManager.UnsyncedEvents = true;
-
-			message = new byte[config.MessageByteSize];
 
 			listener.ConnectionRequestEvent += OnConnectionRequest;
 			listener.NetworkReceiveEvent += OnNetworkReceive;
@@ -71,6 +72,21 @@ namespace NetworkBenchmark.LiteNetLib
 			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
 		}
 
+		#region ManualMode
+
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				Broadcast(MessageBuffer, delivery);
+			}
+			netManager.TriggerUpdate();
+		}
+
+		#endregion
+
 		private void OnConnectionRequest(ConnectionRequest request)
 		{
 			if (netManager.ConnectedPeerList.Count > config.Clients)
@@ -85,17 +101,26 @@ namespace NetworkBenchmark.LiteNetLib
 
 		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod clientDeliveryMethod)
 		{
-			Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
-
 			if (benchmarkRunning)
 			{
-				Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, message, 0, reader.UserDataSize);
-				peer.Send(message, deliveryMethod);
-				Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
-				netManager.TriggerUpdate();
+				Interlocked.Increment(ref benchmarkStatistics.MessagesServerReceived);
+				if (!ManualMode)
+				{
+					Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, MessageBuffer, 0, reader.UserDataSize);
+					peer.Send(MessageBuffer, deliveryMethod);
+					Interlocked.Increment(ref benchmarkStatistics.MessagesServerSent);
+					netManager.TriggerUpdate();
+				}
 			}
 
 			reader.Recycle();
+		}
+
+		private void Broadcast(byte[] data, DeliveryMethod delivery)
+		{
+			netManager.SendToAll(data, delivery);
+			var messagesSent = netManager.ConnectedPeersCount;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
 		}
 
 		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)

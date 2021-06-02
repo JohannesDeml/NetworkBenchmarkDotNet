@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FixedColumn.cs">
+// <copyright file="EnvironmentVariableColumn.cs">
 //   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -9,8 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Globalization;
-using System.Reflection;
+using System.Runtime.InteropServices;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
@@ -18,40 +17,33 @@ using BenchmarkDotNet.Running;
 namespace NetworkBenchmark
 {
 	/// <summary>
-	/// A simple column having one defined value for all cells
-	/// Helpful when merging different csvs to still being able to distinguish them in e.g. their version or os
-	/// By default it is set to not always show, since its main use case is to show metadata
+	/// Static column presenting the value of an environment variable of the system.
+	/// Helpful for tagging machines with specific names.
 	/// </summary>
-	public class FixedColumn : IColumn
+	public class EnvironmentVariableColumn : IColumn
 	{
-		/// <summary>
-		/// Column showing the application version
-		/// </summary>
-		public static readonly FixedColumn VersionColumn =
-			new FixedColumn("Version", Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version);
-
-		/// <summary>
-		/// Column showing the used operating system
-		/// </summary>
-		public static readonly FixedColumn OperatingSystemColumn =
-			new FixedColumn("OS", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
-
-		/// <summary>
-		/// Column with the current date and time in an invariant culture format
-		/// </summary>
-		public static readonly FixedColumn DateTimeColumn =
-			new FixedColumn("DateTime", DateTime.Now.ToString(CultureInfo.InvariantCulture));
-
 		public string Id { get; }
 		public string ColumnName { get; }
 
+		private readonly string environmentVariableKey;
 		private readonly string cellValue;
 
-		public FixedColumn(string columnName, string cellValue)
+		public EnvironmentVariableColumn(string columnName, string environmentVariableKey, string defaultValue = "Not set")
 		{
-			this.cellValue = cellValue;
+			this.environmentVariableKey = environmentVariableKey;
 			ColumnName = columnName;
-			Id = nameof(FixedColumn) + "." + ColumnName;
+			this.cellValue = Environment.GetEnvironmentVariable(environmentVariableKey, EnvironmentVariableTarget.Process);
+
+			// Fallbacks for windows
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				this.cellValue ??= Environment.GetEnvironmentVariable(environmentVariableKey, EnvironmentVariableTarget.User);
+				this.cellValue ??= Environment.GetEnvironmentVariable(environmentVariableKey, EnvironmentVariableTarget.Machine);
+			}
+
+			this.cellValue ??= defaultValue;
+
+			Id = nameof(EnvironmentVariableColumn) + "." + ColumnName;
 		}
 
 		public bool IsDefault(Summary summary, BenchmarkCase benchmarkCase) => false;
@@ -64,7 +56,7 @@ namespace NetworkBenchmark
 		public int PriorityInCategory { get; set; } = 0;
 		public bool IsNumeric => false;
 		public UnitType UnitType => UnitType.Dimensionless;
-		public string Legend => $"Fixed column with value {cellValue}";
+		public string Legend => $"Environment variable {environmentVariableKey} has value '{cellValue}'";
 		public string GetValue(Summary summary, BenchmarkCase benchmarkCase, SummaryStyle style) => GetValue(summary, benchmarkCase);
 		public override string ToString() => ColumnName;
 	}

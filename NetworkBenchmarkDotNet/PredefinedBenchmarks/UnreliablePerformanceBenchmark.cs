@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PerformanceBenchmark.cs">
+// <copyright file="UnreliablePerformanceBenchmark.cs">
 //   Copyright (c) 2020 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
@@ -23,7 +23,7 @@ namespace NetworkBenchmark
 
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
 		public override int ClientCount { get; set; } = 500;
-		public override int MessageTarget { get; set; } = 500 * 1000;
+		public override int MessageTarget { get; set; } = 500_000;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 

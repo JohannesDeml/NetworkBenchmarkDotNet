@@ -8,6 +8,8 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+
 namespace NetworkBenchmark
 {
 	public abstract class AServer : IServer
@@ -18,6 +20,21 @@ namespace NetworkBenchmark
 		protected volatile bool listen;
 		protected volatile bool benchmarkRunning;
 
+		/// <summary>
+		/// Manual Mode stops the default behavior and waits for user input to execute tasks
+		/// </summary>
+		protected readonly bool ManualMode;
+
+		protected readonly byte[] MessageBuffer;
+
+		protected AServer(Configuration config)
+		{
+			ManualMode = config.Test == TestType.Manual;
+
+			// Use Pinned Object Heap to reduce GC pressure
+			MessageBuffer = GC.AllocateArray<byte>(config.MessageByteSize, true);
+			config.Message.CopyTo(MessageBuffer, 0);
+		}
 
 		public virtual void StartServer()
 		{
@@ -42,5 +59,11 @@ namespace NetworkBenchmark
 		}
 
 		public abstract void Dispose();
+
+		#region ManualMode
+
+        public abstract void SendMessages(int messageCount, TransmissionType transmissionType);
+
+        #endregion
 	}
 }

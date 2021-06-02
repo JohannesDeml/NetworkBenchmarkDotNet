@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EchoClient.cs">
-//   Copyright (c) 2020 Johannes Deml. All rights reserved.
+//   Copyright (c) 2021 Johannes Deml. All rights reserved.
 // </copyright>
 // <author>
 //   Johannes Deml
@@ -8,7 +8,6 @@
 // </author>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -28,24 +27,26 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
-		private readonly byte[] message;
 		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
-		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics)
+		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			message = config.Message;
 			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
 			listener = new EventBasedNetListener();
 			netManager = new NetManager(listener);
 			if (!config.Address.Contains(':'))
 			{
+				// For LiteNetLib 1.0 and above
+				//netManager.IPv6Mode = IPv6Mode.Disabled;
+
+				// LiteNetLib up to 0.9.4
 				netManager.IPv6Enabled = IPv6Mode.Disabled;
 			}
 
@@ -73,14 +74,10 @@ namespace NetworkBenchmark.LiteNetLib
 		public override void StartBenchmark()
 		{
 			base.StartBenchmark();
-			var parallelMessagesPerClient = config.ParallelMessages;
-
-			for (int i = 0; i < parallelMessagesPerClient; i++)
+			if (!ManualMode)
 			{
-				Send(message);
+				SendMessages(config.ParallelMessages, config.Transmission);
 			}
-
-			netManager.TriggerUpdate();
 		}
 
 		public override void DisconnectClient()
@@ -112,14 +109,30 @@ namespace NetworkBenchmark.LiteNetLib
 			isDisposed = true;
 		}
 
-		private void Send(byte[] bytes)
+		#region ManualMode
+
+		public override void SendMessages(int messageCount, TransmissionType transmissionType)
+		{
+			var delivery = LiteNetLibBenchmark.GetDeliveryMethod(transmissionType);
+
+			for (int i = 0; i < messageCount; i++)
+			{
+				Send(Message, delivery);
+			}
+
+			netManager.TriggerUpdate();
+		}
+
+		#endregion
+
+		private void Send(byte[] bytes, DeliveryMethod delivery)
 		{
 			if (!IsConnected)
 			{
 				return;
 			}
 
-			peer.Send(bytes, deliveryMethod);
+			peer.Send(bytes, delivery);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
@@ -145,8 +158,11 @@ namespace NetworkBenchmark.LiteNetLib
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
-				Send(message);
-				netManager.TriggerUpdate();
+				if (!ManualMode)
+				{
+					Send(Message, deliverymethod);
+					netManager.TriggerUpdate();
+				}
 			}
 
 			reader.Recycle();
