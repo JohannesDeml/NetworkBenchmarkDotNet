@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 
 namespace kcp2k
@@ -18,29 +16,12 @@ namespace kcp2k
         internal int rto;
         internal uint fastack;
         internal uint xmit;
-        // we need a auto scaling byte[] with a WriteBytes function.
+
+        // we need an auto scaling byte[] with a WriteBytes function.
         // MemoryStream does that perfectly, no need to reinvent the wheel.
         // note: no need to pool it, because Segment is already pooled.
-        internal MemoryStream data = new MemoryStream();
-
-        // pool ////////////////////////////////////////////////////////////////
-        internal static readonly ConcurrentStack<Segment> Pool = new ConcurrentStack<Segment>();
-
-        public static Segment Take()
-        {
-            if (Pool.TryPop(out var seg))
-            {
-	            return seg;
-            }
-            return new Segment();
-        }
-
-        public static void Return(Segment seg)
-        {
-            seg.Reset();
-            Pool.Push(seg);
-        }
-        ////////////////////////////////////////////////////////////////////////
+        // -> MTU as initial capacity to avoid most runtime resizing/allocations
+        internal MemoryStream data = new MemoryStream(Kcp.MTU_DEF);
 
         // ikcp_encode_seg
         // encode a segment into buffer
