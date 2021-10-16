@@ -23,18 +23,18 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly KcpServer server;
 		private readonly Thread serverThread;
 		private readonly KcpChannel communicationChannel;
-		private readonly bool noDelay;
+		private const bool DualMode = true;
+		private const bool NoDelay = true;
 
 		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			noDelay = true;
 			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
 
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);
-			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, noDelay, interval);
+			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, DualMode, NoDelay, interval);
 
 			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
