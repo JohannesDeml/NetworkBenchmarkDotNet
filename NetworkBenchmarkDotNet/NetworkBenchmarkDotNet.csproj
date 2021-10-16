@@ -30,7 +30,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
       <PackageReference Include="ENet-CSharp" Version="2.4.7" />
       <PackageReference Include="LiteNetLib" Version="0.9.4" />
       <PackageReference Include="NetCoreServer" Version="5.0.15" />

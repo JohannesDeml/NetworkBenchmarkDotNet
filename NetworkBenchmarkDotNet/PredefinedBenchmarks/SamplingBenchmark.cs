@@ -18,7 +18,8 @@ namespace NetworkBenchmark
 		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer)]
 		public NetworkLibrary Library { get; set; }
 
-		public override int ClientCount { get; set; } = 1;
+		[Params(1, Priority = 100)]
+		public override int ClientCount { get; set; }
 		public override int MessageTarget { get; set; } = 100_000;
 		protected override BenchmarkMode Mode => BenchmarkMode.Sampling;
 		protected override NetworkLibrary LibraryTarget => Library;
