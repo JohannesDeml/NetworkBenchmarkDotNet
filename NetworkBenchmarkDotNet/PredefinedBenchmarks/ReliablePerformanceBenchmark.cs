@@ -22,7 +22,7 @@ namespace NetworkBenchmark
 		public TransmissionType Transmission { get; set; }
 
 		[Params(500, Priority = 100)]
-		public override int ClientCount { get; set; }
+		public override int Clients { get; set; }
 		public override int MessageTarget { get; set; } = 500_000;
 		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
 

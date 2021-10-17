@@ -18,7 +18,7 @@ namespace NetworkBenchmark
 		/// <summary>
 		/// Library target for the benchmark
 		/// </summary>
-		[Params(NetworkLibrary.ENet, Priority = -100)]
+		[Params(NetworkLibrary.ENet, NetworkLibrary.LiteNetLib, NetworkLibrary.NetCoreServer, NetworkLibrary.Kcp2k, Priority = -100)]
 		public NetworkLibrary Library { get; set; }
 
 		/// <summary>
@@ -32,11 +32,11 @@ namespace NetworkBenchmark
 		public int TickRate { get; set; }
 
 
-		[Params(TransmissionType.Reliable, TransmissionType.Unreliable, Priority = -90)]
+		[Params(TransmissionType.Unreliable, Priority = -90)]
 		public TransmissionType Transmission { get; set; }
 
-		[Params(100, 1000, Priority = 100)]
-		public override int ClientCount { get; set; }
+		[Params(100, Priority = 100)]
+		public override int Clients { get; set; }
 		[Params(100_000, Priority = 90)]
 		public override int MessageTarget { get; set; }
 
