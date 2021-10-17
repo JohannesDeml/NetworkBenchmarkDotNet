@@ -21,9 +21,10 @@ namespace NetworkBenchmark
 		[Params(TransmissionType.Unreliable)]
 		public TransmissionType Transmission { get; set; }
 
-		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
-		public override int ClientCount { get; set; } = 500;
+		[Params(500, Priority = 100)]
+		public override int Clients { get; set; }
 		public override int MessageTarget { get; set; } = 500_000;
+		protected override BenchmarkMode Mode => BenchmarkMode.Performance;
 
 		protected override NetworkLibrary LibraryTarget => Library;
 

@@ -75,7 +75,8 @@ namespace NetworkBenchmark.Kcp2k
 		private void Tick()
 		{
 			client.RawReceive();
-			client.Tick();
+			client.TickIncoming();
+			client.TickOutgoing();
 		}
 
 		public override void StartBenchmark()

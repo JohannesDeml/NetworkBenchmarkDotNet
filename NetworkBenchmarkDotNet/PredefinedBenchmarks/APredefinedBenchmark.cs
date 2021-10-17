@@ -16,7 +16,7 @@ namespace NetworkBenchmark
 {
 	public abstract class APredefinedBenchmark
 	{
-		public abstract int ClientCount { get; set; }
+		public abstract int Clients { get; set; }
 		public abstract int MessageTarget { get; set; }
 		protected abstract BenchmarkMode Mode { get; }
 		protected abstract NetworkLibrary LibraryTarget { get; }
@@ -29,7 +29,7 @@ namespace NetworkBenchmark
 		{
 			var config = BenchmarkCoordinator.Config;
 			config.Benchmark = Mode;
-			config.Clients = ClientCount;
+			config.Clients = Clients;
 			config.Library = LibraryTarget;
 			Console.Write(config.ToFormattedString());
 
