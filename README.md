@@ -28,15 +28,15 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
   * [Unity Client Example](https://github.com/JohannesDeml/ENetUnityMobile)
-* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.4)
+* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.5.2)
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
-* [Kcp2k](https://github.com/vis2k/kcp2k) (v 1.8.0)
+* [Kcp2k](https://github.com/vis2k/kcp2k) (v 1.12.0)
   * Port of KCP with 100% C# Code, Future Technology for [Mirror-NG](https://github.com/MirrorNG/MirrorNG)
   * Packetsize overhead: 24 byte
   * [Unity Example](https://github.com/vis2k/kcp2k)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 5.0.15)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 5.1.0)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
@@ -44,16 +44,21 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ## Benchmark Setup
 
-### Used Hardware
+### Hardware
 
 * Ubuntu VPS
   * Virtual private server with dedicated CPU's running - [Hardware](https://www.netcup.eu/bestellen/produkt.php?produkt=2624)
-  * Ubuntu 20.04.2 LTS x86-64 Kernel 5.4.0-72-generic
+  * Ubuntu 20.04.3 LTS x86-64 Kernel 5.14.0-051400-generic
 
 * Ubuntu Desktop / Windows Desktop
   * Desktop PC from 2020 - [Hardware](https://pcpartpicker.com/user/JohannesDeml/saved/zz7yK8)
-  * Windows 10 Pro 20H2 x86-64 Build 19042.844
-  * Ubuntu 20.04.2 LTS x86-64 Kernel 5.8.0-50-generic
+  * Windows 10 Pro x86-64 Build 19043.1266 (21H1/May2021Update)
+  * Ubuntu 20.04.3 LTS x86-64 Kernel 5.11.0-37-generic
+
+### Software
+
+* [.NET](https://dotnet.microsoft.com/download/dotnet) 5.0.11 (5.0.1121.47308)
+* [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) 0.13.1
 
 ### Procedure
 For the two desktop setups, the benchmarks are run on a restarted system with 5 minutes idle time before starting the benchmark. They are run with admin privileges and all unnecessary other processes are killed before running the benchmarks. For Ubuntu VPS, the benchmarks are run through continuous integration on a typical indie server setup with other processes running as well. After the benchmarks are run, a list of all running processes to make them more reproducible. To reproduce the benchmarks, run `sudo sh linux-benchmark.sh` or `win-benchmark.bat` . If you want to execute directly from the compiled program, run `./NetworkBenchmarkDotNet -b Essential`.
@@ -65,19 +70,19 @@ The raw data and additional files can be downloaded from the [release section](.
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time (lower is better).
-![PingPong Unreliable .NET Benchmark chart](./Docs/nbn-pingpongunreliable-1.0.0.png)
+![PingPong Unreliable .NET Benchmark chart](./Docs/nbn-pingpongunreliable-1.0.1.png)
 
 ### Benchmark [PingPongReliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/ReliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **reliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time (lower is better).
-![PingPong Reliable .NET Benchmark chart](./Docs/nbn-pingpongreliable-1.0.0.png)
+![PingPong Reliable .NET Benchmark chart](./Docs/nbn-pingpongreliable-1.0.1.png)
 
 ### Benchmark [PingPongBatchedUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/UnreliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **10 messages** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance (higher is better).
-![PingPong Batched Unreliable .NET Benchmark chart](./Docs/nbn-pingpongbatchedunreliable-1.0.0.png)
+![PingPong Batched Unreliable .NET Benchmark chart](./Docs/nbn-pingpongbatchedunreliable-1.0.1.png)
 
 ### Benchmark [SampleEchoSimple](./NetworkBenchmarkDotNet/PredefinedBenchmarks/SamplingBenchmark.cs)
 
@@ -87,7 +92,7 @@ This test collects information about generated garbage and CPU times while runni
 ### Overview
 This is a comparison between all tests with their message throughput (higher is better).
 
-![Network Benchmark .NET results overview](./Docs/nbn-overview-1.0.0.png)
+![Network Benchmark .NET results overview](./Docs/nbn-overview-1.0.1.png)
 
 ### Notes
 
