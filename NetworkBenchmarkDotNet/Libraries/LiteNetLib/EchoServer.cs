@@ -33,6 +33,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 			netManager = new NetManager(this);
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
+			//netManager.UseNativeSockets = true;
 			if (!config.Address.Contains(':'))
 			{
 				netManager.IPv6Mode = IPv6Mode.Disabled;

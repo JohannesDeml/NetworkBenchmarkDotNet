@@ -44,6 +44,7 @@ namespace NetworkBenchmark.LiteNetLib
 				netManager.IPv6Mode = IPv6Mode.Disabled;
 			}
 
+			//netManager.UseNativeSockets = true;
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;
