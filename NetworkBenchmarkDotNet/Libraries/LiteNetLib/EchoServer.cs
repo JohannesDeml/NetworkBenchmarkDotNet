@@ -16,13 +16,12 @@ using LiteNetLib;
 
 namespace NetworkBenchmark.LiteNetLib
 {
-	internal class EchoServer : AServer
+	internal class EchoServer : AServer, INetEventListener
 	{
 		public override bool IsStarted => netManager != null && netManager.IsRunning;
 
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
-		private readonly EventBasedNetListener listener;
 		private readonly NetManager netManager;
 		private readonly DeliveryMethod deliveryMethod;
 
@@ -32,24 +31,15 @@ namespace NetworkBenchmark.LiteNetLib
 			this.benchmarkStatistics = benchmarkStatistics;
 			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
-			listener = new EventBasedNetListener();
-			netManager = new NetManager(listener);
+			netManager = new NetManager(this);
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
+			//netManager.UseNativeSockets = true;
 			if (!config.Address.Contains(':'))
 			{
-				// For LiteNetLib 1.0 and above
-				//netManager.IPv6Mode = IPv6Mode.Disabled;
-
-				// LiteNetLib up to 0.9.4
-				netManager.IPv6Enabled = IPv6Mode.Disabled;
+				netManager.IPv6Mode = IPv6Mode.Disabled;
 			}
 
 			netManager.UnsyncedEvents = true;
-
-			listener.ConnectionRequestEvent += OnConnectionRequest;
-			listener.NetworkReceiveEvent += OnNetworkReceive;
-			listener.NetworkErrorEvent += OnNetworkError;
-			listener.PeerDisconnectedEvent += OnPeerDisconnected;
 		}
 
 		public override void StartServer()
@@ -64,13 +54,7 @@ namespace NetworkBenchmark.LiteNetLib
 			netManager.Stop();
 		}
 
-		public override void Dispose()
-		{
-			listener.ConnectionRequestEvent -= OnConnectionRequest;
-			listener.NetworkReceiveEvent -= OnNetworkReceive;
-			listener.NetworkErrorEvent -= OnNetworkError;
-			listener.PeerDisconnectedEvent -= OnPeerDisconnected;
-		}
+		public override void Dispose() { }
 
 		#region ManualMode
 
@@ -87,7 +71,7 @@ namespace NetworkBenchmark.LiteNetLib
 
 		#endregion
 
-		private void OnConnectionRequest(ConnectionRequest request)
+		void INetEventListener.OnConnectionRequest(ConnectionRequest request)
 		{
 			if (netManager.ConnectedPeerList.Count > config.Clients)
 			{
@@ -98,8 +82,19 @@ namespace NetworkBenchmark.LiteNetLib
 
 			request.Accept();
 		}
+		private void Broadcast(byte[] data, DeliveryMethod delivery)
+		{
+			netManager.SendToAll(data, delivery);
+			var messagesSent = netManager.ConnectedPeersCount;
+			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
+		}
 
-		private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod clientDeliveryMethod)
+		void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
+		{
+			Interlocked.Increment(ref benchmarkStatistics.Errors);
+		}
+
+		void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
 		{
 			if (benchmarkRunning)
 			{
@@ -116,19 +111,11 @@ namespace NetworkBenchmark.LiteNetLib
 			reader.Recycle();
 		}
 
-		private void Broadcast(byte[] data, DeliveryMethod delivery)
-		{
-			netManager.SendToAll(data, delivery);
-			var messagesSent = netManager.ConnectedPeersCount;
-			Interlocked.Add(ref benchmarkStatistics.MessagesServerSent, messagesSent);
-		}
+		void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) { }
+		void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency) { }
+		void INetEventListener.OnPeerConnected(NetPeer peer) { }
 
-		private void OnNetworkError(IPEndPoint endpoint, SocketError socketerror)
-		{
-			Interlocked.Increment(ref benchmarkStatistics.Errors);
-		}
-
-		private void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectinfo)
+		void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectinfo)
 		{
 			if (benchmarkPreparing || benchmarkRunning)
 			{
