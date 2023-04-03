@@ -12,6 +12,7 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
 namespace NetworkBenchmark
@@ -112,7 +113,7 @@ namespace NetworkBenchmark
 				"The following benchmarks are failed to build: " +
 				string.Join(", ", summary.Reports.Where(r => !r.BuildResult.IsBuildSuccess).Select(r => r.BenchmarkCase.DisplayInfo)));
 
-			Assert(summary.Reports.All(r => r.ExecuteResults.Any(er => er.FoundExecutable && er.Data.Any())),
+			Assert(summary.Reports.All(r => r.ExecuteResults.Any(er => er.FoundExecutable && er.Results.Any())),
 				"All reports should have at least one \"ExecuteResult\" with \"FoundExecutable\" = true and at least one \"Data\" item");
 
 			Assert(summary.Reports.All(report => report.AllMeasurements.Any()),
