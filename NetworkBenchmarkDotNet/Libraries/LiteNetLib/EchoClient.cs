@@ -28,7 +28,6 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly NetManager netManager;
-		private readonly DeliveryMethod deliveryMethod;
 		private NetPeer peer;
 
 		public EchoClient(int id, Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
@@ -36,7 +35,6 @@ namespace NetworkBenchmark.LiteNetLib
 			this.id = id;
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
 			netManager = new NetManager(this);
 			if (!config.Address.Contains(':'))
@@ -44,7 +42,7 @@ namespace NetworkBenchmark.LiteNetLib
 				netManager.IPv6Mode = IPv6Mode.Disabled;
 			}
 
-			//netManager.UseNativeSockets = true;
+			netManager.UseNativeSockets = config.UseNativeSockets;
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ClientTickRate);
 			netManager.UnsyncedEvents = true;
 			netManager.DisconnectTimeout = 10000;
@@ -138,14 +136,14 @@ namespace NetworkBenchmark.LiteNetLib
 			isConnected = false;
 		}
 
-		void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliverymethod)
+		void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
 		{
 			if (BenchmarkRunning)
 			{
 				Interlocked.Increment(ref benchmarkStatistics.MessagesClientReceived);
 				if (!ManualMode)
 				{
-					Send(Message, deliverymethod);
+					Send(Message, deliveryMethod);
 					netManager.TriggerUpdate();
 				}
 			}

@@ -99,6 +99,12 @@ namespace NetworkBenchmark
 		/// </summary>
 		public int ServerTickRate { get; set; }
 
+		/// <summary>
+		/// Special feature of LiteNetLib for using faster socket implementation
+		/// This is currently not supported for all platforms
+		/// </summary>
+		public bool UseNativeSockets { get; set; }
+
 		public byte[] Message { get; private set; }
 
 		public void PrepareForNewBenchmark()
@@ -210,6 +216,7 @@ namespace NetworkBenchmark
 			sb.Append($" --message-payload {MessagePayload}");
 			sb.Append($" --client-tick-rate {ClientTickRate}");
 			sb.Append($" --server-tick-rate {ServerTickRate}");
+			sb.Append($" --use-native-sockets {UseNativeSockets}");
 		}
 
 		public static void ApplyPredefinedBenchmarkConfiguration(Configuration config)
@@ -225,6 +232,7 @@ namespace NetworkBenchmark
 			config.MessageByteSize = 32;
 			config.ServerTickRate = 60;
 			config.ClientTickRate = 60;
+			config.UseNativeSockets = true;
 		}
 	}
 }

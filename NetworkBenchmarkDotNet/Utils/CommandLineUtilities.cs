@@ -77,7 +77,11 @@ namespace NetworkBenchmark
 				new Option<int>(
 					"--server-tick-rate",
 					getDefaultValue: () => 60,
-					"Server ticks per second if supported")
+					"Server ticks per second if supported"),
+				new Option<bool>(
+					"--use-native-sockets",
+					getDefaultValue: () => true,
+					"Use native Sockets (LiteNetLib only)"),
 			};
 
 			rootCommand.Name = "NetworkBenchmarkDotNet";
