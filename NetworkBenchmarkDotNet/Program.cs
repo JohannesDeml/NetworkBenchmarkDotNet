@@ -12,6 +12,7 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
@@ -103,7 +104,8 @@ namespace NetworkBenchmark
 		/// <typeparam name="T">Type of the benchmark to run</typeparam>
 		private static void RunBenchmark<T>()
 		{
-			var summary = BenchmarkRunner.Run<T>();
+			ManualConfig config = ManualConfig.CreateMinimumViable();
+			var summary = BenchmarkRunner.Run<T>(config);
 
 			Assert(!summary.HasCriticalValidationErrors, "The \"Summary\" should have NOT \"HasCriticalValidationErrors\"");
 

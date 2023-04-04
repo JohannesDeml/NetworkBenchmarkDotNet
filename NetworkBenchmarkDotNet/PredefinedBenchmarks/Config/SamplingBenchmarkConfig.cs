@@ -22,8 +22,6 @@ namespace NetworkBenchmark
 	{
 		public SamplingBenchmarkConfig()
 		{
-			Add(DefaultConfig.Instance);
-
 			Job baseJob = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)

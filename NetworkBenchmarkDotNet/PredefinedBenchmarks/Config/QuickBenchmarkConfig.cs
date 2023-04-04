@@ -19,8 +19,6 @@ namespace NetworkBenchmark
 	{
 		public QuickBenchmarkConfig()
 		{
-			Add(DefaultConfig.Instance);
-
 			Job baseJob = Job.Default
 				.WithStrategy(RunStrategy.Monitoring)
 				.WithLaunchCount(1)

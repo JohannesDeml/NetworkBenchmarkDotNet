@@ -18,8 +18,6 @@ namespace NetworkBenchmark
 	{
 		public PerformanceBenchmarkConfig()
 		{
-			Add(DefaultConfig.Instance);
-
 			Job baseJob = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
