@@ -1,10 +1,10 @@
 # Network Benchmark .NET
 
-*Low Level .NET 5 Networking libraries benchmarked for UDP socket performance*
+*Low Level .NET 6 Networking libraries benchmarked for UDP socket performance*
 
 ![Screenshot](./Docs/screenshot.png)
 
-[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 5.0](https://img.shields.io/badge/.NET-5.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/5.0)
+[![Releases](https://img.shields.io/github/release/JohannesDeml/NetworkBenchmarkDotNet/all.svg)](../../releases) [![.NET 6.0](https://img.shields.io/badge/.NET-6.0-blueviolet.svg)](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 ## Table of Contents
 
@@ -23,20 +23,20 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 ### Supported Libraries
 
-* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.7)
+* [ENet-CSharp](https://github.com/nxrighthere/ENet-CSharp) (v 2.4.8)
   * Wrapper for [ENet](https://github.com/lsalzman/enet), building a reliable sequenced protocol on top of UDP
   * Max concurrent connections are limited to 4095 due to the protocol
   * Packetsize overhead: 10 bytes
   * [Unity Client Example](https://github.com/JohannesDeml/ENetUnityMobile)
-* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 0.9.5.2)
+* [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (v 1.0.1)
   * Very feature-rich library
   * Packetsize overhead: 1 byte for unreliable, 4 bytes for reliable
   * [Unity Client Example](https://github.com/RevenantX/NetGameExample)
-* [Kcp2k](https://github.com/vis2k/kcp2k) (v 1.12.0)
+* [Kcp2k](https://github.com/vis2k/kcp2k) (v 1.34.0)
   * Port of KCP with 100% C# Code, Future Technology for [Mirror-NG](https://github.com/MirrorNG/MirrorNG)
   * Packetsize overhead: 24 byte
   * [Unity Example](https://github.com/vis2k/kcp2k)
-* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 5.1.0)
+* [NetCoreServer](https://github.com/chronoxor/NetCoreServer) (v 6.7.0)
   * Pure C# / .Net library for TCP/UDP/SSL with no additional protocols on top
   * Packetsize overhead: 0 bytes, but you have to invent the wheel yourself
   * [Unity Client Example](https://github.com/JohannesDeml/Unity-Net-Core-Networking-Sockets)
@@ -48,17 +48,29 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 * Ubuntu VPS
   * Virtual private server with dedicated CPU's running - [Hardware](https://www.netcup.eu/bestellen/produkt.php?produkt=2624)
-  * Ubuntu 20.04.3 LTS x86-64 Kernel 5.14.0-051400-generic
-
+  * Ubuntu 22.04.2 LTS
+    ```
+    $> hostnamectl
+             Chassis: vm
+      Virtualization: kvm
+    Operating System: Ubuntu 22.04.2 LTS
+              Kernel: Linux 5.15.0-48-generic
+        Architecture: x86-64
+     Hardware Vendor: netcup
+      Hardware Model: KVM Server
+    ```
+  
+    
+  
 * Ubuntu Desktop / Windows Desktop
   * Desktop PC from 2020 - [Hardware](https://pcpartpicker.com/user/JohannesDeml/saved/zz7yK8)
-  * Windows 10 Pro x86-64 Build 19043.1266 (21H1/May2021Update)
-  * Ubuntu 20.04.3 LTS x86-64 Kernel 5.11.0-37-generic
+  * xxxxWindows 10 Pro x86-64 Build 19043.1266 (21H1/May2021Update)
+  * xxxxUbuntu 20.04.3 LTS x86-64 Kernel 5.11.0-37-generic
 
 ### Software
 
-* [.NET](https://dotnet.microsoft.com/download/dotnet) 5.0.11 (5.0.1121.47308)
-* [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) 0.13.1
+* [.NET](https://dotnet.microsoft.com/download/dotnet) 6.0.407 (`dotnet --version`)
+* [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) 0.13.5
 
 ### Procedure
 For the two desktop setups, the benchmarks are run on a restarted system with 5 minutes idle time before starting the benchmark. They are run with admin privileges and all unnecessary other processes are killed before running the benchmarks. For Ubuntu VPS, the benchmarks are run through continuous integration on a typical indie server setup with other processes running as well. After the benchmarks are run, a list of all running processes to make them more reproducible. To reproduce the benchmarks, run `sudo sh linux-benchmark.sh` or `win-benchmark.bat` . If you want to execute directly from the compiled program, run `./NetworkBenchmarkDotNet -b Essential`.
@@ -107,7 +119,7 @@ This is a comparison between all tests with their message throughput (higher is 
 
 ## Installation
 
-Make sure you have [.Net 5 SDK](https://dotnet.microsoft.com/download) installed.
+Make sure you have [.Net 6 SDK](https://dotnet.microsoft.com/download) installed.
 
 Then just open the solution file with Visual Studio/Rider/Visual Studio Code and build it. Note that results of the benchmarks can be very different with a different operating system and hardware.
 
@@ -187,7 +199,7 @@ Your favorite library is missing, or you feel like the benchmarks are not testin
 Your new proposed library ... 
 
 * works with Unity as a Client
-* works with .NET 5 for the server 
+* works with .NET 6 for the server 
 * uses UDP (additional RUDP would be nice)
 * is Open Source (can still be commercial)
 * is stable enough not to break in the benchmarks
