@@ -48,7 +48,7 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
 
 * Ubuntu VPS
   * Virtual private server with dedicated CPU's running - [Hardware](https://www.netcup.eu/bestellen/produkt.php?produkt=2624)
-  * Ubuntu 22.04.2 LTS
+  * Ubuntu 22.04.2 LTS x86-64 Kernel 5.15.0-48-generic
     ```
     $> hostnamectl
              Chassis: vm
@@ -64,12 +64,12 @@ NBN is a benchmark for low level networking libraries using UDP and can be used 
   
 * Ubuntu Desktop / Windows Desktop
   * Desktop PC from 2020 - [Hardware](https://pcpartpicker.com/user/JohannesDeml/saved/zz7yK8)
-  * xxxxWindows 10 Pro x86-64 Build 19043.1266 (21H1/May2021Update)
-  * xxxxUbuntu 20.04.3 LTS x86-64 Kernel 5.11.0-37-generic
+  * Windows 11 Pro x86-64 Build 22621,1485 (22H2)
+  * Ubuntu 22.04.2 LTS x86-64 Kernel 5.19.0-38-generic
 
 ### Software
 
-* [.NET](https://dotnet.microsoft.com/download/dotnet) 6.0.407 (`dotnet --version`)
+* [.NET](https://dotnet.microsoft.com/download/dotnet) 6.0.13 on Ubuntu, 6.0.15 on Windows
 * [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) 0.13.5
 
 ### Procedure
@@ -82,19 +82,19 @@ The raw data and additional files can be downloaded from the [release section](.
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time (lower is better).
-![PingPong Unreliable .NET Benchmark chart](./Docs/nbn-pingpongunreliable-1.0.1.png)
+![PingPong Unreliable .NET Benchmark chart](./Docs/nbn-pingpongunreliable-1.1.0.png)
 
 ### Benchmark [PingPongReliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/ReliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **1 message** each with the server with **reliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for getting an idea of an average roundtrip time (lower is better).
-![PingPong Reliable .NET Benchmark chart](./Docs/nbn-pingpongreliable-1.0.1.png)
+![PingPong Reliable .NET Benchmark chart](./Docs/nbn-pingpongreliable-1.1.0.png)
 
 ### Benchmark [PingPongBatchedUnreliable](./NetworkBenchmarkDotNet/PredefinedBenchmarks/UnreliablePerformanceBenchmark.cs)
 
 Runs the benchmark with **500** clients, which pingpong **10 messages** each with the server with **unreliable** transmission. The benchmark runs until a total of **500,000** messages are sent to the server and back to the clients. Message size is **32 bytes**.  
 This test is for multiplexing / message merging performance (higher is better).
-![PingPong Batched Unreliable .NET Benchmark chart](./Docs/nbn-pingpongbatchedunreliable-1.0.1.png)
+![PingPong Batched Unreliable .NET Benchmark chart](./Docs/nbn-pingpongbatchedunreliable-1.1.0.png)
 
 ### Benchmark [SampleEchoSimple](./NetworkBenchmarkDotNet/PredefinedBenchmarks/SamplingBenchmark.cs)
 
@@ -104,7 +104,7 @@ This test collects information about generated garbage and CPU times while runni
 ### Overview
 This is a comparison between all tests with their message throughput (higher is better).
 
-![Network Benchmark .NET results overview](./Docs/nbn-overview-1.0.1.png)
+![Network Benchmark .NET results overview](./Docs/nbn-overview-1.1.0.png)
 
 ### Notes
 
@@ -134,39 +134,41 @@ You can run custom benchmarks through the command-line. Use can test multiple se
 ```
 Usage:
   NetworkBenchmarkDotNet [options]
+
 Options:
-  -b, --benchmark                         Run predefined benchmarks [default:
-  <All|Custom|Essential|Performance|Qu    Custom]
-  ick|Sampling>
-  -m, --execution-mode                    Control what parts to run [default:
-  <Client|Complete|Server>                Complete]
-  -t, --test <Manual|PingPong>            Test type [default: PingPong]
-  --transmission <Reliable|Unreliable>    Transmission type [default:
-                                          Unreliable]
-  -l, --library                           Library target [default: ENet]
-  <ENet|Kcp2k|LiteNetLib|NetCoreServer
-  >
-  -d, --duration <duration>               Test duration in seconds (-1 for
-                                          manual stopping) [default: 10]
-  --address <address>                     IP Address, can be ipv4 (e.g.
-                                          127.0.0.1) or ipv6 (e.g. ::1)
-                                          [default: ::1]
-  --port <port>                           Socket Port [default: 3330]
-  --clients <clients>                     #Simultaneous clients [default: 500]
-  --parallel-messages                     #Parallel messages per client
-  <parallel-messages>                     [default: 1]
-  --message-byte-size                     Message byte size sent by clients
-  <message-byte-size>                     [default: 32]
-  --message-payload                       Message load sent by clients
-  <Ones|Random|Zeros>                     [default: Random]
-  --verbose                               Verbose output of test steps and
-                                          errors [default: True]
-  --client-tick-rate                      Client ticks per second if supported
-  <client-tick-rate>                      [default: 60]
-  --server-tick-rate                      Server ticks per second if supported
-  <server-tick-rate>                      [default: 60]
-  --version                               Show version information
-  -?, -h, --help                          Show help and usage information
+  -b, --benchmark                          Run predefined benchmarks [default:
+  <All|Custom|Essential|Performance|Qui    Custom]
+  ck|Sampling>
+  -m, --execution-mode                     Control what parts to run [default:
+  <Client|Complete|Server>                 Complete]
+  -t, --test <Manual|PingPong>             Test type [default: PingPong]
+  --transmission <Reliable|Unreliable>     Transmission type [default:
+                                           Unreliable]
+  -l, --library                            Library target [default: ENet]
+  <ENet|Kcp2k|LiteNetLib|NetCoreServer>
+  -d, --duration <duration>                Test duration in seconds (-1 for
+                                           manual stopping) [default: 10]
+  --address <address>                      IP Address, can be ipv4 (e.g.
+                                           127.0.0.1) or ipv6 (e.g. ::1)
+                                           [default: ::1]
+  --port <port>                            Socket Port [default: 3330]
+  --clients <clients>                      # Simultaneous clients [default: 500]
+  --parallel-messages                      #Parallel messages per client
+  <parallel-messages>                      [default: 1]
+  --message-byte-size                      Message byte size sent by clients
+  <message-byte-size>                      [default: 32]
+  --message-payload <Ones|Random|Zeros>    Message load sent by clients
+                                           [default: Random]
+  --verbose                                Verbose output of test steps and
+                                           errors [default: True]
+  --client-tick-rate <client-tick-rate>    Client ticks per second if supported
+                                           [default: 60]
+  --server-tick-rate <server-tick-rate>    Server ticks per second if supported
+                                           [default: 60]
+  --use-native-sockets                     Use native Sockets (LiteNetLib only)
+                                           [default: True]
+  --version                                Show version information
+  -?, -h, --help                           Show help and usage information
 ```
 
 ### Predefined Benchmarks
