@@ -34,7 +34,11 @@ namespace NetworkBenchmark.Kcp2k
 
 
 			var interval = (uint) Utilities.CalculateTimeout(config.ServerTickRate);
-			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, DualMode, NoDelay, interval);
+			KcpConfig kcpConfig = new KcpConfig();
+			kcpConfig.DualMode = DualMode;
+			kcpConfig.NoDelay = NoDelay;
+			kcpConfig.Interval = interval;
+			server = new KcpServer(OnConnected, OnReceiveMessage, OnDisconnected, OnError, kcpConfig);
 
 			serverThread = new Thread(TickLoop);
 			serverThread.Name = "Kcp2k Server";
@@ -87,7 +91,7 @@ namespace NetworkBenchmark.Kcp2k
 			}
 		}
 
-		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment)
+		private void OnReceiveMessage(int connectionId, ArraySegment<byte> arraySegment, KcpChannel arg3)
 		{
 			if (benchmarkRunning)
 			{
@@ -108,6 +112,14 @@ namespace NetworkBenchmark.Kcp2k
 			}
 		}
 
+		private void OnError(int clientId, ErrorCode errorCode, string message)
+		{
+			if (benchmarkPreparing || benchmarkRunning)
+			{
+				Utilities.WriteVerboseLine($"Server error for client {clientId} {errorCode}: {message}");
+			}
+		}
+
 		private void Send(int connectionId, ArraySegment<byte> message, KcpChannel channel)
 		{
 			server.Send(connectionId, message, channel);
@@ -118,7 +130,7 @@ namespace NetworkBenchmark.Kcp2k
 		{
 			foreach (var connection in server.connections.Values)
 			{
-				connection.SendData(message, channel);
+				connection.peer.SendData(message, channel);
 			}
 
 			var messagesSent = server.connections.Count;

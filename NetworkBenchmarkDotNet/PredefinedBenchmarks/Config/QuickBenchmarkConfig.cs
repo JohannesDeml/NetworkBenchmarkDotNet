@@ -19,8 +19,6 @@ namespace NetworkBenchmark
 	{
 		public QuickBenchmarkConfig()
 		{
-			Add(DefaultConfig.Instance);
-
 			Job baseJob = Job.Default
 				.WithStrategy(RunStrategy.Monitoring)
 				.WithLaunchCount(1)
@@ -28,11 +26,10 @@ namespace NetworkBenchmark
 				.WithIterationCount(5)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true)
-				.WithPlatform(Platform.X64);
+				.WithGcForce(true);
 
 			// Here you can test different runtimes
-			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core60));
 
 			ConfigHelper.AddDefaultColumns(this);
 			AddColumn(new MessagesPerSecondColumn());

@@ -22,18 +22,15 @@ namespace NetworkBenchmark
 	{
 		public SamplingBenchmarkConfig()
 		{
-			Add(DefaultConfig.Instance);
-
 			Job baseJob = Job.Default
 				.WithLaunchCount(1)
 				.WithWarmupCount(1)
 				.WithIterationCount(1)
 				.WithGcServer(true)
 				.WithGcConcurrent(true)
-				.WithGcForce(true)
-				.WithPlatform(Platform.X64);
+				.WithGcForce(true);
 
-			AddJob(baseJob.WithRuntime(CoreRuntime.Core50));
+			AddJob(baseJob.WithRuntime(CoreRuntime.Core60));
 
 			ConfigHelper.AddDefaultColumns(this);
 

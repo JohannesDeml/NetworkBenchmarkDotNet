@@ -23,17 +23,15 @@ namespace NetworkBenchmark.LiteNetLib
 		private readonly Configuration config;
 		private readonly BenchmarkStatistics benchmarkStatistics;
 		private readonly NetManager netManager;
-		private readonly DeliveryMethod deliveryMethod;
 
 		public EchoServer(Configuration config, BenchmarkStatistics benchmarkStatistics) : base(config)
 		{
 			this.config = config;
 			this.benchmarkStatistics = benchmarkStatistics;
-			deliveryMethod = LiteNetLibBenchmark.GetDeliveryMethod(config.Transmission);
 
 			netManager = new NetManager(this);
 			netManager.UpdateTime = Utilities.CalculateTimeout(config.ServerTickRate);
-			//netManager.UseNativeSockets = true;
+			netManager.UseNativeSockets = config.UseNativeSockets;
 			if (!config.Address.Contains(':'))
 			{
 				netManager.IPv6Mode = IPv6Mode.Disabled;

@@ -27,7 +27,7 @@ namespace NetworkBenchmark.Kcp2k
 		private readonly BenchmarkStatistics benchmarkStatistics;
 
 		private readonly Thread tickThread;
-		private readonly KcpClientConnection client;
+		private readonly KcpClient client;
 		private readonly KcpChannel communicationChannel;
 		private readonly bool noDelay;
 
@@ -39,11 +39,12 @@ namespace NetworkBenchmark.Kcp2k
 			noDelay = true;
 			communicationChannel = Kcp2kBenchmark.GetChannel(config.Transmission);
 
-			client = new KcpClientConnection();
+			KcpConfig kcpConfig = new KcpConfig();
+			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
+			kcpConfig.Interval = interval;
+			kcpConfig.NoDelay = noDelay;
 
-			client.OnAuthenticated = OnPeerConnected;
-			client.OnData = OnNetworkReceive;
-			client.OnDisconnected = OnPeerDisconnected;
+			client = new KcpClient(OnPeerConnected, OnNetworkReceive, OnPeerDisconnected, OnError, kcpConfig);
 
 			tickThread = new Thread(TickLoop);
 			tickThread.Name = $"Kcp2k Client {id}";
@@ -62,8 +63,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void TickLoop()
 		{
-			var interval = (uint) Utilities.CalculateTimeout(config.ClientTickRate);
-			client.Connect(config.Address, (ushort) config.Port, noDelay, interval);
+			client.Connect(config.Address, (ushort) config.Port);
 
 			while (Listen)
 			{
@@ -74,9 +74,7 @@ namespace NetworkBenchmark.Kcp2k
 
 		private void Tick()
 		{
-			client.RawReceive();
-			client.TickIncoming();
-			client.TickOutgoing();
+			client.Tick();
 		}
 
 		public override void StartBenchmark()
@@ -126,7 +124,7 @@ namespace NetworkBenchmark.Kcp2k
 				return;
 			}
 
-			client.SendData(buffer, channel);
+			client.Send(buffer, channel);
 			Interlocked.Increment(ref benchmarkStatistics.MessagesClientSent);
 		}
 
@@ -136,7 +134,7 @@ namespace NetworkBenchmark.Kcp2k
 			isConnected = true;
 		}
 
-		private void OnNetworkReceive(ArraySegment<byte> arraySegment)
+		private void OnNetworkReceive(ArraySegment<byte> arraySegment, KcpChannel kcpChannel)
 		{
 			if (BenchmarkRunning)
 			{
@@ -156,6 +154,14 @@ namespace NetworkBenchmark.Kcp2k
 			}
 
 			isConnected = false;
+		}
+
+		private void OnError(ErrorCode errorCode, string message)
+		{
+			if (BenchmarkRunning)
+			{
+				Utilities.WriteVerboseLine($"Client {id} error {errorCode}: {message}");
+			}
 		}
 	}
 }

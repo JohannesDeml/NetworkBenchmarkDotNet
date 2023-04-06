@@ -16,7 +16,7 @@ set /p benchmark=Which benchmark do you want to run [Quick/Performance/Sampling/
 echo on
 :: Options: https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build
 :: Build targets: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
-dotnet build --configuration Release --framework net5.0 --output .\bin\NetworkBenchmarkDotNet-Windows\
+dotnet build --configuration Release --framework net6.0 --output .\bin\NetworkBenchmarkDotNet-Windows\
 .\bin\NetworkBenchmarkDotNet-Windows\NetworkBenchmarkDotNet -b %benchmark%
 
 echo off
