@@ -67,5 +67,13 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/JohannesDeml/NetworkBenchmarkDotNet</PackageProjectUrl>
     </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
     
 </Project>
